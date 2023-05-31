@@ -1,4 +1,4 @@
-package ru.practicum.server.exeption;
+package ru.practicum.server.exception;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Builder
@@ -21,15 +22,16 @@ public class EndpointHitDto {
 
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "app name must not be null")
     private String app;
 
-    @NotBlank
+    @NotBlank(message = "uri must not be null")
     private String uri;
 
-    @NotBlank
+    @NotBlank(message = "ip must not be null")
     private String ip;
 
+    @NotNull(message = "timestamp must not be null")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp;
 }

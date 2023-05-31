@@ -1,4 +1,4 @@
-package ru.practicum.server.exeption;
+package ru.practicum.server.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -21,7 +21,7 @@ public class StatsServerExceptionHandler {
 
     @ExceptionHandler
     @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleValidationException(final RuntimeException e) {
+    public ErrorResponse handleRuntimeException(final RuntimeException e) {
         log.warn("[HTTP STATUS 500] {} ", e.getMessage(), e);
 
         return new ErrorResponse(e.getMessage());
