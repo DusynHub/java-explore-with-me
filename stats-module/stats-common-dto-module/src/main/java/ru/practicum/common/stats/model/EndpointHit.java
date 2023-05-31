@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.format.annotation.DateTimeFormat;
 
 
 import javax.persistence.Column;
@@ -42,7 +41,7 @@ public class EndpointHit {
     @Column(name = "ip", nullable = false)
     private String ip;
 
-    @Column(name = "timestamp")
+    @Column(name = "timestamp", nullable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp;
 }

@@ -1,40 +1,19 @@
 version: '3.1'
 services:
-  stats-client-module:
-    build: stats-module/stats-client-module
-    image: stats-module/stats-client-module
-    container_name: stats-client-module
-    ports:
-      - "9090:9090"
-    depends_on:
-      - stats-server-module
-      - stats_db
-    environment:
-      - STATS_SERVER_URL=http://stats-server-module:7070
-      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:9091
-
   stats-server-module:
     build: stats-module/stats-server-module
     image: stats-module/stats-server-module
     container_name: stats_server_module
     ports:
-      - "7070:7070"
+      - "9090:9090"
     depends_on:
       - stats_db
     environment:
-      - SERVER_PORT=7070
+      - SERVER_PORT=9090
       - SPRING_DATASOURCE_URL=jdbc:postgresql://stats_db:5432/stats
-#      - SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/stats
       - SPRING_DATASOURCE_USERNAME=masfuj
       - SPRING_DATASOURCE_PASSWORD=masfuj
-      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:7071
-
-  #  stats-db:
-#    image: postgres:14-alpine
-
-#  ewm-service:
-#    ports:
-#      - "8080:8080"
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:9091
 
   ewm-db:
     image: postgres:15.3-alpine
