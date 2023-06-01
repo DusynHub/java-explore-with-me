@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Slf4j
-public class StatsServerServiceImpl implements StatsServerService{
+public class StatsServerServiceImpl implements StatsServerService {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -39,7 +39,14 @@ public class StatsServerServiceImpl implements StatsServerService{
     @Override
     @Transactional
     public EndpointHitDto addEndPointHit(EndpointHitDto endpointHitDto) {
-
+        log.info("[StatsService] получен запрос сохранение информация об обращении " +
+                        "в приложении - '{}' " +
+                        "по uri-'{}' " +
+                        "от ip - '{}']",
+                endpointHitDto.getApp(),
+                endpointHitDto.getUri(),
+                endpointHitDto.getIp()
+        );
         return EndpointHitMapper.INSTANCE.endpointHitToEndpointHitDto(
                 statsServiceRepository.save(
                         EndpointHitMapper.INSTANCE.endpointHitDtoToEndpointHit(endpointHitDto)
@@ -48,15 +55,22 @@ public class StatsServerServiceImpl implements StatsServerService{
     }
 
     @Override
-    public List<ViewStatsDto> getEndpointHitsCount(LocalDateTime start, LocalDateTime end, List<String> endpoints, boolean unique){
+    public List<ViewStatsDto> getEndpointHitsCount(LocalDateTime start,
+                                                   LocalDateTime end,
+                                                   List<String> endpoints,
+                                                   boolean unique) {
+        log.info("[StatsService] получение статистики по частоте использвоания эндпоинтов");
+
+
+
         BooleanExpression byUri;
         QBean<ViewStatsDto> viewStats;
-        if(endpoints.isEmpty()){
+        if (endpoints.isEmpty()) {
             byUri = qEndpointHit.uri.notIn(endpoints);
         } else {
             byUri = qEndpointHit.uri.in(endpoints);
         }
-        if(unique){
+        if (unique) {
             viewStats = Projections.bean(
                     ViewStatsDto.class,
                     qEndpointHit.app,
@@ -71,10 +85,14 @@ public class StatsServerServiceImpl implements StatsServerService{
         }
         JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(entityManager);
 
-                JPAQuery<ViewStatsDto> query = jpaQueryFactory.from(qEndpointHit)
-                        .where(byUri)
-                        .groupBy(qEndpointHit.app, qEndpointHit.uri)
-                        .select(viewStats);
-        return query.fetch().stream().sorted(Comparator.comparing(ViewStatsDto::getHits).reversed()).collect(Collectors.toList());
+        JPAQuery<ViewStatsDto> query = jpaQueryFactory.from(qEndpointHit)
+                .where(byUri)
+                .groupBy(qEndpointHit.app, qEndpointHit.uri)
+                .select(viewStats);
+
+        return query.fetch()
+                .stream()
+                .sorted(Comparator.comparing(ViewStatsDto::getHits).reversed())
+                .collect(Collectors.toList());
     }
 }

@@ -25,7 +25,7 @@ public class StatsServerController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/hit")
     public EndpointHitDto postStat(@RequestBody @Valid EndpointHitDto endpointHitDto){
-        log.info("[StatsController: получен запрос POST /hit]");
+        log.info("[StatsController] получен запрос POST /hit");
         return statsServerService.addEndPointHit(endpointHitDto);
     }
 
@@ -34,32 +34,9 @@ public class StatsServerController {
                                       @RequestParam(name = "end") String end,
                                       @RequestParam(name = "uris", defaultValue ="") List<String> uris,
                                       @RequestParam(name = "unique", defaultValue = "false") boolean unique){
-
-
+        log.info("[StatsController] получен запрос GET /stats");
         LocalDateTime startTime = LocalDateTime.parse(start, formatter);
-
-        LocalDateTime endTime = LocalDateTime.parse(start, formatter);
-
+        LocalDateTime endTime = LocalDateTime.parse(end, formatter);
         return statsServerService.getEndpointHitsCount(startTime, endTime, uris, unique);
-
-
-//        System.out.println("uris = " + uris);
-//        System.out.println("unique = " + unique);
-//
-//        String startUri = URLEncoder.encode(start);
-//
-//        System.out.println("URLEncoder.encode(start) = " + URLEncoder.encode(start));
-//        System.out.println("URLEncoder.encode(end) = " + URLEncoder.encode(end));
-//
-//        String uriComponents =  UriComponentsBuilder.newInstance().path("/stats")
-//                .queryParam("start", start).queryParam("end", end).encode(StandardCharsets.UTF_8).build().toUriString();
-//
-//        System.out.println(uriComponents);
-
-
-
-//        return statsServerService.getNonUniqueEndpointHitsCount(startTime, endTime, uris);
     }
-
-
 }
