@@ -11,12 +11,17 @@ public interface StatsServerService {
 
     EndpointHitDto addEndPointHit(EndpointHitDto endpointHitDto);
 
-    List<ViewStatsDto> getNonUniqueEndpointHitsCount(LocalDateTime start,
-                                                     LocalDateTime end,
-                                                     List<String> endpoints);
+//    List<ViewStatsDto> getNonUniqueEndpointHitsCount(LocalDateTime start,
+//                                                     LocalDateTime end,
+//                                                     List<String> endpoints);
 
-    @Transactional
-    List<ViewStatsDto> getUniqueEndpointHitsCount(LocalDateTime start,
-                                                  LocalDateTime end,
-                                                  List<String> endpoints);
+    List<ViewStatsDto> getEndpointHitsCount(LocalDateTime start,
+                                                     LocalDateTime end,
+                                                     List<String> endpoints,
+                                                     boolean unique);
+
+//    @Transactional
+//    List<ViewStatsDto> getUniqueEndpointHitsCount(LocalDateTime start,
+//                                                  LocalDateTime end,
+//                                                  List<String> endpoints);
 }

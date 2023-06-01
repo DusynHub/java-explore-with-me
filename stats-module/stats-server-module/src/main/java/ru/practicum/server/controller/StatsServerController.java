@@ -2,11 +2,8 @@ package ru.practicum.server.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 import ru.practicum.common.stats.dto.EndpointHitDto;
 import ru.practicum.common.stats.dto.ViewStatsDto;
 import ru.practicum.server.service.StatsServerService;
@@ -25,9 +22,10 @@ public class StatsServerController {
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/hit")
     public EndpointHitDto postStat(@RequestBody @Valid EndpointHitDto endpointHitDto){
-
+        log.info("[StatsController: получен запрос POST /hit]");
         return statsServerService.addEndPointHit(endpointHitDto);
     }
 
@@ -41,6 +39,8 @@ public class StatsServerController {
         LocalDateTime startTime = LocalDateTime.parse(start, formatter);
 
         LocalDateTime endTime = LocalDateTime.parse(start, formatter);
+
+        return statsServerService.getEndpointHitsCount(startTime, endTime, uris, unique);
 
 
 //        System.out.println("uris = " + uris);
@@ -56,11 +56,7 @@ public class StatsServerController {
 //
 //        System.out.println(uriComponents);
 
-        if(unique){
-            return statsServerService.getUniqueEndpointHitsCount(startTime, endTime, uris);
-        } else {
-            return statsServerService.getNonUniqueEndpointHitsCount(startTime, endTime, uris);
-        }
+
 
 //        return statsServerService.getNonUniqueEndpointHitsCount(startTime, endTime, uris);
     }
