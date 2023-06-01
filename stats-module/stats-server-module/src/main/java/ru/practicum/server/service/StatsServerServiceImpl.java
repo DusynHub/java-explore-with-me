@@ -51,11 +51,9 @@ public class StatsServerServiceImpl implements StatsServerService{
     }
 
     @Override
-    @Transactional
     public List<ViewStatsDto> getNonUniqueEndpointHitsCount(LocalDateTime start,
                                                             LocalDateTime end,
                                                             List<String> endpoints){
-
 
         BooleanExpression byUri;
 
@@ -83,32 +81,24 @@ public class StatsServerServiceImpl implements StatsServerService{
     }
 
     @Override
-    @Transactional
     public List<ViewStatsDto> getUniqueEndpointHitsCount(LocalDateTime start,
                                                          LocalDateTime end,
                                                          List<String> endpoints){
         BooleanExpression byUri;
-
         if(endpoints.isEmpty()){
             byUri = qEndpointHit.uri.notIn(endpoints);
         } else {
             byUri = qEndpointHit.uri.in(endpoints);
         }
-
         JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(entityManager);
-
         JPAQuery<EndpointHit> query = jpaQueryFactory.from(qEndpointHit)
                 .where(byUri)
                 .groupBy(qEndpointHit.app, qEndpointHit.uri, qEndpointHit.ip)
                 .select(
                         Projections.bean(
-                                EndpointHit.class,
-                                qEndpointHit.app,
-                                qEndpointHit.uri,
-                                qEndpointHit.ip
+                                EndpointHit.class, qEndpointHit.app, qEndpointHit.uri, qEndpointHit.ip
                         )
                 );
-
         Function<EndpointHit, List<String>> classifier = (endpointHitMap) -> List.of(
                 endpointHitMap.getApp(),
                 endpointHitMap.getUri()
@@ -119,13 +109,11 @@ public class StatsServerServiceImpl implements StatsServerService{
                         .collect(Collectors.groupingBy(classifier, Collectors.counting()));
 
         List<ViewStatsDto> result = new ArrayList<>(viewStatsPropertiesWithHits.size());
-
         for(Map.Entry<List<String>, Long> viewStatsProperties : viewStatsPropertiesWithHits.entrySet()){
             result.add(mapListToViewStatsDto(viewStatsProperties.getKey(), viewStatsProperties.getValue()));
         }
         return result.stream().sorted(Comparator.comparing(ViewStatsDto::getHits).reversed()).collect(Collectors.toList());
     }
-
     private ViewStatsDto mapListToViewStatsDto(List<String> properties, Long hits){
         return new ViewStatsDto(properties.get(0), properties.get(1), hits);
     }
