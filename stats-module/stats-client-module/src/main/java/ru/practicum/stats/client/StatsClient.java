@@ -16,7 +16,7 @@ import java.util.List;
 @Component
 public class StatsClient extends BaseClient {
 
-    private final static String statsServerUrl = "http://localhost:5050";
+    private final String statsServerUrl = "http://localhost:9090";
 
     @Autowired
     public StatsClient(String statsServerUrl,
@@ -26,23 +26,20 @@ public class StatsClient extends BaseClient {
                 .build()
         );
     }
-    
-    public ResponseEntity<Object> postStat( EndpointHitDto endpointHitDto) {
+
+    public ResponseEntity<Object> postStat(EndpointHitDto endpointHitDto) {
         return post("/hit", endpointHitDto);
     }
 
     public ResponseEntity<Object> getStat(String start, String end, List<String> uri, boolean unique) {
 
         String res = UriComponentsBuilder
-                .fromUriString("/")
+                .fromUriString("/stats")
                 .queryParam("start", start)
                 .queryParam("end", end)
-                .queryParam("uri",uri)
+                .queryParam("uri", uri)
                 .queryParam("unique", unique)
                 .build().encode().toUriString();
-
-        System.out.println(res);
-
         return get(res);
     }
 

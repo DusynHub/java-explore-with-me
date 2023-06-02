@@ -1,6 +1,6 @@
 version: '3.1'
 services:
-  stats-server-module:
+  stats-server:
     build: stats-module/stats-server-module
     image: stats-module/stats-server-module
     container_name: stats_server_module
@@ -24,6 +24,7 @@ services:
       - POSTGRES_DB=ewm
       - POSTGRES_USER=masfuj
       - POSTGRES_PASSWORD=masfuj
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:7542
 
   stats_db:
     image: postgres:15.3-alpine

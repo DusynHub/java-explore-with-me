@@ -8,7 +8,6 @@
 		<artifactId>explore-with-me</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
-<!--		<relativePath/> &lt;!&ndash; lookup parent from repository &ndash;&gt;-->
 	</parent>
 
 	<artifactId>stats-module</artifactId>

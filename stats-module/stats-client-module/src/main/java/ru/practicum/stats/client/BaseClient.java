@@ -22,7 +22,6 @@ public abstract class BaseClient {
     protected ResponseEntity<Object> get(String path) {
         return makeAndSendRequest(HttpMethod.GET, path, null, null);
     }
-    
 
     protected <T> ResponseEntity<Object> post(String path,  T body) {
         return makeAndSendRequest(HttpMethod.POST, path, null, body);

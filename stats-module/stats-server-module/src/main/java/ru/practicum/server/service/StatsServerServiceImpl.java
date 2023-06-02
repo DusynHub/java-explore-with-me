@@ -33,7 +33,7 @@ public class StatsServerServiceImpl implements StatsServerService {
 
     private final StatsServiceRepository statsServiceRepository;
 
-    private final QEndpointHit qEndpointHit = QEndpointHit.endpointHit;
+    private static final QEndpointHit qEndpointHit = QEndpointHit.endpointHit;
 
 
     @Override
