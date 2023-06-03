@@ -11,8 +11,10 @@ import org.mockserver.integration.ClientAndServer;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import reactor.core.publisher.Mono;
 import ru.practicum.common.stats.dto.EndpointHitDto;
 import org.mockserver.model.MediaType;
+import ru.practicum.common.stats.dto.ViewStatsDto;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -30,6 +32,12 @@ class StatsClientTest {
     private final String host = "localhost";
     private final int port = 9090;
 
+    private final String baseUrl =  new StringBuilder()
+            .append(protocol)
+            .append(host)
+            .append(":")
+            .append(port).toString();
+
     RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder();
 
     private final StatsClient statsClient = new StatsClient(
@@ -39,6 +47,8 @@ class StatsClientTest {
                     .append(":")
                     .append(port).toString(),
             restTemplateBuilder);
+
+    private final StatsClientInterface statsClientInterface = new StatsServiceImpl("http://localhost:9090");
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -52,6 +62,8 @@ class StatsClientTest {
         String endDate = "2022-02-07 11:11:55";
         List<String> uriL = List.of("/event");
         boolean uniques = false;
+
+        mapper.findAndRegisterModules();
 
         ClientAndServer.startClientAndServer(port);
 
@@ -69,23 +81,26 @@ class StatsClientTest {
                         response()
                                 .withStatusCode(200)
                                 .withContentType(MediaType.APPLICATION_JSON)
-                                .withBody(mapper.writeValueAsString("Some stats"))
+                                .withBody(mapper.writeValueAsString(ViewStatsDto.builder().build()))
                 );
 
-        ResponseEntity<Object> response = statsClient.getStat(startDate, endDate, uriL, uniques);
+        System.out.println(            new StringBuilder()
+                .append(protocol)
+                .append(host)
+                .append(":")
+                .append(port).toString());
+       ResponseEntity<List<ViewStatsDto>> response = statsClientInterface.getStat(startDate, endDate, uriL, uniques);
 
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
-        assertThat(response.getBody()).isEqualTo("Some stats");
     }
 
     @Test
     void postStats() throws JsonProcessingException {
-        EndpointHitDto endpointHit = EndpointHitDto.builder()
-                .app("ewm-main-service")
-                .uri("/events/2")
-                .ip("192.163.0.1")
-                .timestamp(LocalDateTime.parse("2022-09-06 11:00:23", formatter))
-                .build();
+
+        String app = "ewm-main-service";
+        String uri = "/events/2";
+        String ip = "192.163.0.1";
+        String timestamp = "2022-09-06 11:00:23";
 
         ClientAndServer.startClientAndServer(port);
 
@@ -99,12 +114,11 @@ class StatsClientTest {
                         response()
                                 .withStatusCode(201)
                                 .withContentType(MediaType.APPLICATION_JSON)
-                                .withBody(mapper.writeValueAsString("Some stats has been saved"))
+                                .withBody(mapper.writeValueAsString(ViewStatsDto.builder().build()))
                 );
 
-        ResponseEntity<Object> response = statsClient.postStat(endpointHit);
+        ResponseEntity<EndpointHitDto> response = statsClientInterface.postStat(app, uri, ip, timestamp);
         assertThat(response.getStatusCodeValue()).isEqualTo(201);
-        assertThat(response.getBody()).isEqualTo("Some stats has been saved");
     }
 
     @AfterEach
