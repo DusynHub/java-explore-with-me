@@ -8,14 +8,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockserver.client.MockServerClient;
 import org.mockserver.integration.ClientAndServer;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.web.util.UriComponentsBuilder;
 import ru.practicum.common.stats.dto.EndpointHitDto;
 import org.mockserver.model.MediaType;
+import ru.practicum.common.stats.dto.ViewStatsDto;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,22 +24,13 @@ import static org.mockserver.model.HttpResponse.response;
 @ExtendWith(SpringExtension.class)
 @RequiredArgsConstructor
 class StatsClientTest {
-
-    private final String protocol = "http://";
+    private final String protocol = "http";
     private final String host = "localhost";
     private final int port = 9090;
 
-    RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder();
-
-    private final StatsClient statsClient = new StatsClient(
-            new StringBuilder()
-                    .append(protocol)
-                    .append(host)
-                    .append(":")
-                    .append(port).toString(),
-            restTemplateBuilder);
-
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private final String baseUrl = UriComponentsBuilder.newInstance().scheme(protocol).host(host)
+            .port(port).toUriString();
+    private final StatsClient statsClient = new StatsServiceImpl(baseUrl);
 
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -52,6 +42,8 @@ class StatsClientTest {
         String endDate = "2022-02-07 11:11:55";
         List<String> uriL = List.of("/event");
         boolean uniques = false;
+
+        mapper.findAndRegisterModules();
 
         ClientAndServer.startClientAndServer(port);
 
@@ -69,23 +61,20 @@ class StatsClientTest {
                         response()
                                 .withStatusCode(200)
                                 .withContentType(MediaType.APPLICATION_JSON)
-                                .withBody(mapper.writeValueAsString("Some stats"))
+                                .withBody(mapper.writeValueAsString(ViewStatsDto.builder().build()))
                 );
 
-        ResponseEntity<Object> response = statsClient.getStat(startDate, endDate, uriL, uniques);
-
+        ResponseEntity<List<ViewStatsDto>> response = statsClient.getStat(startDate, endDate, uriL, uniques);
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
-        assertThat(response.getBody()).isEqualTo("Some stats");
     }
 
     @Test
     void postStats() throws JsonProcessingException {
-        EndpointHitDto endpointHit = EndpointHitDto.builder()
-                .app("ewm-main-service")
-                .uri("/events/2")
-                .ip("192.163.0.1")
-                .timestamp(LocalDateTime.parse("2022-09-06 11:00:23", formatter))
-                .build();
+
+        String app = "ewm-main-service";
+        String uri = "/events/2";
+        String ip = "192.163.0.1";
+        String timestamp = "2022-09-06 11:00:23";
 
         ClientAndServer.startClientAndServer(port);
 
@@ -99,12 +88,10 @@ class StatsClientTest {
                         response()
                                 .withStatusCode(201)
                                 .withContentType(MediaType.APPLICATION_JSON)
-                                .withBody(mapper.writeValueAsString("Some stats has been saved"))
+                                .withBody(mapper.writeValueAsString(ViewStatsDto.builder().build()))
                 );
-
-        ResponseEntity<Object> response = statsClient.postStat(endpointHit);
+        ResponseEntity<EndpointHitDto> response = statsClient.postStat(app, uri, ip, timestamp);
         assertThat(response.getStatusCodeValue()).isEqualTo(201);
-        assertThat(response.getBody()).isEqualTo("Some stats has been saved");
     }
 
     @AfterEach

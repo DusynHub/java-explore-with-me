@@ -12,7 +12,6 @@ import javax.validation.ValidationException;
 @Slf4j
 public class StatsServerExceptionHandler {
 
-
     @ExceptionHandler
     @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleException(Throwable e) {
