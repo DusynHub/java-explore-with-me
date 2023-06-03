@@ -15,6 +15,13 @@ services:
       - SPRING_DATASOURCE_PASSWORD=masfuj
       - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:9091
 
+  ewm-service:
+    build: ewm-service
+    image: ewm-service
+    container_name: ewm-service
+    ports:
+      - "8080:8080"
+
   ewm-db:
     image: postgres:15.3-alpine
     container_name: postgres_stats_db_ewm

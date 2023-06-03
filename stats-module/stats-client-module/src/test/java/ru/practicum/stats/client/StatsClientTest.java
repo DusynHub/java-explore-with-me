@@ -3,6 +3,7 @@ package ru.practicum.stats.client;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockserver.client.MockServerClient;
@@ -52,7 +53,7 @@ class StatsClientTest {
         List<String> uriL = List.of("/event");
         boolean uniques = false;
 
-        ClientAndServer.startClientAndServer(7070);
+        ClientAndServer.startClientAndServer(port);
 
         mockServerClient
                 .when(
@@ -104,5 +105,10 @@ class StatsClientTest {
         ResponseEntity<Object> response = statsClient.postStat(endpointHit);
         assertThat(response.getStatusCodeValue()).isEqualTo(201);
         assertThat(response.getBody()).isEqualTo("Some stats has been saved");
+    }
+
+    @AfterEach
+    void afterEach() {
+        mockServerClient.stop();
     }
 }
