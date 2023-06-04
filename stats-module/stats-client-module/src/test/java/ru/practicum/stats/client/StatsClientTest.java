@@ -38,19 +38,7 @@ class StatsClientTest {
             .append(":")
             .append(port).toString();
 
-    RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder();
-
-    private final StatsClient statsClient = new StatsClient(
-            new StringBuilder()
-                    .append(protocol)
-                    .append(host)
-                    .append(":")
-                    .append(port).toString(),
-            restTemplateBuilder);
-
-    private final StatsClientInterface statsClientInterface = new StatsServiceImpl("http://localhost:9090");
-
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private final StatsClientInterface statsClientInterface = new StatsServiceImpl(baseUrl);
 
     private final ObjectMapper mapper = new ObjectMapper();
 
