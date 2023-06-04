@@ -16,28 +16,20 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
-public class StatsServiceImpl implements StatsClientInterface {
+public class StatsServiceImpl implements StatsClient {
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private final WebClient webClient;
 
     public StatsServiceImpl(String baseUrl) {
-        webClient= WebClient.builder()
+        webClient = WebClient.builder()
                 .baseUrl(baseUrl)
                 .build();
     }
 
     @Override
     public ResponseEntity<List<ViewStatsDto>> getStat(String start, String end, List<String> uri, boolean unique) {
-
-        UriComponentsBuilder
-                .fromUriString("/stats")
-                .queryParam("start", start)
-                .queryParam("end", end)
-                .queryParam("uri", uri)
-                .queryParam("unique", unique)
-                .build().encode().toUriString();
 
         return webClient.get()
                 .uri(UriComponentsBuilder

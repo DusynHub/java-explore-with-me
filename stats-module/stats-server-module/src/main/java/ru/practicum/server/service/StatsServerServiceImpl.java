@@ -12,8 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.common.stats.dto.EndpointHitDto;
 import ru.practicum.common.stats.dto.ViewStatsDto;
 import ru.practicum.common.stats.model.QEndpointHit;
-import ru.practicum.server.mapper.EndpointHitMapper;
-import ru.practicum.server.repository.StatsServiceRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -31,10 +29,7 @@ public class StatsServerServiceImpl implements StatsServerService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    private final StatsServiceRepository statsServiceRepository;
-
     private static final QEndpointHit qEndpointHit = QEndpointHit.endpointHit;
-
 
     @Override
     @Transactional
@@ -47,11 +42,35 @@ public class StatsServerServiceImpl implements StatsServerService {
                 endpointHitDto.getUri(),
                 endpointHitDto.getIp()
         );
-        return EndpointHitMapper.INSTANCE.endpointHitToEndpointHitDto(
-                statsServiceRepository.save(
-                        EndpointHitMapper.INSTANCE.endpointHitDtoToEndpointHit(endpointHitDto)
+
+        String insertQuery = "INSERT INTO endpoint_hit ( app, uri, ip, timestamp)"
+                + " VALUES ( :app, :uri, :ip, :timestamp)";
+
+        entityManager.createNativeQuery(insertQuery)
+                .setParameter("app", endpointHitDto.getApp())
+                .setParameter("uri", endpointHitDto.getUri())
+                .setParameter("ip", endpointHitDto.getIp())
+                .setParameter("timestamp", endpointHitDto.getTimestamp())
+                .executeUpdate();
+
+        JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(entityManager);
+        JPAQuery<EndpointHitDto> selectQuery = jpaQueryFactory.from(qEndpointHit)
+                .where(qEndpointHit.uri.eq(endpointHitDto.getUri())
+                        .and(qEndpointHit.app.eq(endpointHitDto.getApp()))
+                        .and(qEndpointHit.ip.eq(endpointHitDto.getIp()))
+                        .and(qEndpointHit.timestamp.eq(endpointHitDto.getTimestamp()))
                 )
-        );
+                .select(
+                        Projections.bean(
+                                EndpointHitDto.class,
+                                qEndpointHit.id,
+                                qEndpointHit.app,
+                                qEndpointHit.uri,
+                                qEndpointHit.ip,
+                                qEndpointHit.timestamp
+                        )
+                );
+        return selectQuery.fetchFirst();
     }
 
     @Override
@@ -60,8 +79,6 @@ public class StatsServerServiceImpl implements StatsServerService {
                                                    List<String> endpoints,
                                                    boolean unique) {
         log.info("[StatsService] получение статистики по частоте использвоания эндпоинтов");
-
-
 
         BooleanExpression byUri;
         QBean<ViewStatsDto> viewStats;

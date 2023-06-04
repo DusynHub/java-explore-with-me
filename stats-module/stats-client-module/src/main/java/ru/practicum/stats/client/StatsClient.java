@@ -6,7 +6,7 @@ import ru.practicum.common.stats.dto.ViewStatsDto;
 
 import java.util.List;
 
-public interface StatsClientInterface {
+public interface StatsClient {
 
     ResponseEntity<List<ViewStatsDto>> getStat(String start, String end, List<String> uri, boolean unique);
 

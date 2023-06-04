@@ -61,6 +61,7 @@
 			<version>2.14.2</version>
 		</dependency>
 
+		<!--query dsl dependencies-->
 		<dependency>
 			<groupId>com.querydsl</groupId>
 			<artifactId>querydsl-apt</artifactId>
@@ -75,19 +76,19 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.mapstruct</groupId>
-			<artifactId>mapstruct</artifactId>
-			<version>1.5.3.Final</version>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-sql</artifactId>
+			<version>5.0.0</version>
 		</dependency>
-
 		<dependency>
-			<groupId>org.mapstruct</groupId>
-			<artifactId>mapstruct-processor</artifactId>
-			<version>1.5.3.Final</version>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-sql-codegen</artifactId>
+			<version>5.0.0</version>
 			<scope>provided</scope>
 		</dependency>
+		<!--query dsl dependencies-->
 
-	</dependencies>
+    </dependencies>
 
 
 	<build>

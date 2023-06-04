@@ -8,16 +8,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockserver.client.MockServerClient;
 import org.mockserver.integration.ClientAndServer;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import reactor.core.publisher.Mono;
+import org.springframework.web.util.UriComponentsBuilder;
 import ru.practicum.common.stats.dto.EndpointHitDto;
 import org.mockserver.model.MediaType;
 import ru.practicum.common.stats.dto.ViewStatsDto;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,18 +24,13 @@ import static org.mockserver.model.HttpResponse.response;
 @ExtendWith(SpringExtension.class)
 @RequiredArgsConstructor
 class StatsClientTest {
-
-    private final String protocol = "http://";
+    private final String protocol = "http";
     private final String host = "localhost";
     private final int port = 9090;
 
-    private final String baseUrl =  new StringBuilder()
-            .append(protocol)
-            .append(host)
-            .append(":")
-            .append(port).toString();
-
-    private final StatsClientInterface statsClientInterface = new StatsServiceImpl(baseUrl);
+    private final String baseUrl = UriComponentsBuilder.newInstance().scheme(protocol).host(host)
+            .port(port).toUriString();
+    private final StatsClient statsClient = new StatsServiceImpl(baseUrl);
 
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -72,13 +64,7 @@ class StatsClientTest {
                                 .withBody(mapper.writeValueAsString(ViewStatsDto.builder().build()))
                 );
 
-        System.out.println(            new StringBuilder()
-                .append(protocol)
-                .append(host)
-                .append(":")
-                .append(port).toString());
-       ResponseEntity<List<ViewStatsDto>> response = statsClientInterface.getStat(startDate, endDate, uriL, uniques);
-
+        ResponseEntity<List<ViewStatsDto>> response = statsClient.getStat(startDate, endDate, uriL, uniques);
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
     }
 
@@ -104,8 +90,7 @@ class StatsClientTest {
                                 .withContentType(MediaType.APPLICATION_JSON)
                                 .withBody(mapper.writeValueAsString(ViewStatsDto.builder().build()))
                 );
-
-        ResponseEntity<EndpointHitDto> response = statsClientInterface.postStat(app, uri, ip, timestamp);
+        ResponseEntity<EndpointHitDto> response = statsClient.postStat(app, uri, ip, timestamp);
         assertThat(response.getStatusCodeValue()).isEqualTo(201);
     }
 

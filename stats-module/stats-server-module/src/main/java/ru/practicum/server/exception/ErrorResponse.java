@@ -11,5 +11,4 @@ import lombok.Setter;
 public class ErrorResponse {
     @JsonProperty("error")
     private final String error;
-
 }
