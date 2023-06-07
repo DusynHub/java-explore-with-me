@@ -1,0 +1,52 @@
+version: '3.1'
+services:
+  stats-server:
+    build: stats-module/stats-server-module
+    image: stats-module/stats-server-module
+    container_name: stats_server_module
+    ports:
+      - "9090:9090"
+    depends_on:
+      - stats_db
+    environment:
+      - SERVER_PORT=9090
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats_db:5432/stats
+      - SPRING_DATASOURCE_USERNAME=masfuj
+      - SPRING_DATASOURCE_PASSWORD=masfuj
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:9093
+
+  ewm-service:
+    build: ewm-service
+    image: ewm-service
+    container_name: ewm-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - ewm-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm_service
+      - SPRING_DATASOURCE_USERNAME=masfuj
+      - SPRING_DATASOURCE_PASSWORD=masfuj
+
+  ewm-db:
+    image: postgres:15.3-alpine
+    container_name: ewm-db
+    ports:
+      - "6542:5432"
+    environment:
+      - POSTGRES_DB=ewm_service
+      - POSTGRES_USER=masfuj
+      - POSTGRES_PASSWORD=masfuj
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:7542
+
+  stats_db:
+    image: postgres:15.3-alpine
+    container_name: postgres_stats_db_module
+    ports:
+      - "6541:5432"
+    environment:
+      - POSTGRES_DB=stats
+      - POSTGRES_USER=masfuj
+      - POSTGRES_PASSWORD=masfuj
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:7541
+
