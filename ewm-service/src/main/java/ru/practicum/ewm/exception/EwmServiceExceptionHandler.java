@@ -15,7 +15,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestControllerAdvice
-//(basePackages = "ewm-service")
+        //(basePackages = "ewm-service")
 @Slf4j
 public class EwmServiceExceptionHandler {
 
@@ -72,7 +72,6 @@ public class EwmServiceExceptionHandler {
     private ErrorResponse makeErrorResponse(Throwable e, String reason) {
 
         return new ErrorResponse(
-//                List.of(e.getStackTrace()),
                 HttpStatus.BAD_REQUEST,
                 reason,
                 e.getLocalizedMessage(),
