@@ -7,12 +7,10 @@ import ru.practicum.ewm.user.model.EwmUser;
 /**
  * Mapper for EwmUser
  */
-@Mapper(componentModel = "spring")
+@Mapper
 public interface EwmUserMapper {
 
-
     EwmUserMapper INSTANCE = Mappers.getMapper(EwmUserMapper.class);
-
 
     EwmUserDto ewmUserToEwmUserDto (EwmUser ewmUser);
 

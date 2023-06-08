@@ -48,8 +48,9 @@ public class AdminEwmUserController {
 
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(@PathVariable @Positive long userId){
+    public void deleteUser(@PathVariable String userId){
         log.info("[Admin Controller] received a request DELETE /admin/users/{}", userId);
-        ewmUserService.deleteUser(userId);
+        long userIdLong = Long.parseLong(userId);
+        ewmUserService.deleteUser(userIdLong);
     }
 }

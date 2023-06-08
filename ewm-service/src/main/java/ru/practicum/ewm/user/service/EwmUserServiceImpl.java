@@ -10,6 +10,7 @@ import ru.practicum.ewm.exception.ResourceNotFoundException;
 import ru.practicum.ewm.user.model.dto.EwmUserDto;
 import ru.practicum.ewm.user.model.dto.EwmUserMapper;
 import ru.practicum.ewm.user.repository.EwmUserRepository;
+import ru.practicum.ewm.util.annotation.OffsetPageRequest;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,9 +33,10 @@ public class EwmUserServiceImpl implements EwmUserService {
                     .map(EwmUserMapper.INSTANCE::ewmUserToEwmUserDto)
                     .collect(Collectors.toList());
         } else {
-            PageRequest pageRequest = PageRequest.of(from,
+            OffsetPageRequest pageRequest = OffsetPageRequest.of(from,
                     size,
-                    Sort.by(Sort.Direction.ASC, "id"));
+                    Sort.by(Sort.Direction.ASC, "id")
+            );
             return ewmUserRepository.findAllBy(pageRequest).stream()
                     .map(EwmUserMapper.INSTANCE::ewmUserToEwmUserDto)
                     .collect(Collectors.toList());
@@ -46,7 +48,9 @@ public class EwmUserServiceImpl implements EwmUserService {
     public EwmUserDto saveUser(EwmUserDto ewmUserDto) {
         log.info("[Service] received a request to save user");
         return EwmUserMapper.INSTANCE.ewmUserToEwmUserDto(
-                ewmUserRepository.save(EwmUserMapper.INSTANCE.ewmUserDtoToEwnUserDto(ewmUserDto))
+            ewmUserRepository.save(
+                    EwmUserMapper.INSTANCE.ewmUserDtoToEwnUserDto(ewmUserDto)
+            )
         );
     }
 
@@ -54,7 +58,7 @@ public class EwmUserServiceImpl implements EwmUserService {
     @Transactional
     public void deleteUser(long userId) {
         log.info("[Service] received a request to delete user with id = '{}'", userId);
-        if (ewmUserRepository.existsById(userId)) {
+        if (!ewmUserRepository.existsById(userId)) {
             throw new ResourceNotFoundException(
                     String.format("User with id = '%d' not found", userId)
             );
