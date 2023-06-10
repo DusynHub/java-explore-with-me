@@ -39,6 +39,10 @@ public class Event {
 
     @Column(name = "annotation")
     private String annotation;
+
+    @Column(name = "category")
+    private String category;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
 
@@ -56,7 +60,7 @@ public class Event {
     @Column(name = "title")
     private String title;
 
-//    optional fields
+//  optional fields
 
     @Column(name = "description")
     private String description;

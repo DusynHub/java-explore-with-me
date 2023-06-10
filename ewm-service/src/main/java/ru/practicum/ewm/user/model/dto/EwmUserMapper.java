@@ -15,4 +15,6 @@ public interface EwmUserMapper {
     EwmUserDto ewmUserToEwmUserDto (EwmUser ewmUser);
 
     EwmUser ewmUserDtoToEwnUserDto(EwmUserDto ewmUserDto);
+
+    EwmShortUserDto ewmUserToEwmShortUserDto (EwmUser ewmUser);
 }

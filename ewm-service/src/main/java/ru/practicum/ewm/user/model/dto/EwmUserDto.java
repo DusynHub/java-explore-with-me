@@ -6,8 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import lombok.ToString;
+
 import ru.practicum.ewm.util.annotation.DomainLength;
 import ru.practicum.ewm.util.annotation.LocalPartLength;
 
@@ -22,7 +22,6 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EwmUserDto {
-
 
     private long id;
 

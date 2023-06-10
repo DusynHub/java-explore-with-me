@@ -15,7 +15,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestControllerAdvice
-        //(basePackages = "ewm-service")
 @Slf4j
 public class EwmServiceExceptionHandler {
 
