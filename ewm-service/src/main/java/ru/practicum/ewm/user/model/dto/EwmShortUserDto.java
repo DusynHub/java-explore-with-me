@@ -16,6 +16,7 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 public class EwmShortUserDto {
 
+    private long id;
 
     @NotBlank
     private String name;

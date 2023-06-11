@@ -6,11 +6,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.practicum.ewm.location.model.Location;
+import ru.practicum.ewm.enums.State;
 import ru.practicum.ewm.user.model.EwmUser;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -40,19 +42,21 @@ public class Event {
     @Column(name = "annotation")
     private String annotation;
 
-    @Column(name = "category")
+    @Column(name = "category_id")
     private long category;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "initiator",  nullable = false)
+    @JoinColumn(name = "initiator_id",  nullable = false)
     private EwmUser initiator;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "location",  nullable = false)
-    private Location location;
+    @Column(name = "lat")
+    private double lat;
+
+    @Column(name = "lon")
+    private double lon;
 
     @Column(name = "paid")
     private boolean paid;
@@ -78,6 +82,10 @@ public class Event {
 
     @Column(name = "request_moderation")
     private boolean requestModeration;
+
+    @Column(name = "state")
+    @Enumerated(EnumType.STRING)
+    private State state;
 
     @Column(name = "views")
     private int views;

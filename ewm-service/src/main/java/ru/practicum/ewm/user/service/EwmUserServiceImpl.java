@@ -2,7 +2,6 @@ package ru.practicum.ewm.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,7 +10,7 @@ import ru.practicum.ewm.user.model.EwmUser;
 import ru.practicum.ewm.user.model.dto.EwmUserDto;
 import ru.practicum.ewm.user.model.dto.EwmUserMapper;
 import ru.practicum.ewm.user.repository.EwmUserRepository;
-import ru.practicum.ewm.util.annotation.OffsetPageRequest;
+import ru.practicum.ewm.util.OffsetPageRequest;
 
 import java.util.List;
 import java.util.stream.Collectors;

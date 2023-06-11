@@ -10,7 +10,7 @@ import ru.practicum.ewm.category.model.dto.CategoryMapper;
 import ru.practicum.ewm.category.model.dto.NewCategoryDto;
 import ru.practicum.ewm.category.repository.CategoryRepository;
 import ru.practicum.ewm.exception.ResourceNotFoundException;
-import ru.practicum.ewm.util.annotation.OffsetPageRequest;
+import ru.practicum.ewm.util.OffsetPageRequest;
 
 import java.util.List;
 import java.util.stream.Collectors;

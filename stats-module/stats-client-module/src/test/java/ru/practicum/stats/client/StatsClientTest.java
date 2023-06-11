@@ -30,6 +30,7 @@ class StatsClientTest {
 
     private final String baseUrl = UriComponentsBuilder.newInstance().scheme(protocol).host(host)
             .port(port).toUriString();
+
     private final StatsClient statsClient = new StatsServiceImpl(baseUrl);
 
     private final ObjectMapper mapper = new ObjectMapper();

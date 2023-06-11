@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.practicum.ewm.category.model.dto.CategoryDto;
-import ru.practicum.ewm.location.model.Location;
+import ru.practicum.ewm.enums.State;
 import ru.practicum.ewm.location.model.dto.LocationDto;
 import ru.practicum.ewm.user.model.dto.EwmShortUserDto;
 import ru.practicum.ewm.user.model.dto.EwmUserDto;
@@ -23,6 +23,7 @@ public class EventFullDto {
 
 //  obligatory fields
 
+    private long id;
 
     private String annotation;
 
@@ -52,6 +53,8 @@ public class EventFullDto {
     private int participantLimit;
 
     private boolean requestModeration;
+
+    private State state;
 
     private int views;
 }

@@ -9,12 +9,13 @@ import ru.practicum.ewm.location.model.dto.LocationDto;
 import ru.practicum.ewm.user.model.EwmUser;
 import ru.practicum.ewm.user.model.dto.EwmShortUserDto;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
  * Mapper for Event
  */
-@Mapper
+@Mapper(imports = LocalDateTime.class)
 public interface EventMapper {
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -24,6 +25,10 @@ public interface EventMapper {
     @Mapping(target = "publishedOn", ignore = true)
     @Mapping(target = "initiator",
             source = "initiatorUser")
+    @Mapping(target = "lat",
+            source = "newEventDto.location.lat")
+    @Mapping(target = "lon",
+            source = "newEventDto.location.lon")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdOn",
             expression= "java(LocalDateTime.now())")
@@ -34,6 +39,8 @@ public interface EventMapper {
     Event newEventDtoToEvent (NewEventDto newEventDto, EwmUser initiatorUser);
 
 
+    @Mapping(target = "id",
+            source = "event.id")
     @Mapping(target = "category",
             source = "categoryDto")
     @Mapping(target = "initiator",

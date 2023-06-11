@@ -133,6 +133,12 @@
             <version>5.0.0</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>ru.practicum</groupId>
+            <artifactId>stats-client-module</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
         <!--query dsl dependencies-->
     </dependencies>
 

@@ -1,4 +1,4 @@
-package ru.practicum.ewm.util.annotation;
+package ru.practicum.ewm.util;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;

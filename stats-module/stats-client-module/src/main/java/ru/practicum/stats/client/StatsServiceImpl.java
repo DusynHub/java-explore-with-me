@@ -1,5 +1,8 @@
 package ru.practicum.stats.client;
 
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -16,15 +19,17 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
+@PropertySource(value = "classpath:stats-application.properties")
 public class StatsServiceImpl implements StatsClient {
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private final WebClient webClient;
 
-    public StatsServiceImpl(String baseUrl) {
+    public StatsServiceImpl(@Value("${stats-server.url}") String serverUrl) {
+        System.out.println(serverUrl);
         webClient = WebClient.builder()
-                .baseUrl(baseUrl)
+                .baseUrl(serverUrl)
                 .build();
     }
 
