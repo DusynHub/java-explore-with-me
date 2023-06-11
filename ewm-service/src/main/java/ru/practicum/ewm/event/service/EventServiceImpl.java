@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.common.stats.dto.EndpointHitDto;
 import ru.practicum.common.stats.dto.ViewStatsDto;
+import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.category.model.dto.CategoryDto;
 import ru.practicum.ewm.category.service.CategoryService;
 import ru.practicum.ewm.enums.State;
@@ -21,6 +22,7 @@ import ru.practicum.ewm.user.model.dto.EwmShortUserDto;
 import ru.practicum.ewm.user.model.dto.EwmUserDto;
 import ru.practicum.ewm.user.model.dto.EwmUserMapper;
 import ru.practicum.ewm.user.service.EwmUserService;
+import ru.practicum.ewm.util.OffsetPageRequest;
 import ru.practicum.stats.client.StatsClient;
 
 import java.util.List;
@@ -39,6 +41,8 @@ public class EventServiceImpl implements EventService{
 
     private final StatsClient statsClient;
 
+
+
     @Override
     @Transactional
     public EventFullDto postEvent(NewEventDto newEventDto, long initiator) {
@@ -46,17 +50,19 @@ public class EventServiceImpl implements EventService{
 
 
         EwmUser initiatorUser = ewmUserService.getEwmUserEntityById(initiator);
-
+        Category categoryInEvent = categoryService.getCategoryEntity(newEventDto.getCategory());
         Event eventToSave = EventMapper.INSTANCE.newEventDtoToEvent(
                 newEventDto,
-                initiatorUser
+                initiatorUser,
+                categoryInEvent
         );
 
         eventToSave.setState(State.PENDING);
 
         Event savedEvent = eventRepository.save(eventToSave);
-        CategoryDto categoryDto = categoryService.getCategory(newEventDto.getCategory());
 
+
+        CategoryDto categoryDto = categoryService.getCategory(newEventDto.getCategory());
         EwmShortUserDto ewmShortUserDto = EwmUserMapper.INSTANCE.ewmUserToEwmShortUserDto(
                 initiatorUser
         );
@@ -70,5 +76,12 @@ public class EventServiceImpl implements EventService{
                 ewmShortUserDto,
                 newEventDto.getLocation()
         );
+    }
+
+    @Override
+    public List<EventFullDto> getEvents(long userId, int from, int size) {
+        OffsetPageRequest offsetPageRequest = OffsetPageRequest.of(from, size);
+
+        return eventRepository.findAllBy(offsetPageRequest);
     }
 }

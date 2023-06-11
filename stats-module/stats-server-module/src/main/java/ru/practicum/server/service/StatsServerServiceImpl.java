@@ -31,6 +31,7 @@ public class StatsServerServiceImpl implements StatsServerService {
 
     private static final QEndpointHit qEndpointHit = QEndpointHit.endpointHit;
 
+
     @Override
     @Transactional
     public EndpointHitDto addEndPointHit(EndpointHitDto endpointHitDto) {

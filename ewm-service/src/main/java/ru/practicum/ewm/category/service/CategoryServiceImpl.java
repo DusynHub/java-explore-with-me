@@ -83,4 +83,13 @@ public class CategoryServiceImpl implements CategoryService {
             )
         );
     }
+
+    @Override
+    public Category getCategoryEntity(long categoryId) {
+        return categoryRepository.findById(categoryId).orElseThrow(
+                () -> new ResourceNotFoundException(
+                        String.format("Category with id = '%d' not found", categoryId)
+                )
+        );
+    }
 }

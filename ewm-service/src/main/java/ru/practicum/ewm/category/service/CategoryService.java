@@ -1,5 +1,6 @@
 package ru.practicum.ewm.category.service;
 
+import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.category.model.dto.CategoryDto;
 import ru.practicum.ewm.category.model.dto.NewCategoryDto;
 
@@ -46,7 +47,16 @@ public interface CategoryService {
      * Method to get category by id
      *
      * @param categoryId category id
-     * @return required category
+     * @return required category dto
      */
     CategoryDto getCategory(long categoryId);
+
+
+    /**
+     * Method to get category by id
+     *
+     * @param categoryId category id
+     * @return required category
+     */
+    Category getCategoryEntity(long categoryId);
 }

@@ -3,6 +3,7 @@ package ru.practicum.ewm.event.model.dto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
+import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.category.model.dto.CategoryDto;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.location.model.dto.LocationDto;
@@ -29,6 +30,8 @@ public interface EventMapper {
             source = "newEventDto.location.lat")
     @Mapping(target = "lon",
             source = "newEventDto.location.lon")
+    @Mapping(target = "category",
+            source = "category")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdOn",
             expression= "java(LocalDateTime.now())")
@@ -36,7 +39,9 @@ public interface EventMapper {
 //            expression = "java( newEventDto.getEventDate())",
             source =  "newEventDto.eventDate",
             dateFormat = "yyyy-MM-dd HH:mm:ss")
-    Event newEventDtoToEvent (NewEventDto newEventDto, EwmUser initiatorUser);
+    Event newEventDtoToEvent (NewEventDto newEventDto,
+                              EwmUser initiatorUser,
+                              Category category);
 
 
     @Mapping(target = "id",

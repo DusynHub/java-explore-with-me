@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.enums.State;
 import ru.practicum.ewm.user.model.EwmUser;
 
@@ -19,7 +20,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 
@@ -42,8 +42,9 @@ public class Event {
     @Column(name = "annotation")
     private String annotation;
 
-    @Column(name = "category_id")
-    private long category;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id",  nullable = false)
+    private Category category;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
