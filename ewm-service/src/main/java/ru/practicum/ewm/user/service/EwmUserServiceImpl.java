@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.exception.ResourceNotFoundException;
+import ru.practicum.ewm.user.model.EwmUser;
 import ru.practicum.ewm.user.model.dto.EwmUserDto;
 import ru.practicum.ewm.user.model.dto.EwmUserMapper;
 import ru.practicum.ewm.user.repository.EwmUserRepository;
@@ -22,6 +23,15 @@ import java.util.stream.Collectors;
 public class EwmUserServiceImpl implements EwmUserService {
 
     private final EwmUserRepository ewmUserRepository;
+
+    @Override
+    public EwmUser getEwmUserEntityById(long ewmUserId) {
+        return ewmUserRepository.findById(ewmUserId).orElseThrow(() ->
+            new ResourceNotFoundException(
+                    String.format("User with id = '%d' not found", ewmUserId)
+            )
+        );
+    }
 
     @Override
     public List<EwmUserDto> getAllUsersOrUsersByIds(List<Long> ewmUserIds,

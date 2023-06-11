@@ -33,7 +33,20 @@ public interface CategoryService {
      */
     void deleteCategory(long id);
 
+    /**
+     * Method to get all categories
+     *
+     * @param fromLine first category
+     * @param size page size
+     * @return required category list
+     */
     List<CategoryDto> getAllCategories(Integer fromLine, Integer size);
 
+    /**
+     * Method to get category by id
+     *
+     * @param categoryId category id
+     * @return required category
+     */
     CategoryDto getCategory(long categoryId);
 }

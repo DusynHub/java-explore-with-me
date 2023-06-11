@@ -1,5 +1,6 @@
 package ru.practicum.ewm.user.service;
 
+import ru.practicum.ewm.user.model.EwmUser;
 import ru.practicum.ewm.user.model.dto.EwmUserDto;
 
 import java.util.List;
@@ -9,6 +10,14 @@ import java.util.List;
  */
 public interface EwmUserService {
 
+
+    /**
+     * Method to get  user entity by id
+     *
+     * @param ewmUserId  user id
+     * @return required user id
+     */
+    EwmUser getEwmUserEntityById(long ewmUserId);
 
     /**
      * Method to get all users

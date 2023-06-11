@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.practicum.ewm.category.model.dto.CategoryDto;
 import ru.practicum.ewm.location.model.Location;
+import ru.practicum.ewm.location.model.dto.LocationDto;
+import ru.practicum.ewm.user.model.dto.EwmShortUserDto;
 import ru.practicum.ewm.user.model.dto.EwmUserDto;
 
 import java.time.LocalDateTime;
@@ -21,7 +23,6 @@ public class EventFullDto {
 
 //  obligatory fields
 
-    private long id;
 
     private String annotation;
 
@@ -30,9 +31,9 @@ public class EventFullDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
 
-    private EwmUserDto initiator;
+    private EwmShortUserDto initiator;
 
-    private Location location;
+    private LocationDto location;
 
     private boolean paid;
 

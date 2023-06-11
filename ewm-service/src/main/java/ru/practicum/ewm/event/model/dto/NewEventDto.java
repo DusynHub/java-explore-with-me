@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.practicum.ewm.location.model.Location;
+import ru.practicum.ewm.location.model.dto.LocationDto;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -25,7 +26,7 @@ public class NewEventDto {
     private String annotation;
 
     @Positive
-    private int category;
+    private long category;
 
     @NotBlank(message = "Description can't be blank")
     @Size(min = 20, message = "Description length is smaller than 20")
@@ -36,7 +37,7 @@ public class NewEventDto {
     private String eventDate;
 
     @NotNull(message = "Location must not be null")
-    private Location location;
+    private LocationDto location;
 
     private boolean paid;
 

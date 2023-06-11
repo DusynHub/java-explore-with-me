@@ -41,7 +41,7 @@ public class Event {
     private String annotation;
 
     @Column(name = "category")
-    private String category;
+    private long category;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
