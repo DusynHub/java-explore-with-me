@@ -7,7 +7,7 @@ public enum State {
     CANCELED;
 
     public static State getStateFromStateAction(StateAction stateAction) {
-        if (stateAction == StateAction.REJECT_EVENT) {
+        if (stateAction == StateAction.PUBLISH_EVENT) {
             return State.PUBLISHED;
         } else {
             return State.CANCELED;

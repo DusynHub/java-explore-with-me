@@ -71,6 +71,8 @@ public class AdminEventController {
         log.info("[Admin Event Controller] received a request PATCH /admin/events/{}", eventIdString);
         long eventId = Long.parseLong(eventIdString);
 
+        System.out.println(updateEventAdminRequest);
+
         return eventService.updateEventById(eventId, updateEventAdminRequest);
     }
 }

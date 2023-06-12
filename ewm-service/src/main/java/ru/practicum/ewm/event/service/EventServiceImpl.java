@@ -127,23 +127,23 @@ public class EventServiceImpl implements EventService {
         log.info("[Event Service] received a request to get events by admin");
         BooleanExpression expression = Expressions.asBoolean(true).eq(true);
 
-        if(users != null){
+        if (users != null) {
             expression = expression.and(QEvent.event.initiator.id.in(users));
         }
 
-        if(states != null){
+        if (states != null) {
             expression = expression.and(QEvent.event.state.stringValue().in(states));
         }
 
-        if(categories != null){
+        if (categories != null) {
             expression = expression.and(QEvent.event.category.id.in(categories));
         }
 
-        if(rangeStart != null){
+        if (rangeStart != null) {
             expression = expression.and(QEvent.event.eventDate.after(rangeStart));
         }
 
-        if(rangeEnd != null){
+        if (rangeEnd != null) {
             expression = expression.and(QEvent.event.eventDate.before(rangeEnd));
         }
 
@@ -153,43 +153,43 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventFullDto updateEventById(long eventId, UpdateEventAdminRequest updateEventAdminRequest) {
 
-        if(!eventRepository.existsById(eventId)){
+        if (!eventRepository.existsById(eventId)) {
             throw new ResourceNotFoundException(
-                String.format("Event with id = '%d' not found", eventId)
-            );
+                    String.format("Event with id = '%d' not found", eventId));
         }
 
         Event eventToUpdate = eventRepository.findById(eventId)
-            .orElseThrow(() ->
-                new ResourceNotFoundException(
-                        String.format("Event with id = '%d' not found", eventId)
-                )
-            );
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                String.format("Event with id = '%d' not found", eventId)));
 
-        if(eventToUpdate.getState() != State.PENDING){
+
+        if (eventToUpdate.getState() != State.PENDING) {
             throw new InvalidResourceException(
-                    "Cannot publish the event because it's not in the right state: PUBLISHED"
-            );
+                    "Cannot publish the event because it's not in the right state: PUBLISHED");
         }
 
-        try {
-            State updatedState = State.getStateFromStateAction(
-                    StateAction.getStateAction(updateEventAdminRequest.getStateAction())
-            );
-            eventToUpdate.setState(updatedState);
-            objectMapper.updateValue(eventToUpdate, updateEventAdminRequest);
+        State updatedState = State.getStateFromStateAction(
+                StateAction.getStateAction(updateEventAdminRequest.getStateAction()));
 
+        Category category =  categoryService.getCategoryEntity(updateEventAdminRequest.getCategory());;
+        if (updateEventAdminRequest.getCategory() != eventToUpdate.getCategory().getId()) {
+            category = categoryService.getCategoryEntity(updateEventAdminRequest.getCategory());
 
-        } catch (JsonProcessingException e) {
-            log.debug("JsonProcessingException при попытке сереализовать/десериализовать");
-            throw new RuntimeException("Что-то пошло не так");
         }
 
-        System.out.println(eventToUpdate);
+        EventMapper.INSTANCE.updateEventAdminRequestToEvent(
+                updateEventAdminRequest,
+                category,
+                updateEventAdminRequest.getLocation(),
+                updatedState,
+                eventToUpdate);
 
-        return null;
+        Event updatedEvent = eventRepository.save(eventToUpdate);
+        return makeEventFullDtoFromEvent(updatedEvent);
     }
 
     private List<EventFullDto> makeEventFullDtoFromEvents(List<Event> events) {
@@ -208,11 +208,11 @@ public class EventServiceImpl implements EventService {
 
         return events.stream()
                 .map(event -> EventMapper.INSTANCE.eventToEventFullDto(event,
-                                categoryDtos.get(event.getCategory().getId()),
-                                ewmUserDtos.get(event.getInitiator().getId()),
-                                LocationDto.builder().lat(event.getLat()).lon(event.getLon()).build(),
+                        categoryDtos.get(event.getCategory().getId()),
+                        ewmUserDtos.get(event.getInitiator().getId()),
+                        LocationDto.builder().lat(event.getLat()).lon(event.getLon()).build(),
                         1
-                                )).collect(Collectors.toList());
+                )).collect(Collectors.toList());
     }
 
     private EventFullDto makeEventFullDtoFromEvent(Event singleEvent) {

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.category.model.dto.CategoryDto;
 import ru.practicum.ewm.enums.StateAction;
@@ -16,11 +17,12 @@ import ru.practicum.ewm.user.model.dto.EwmShortUserDto;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class UpdateEventAdminRequest {
 
     private String annotation;
 
-    private Category category;
+    private long category;
 
     private String description;
 
