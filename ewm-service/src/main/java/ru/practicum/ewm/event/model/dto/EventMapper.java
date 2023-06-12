@@ -52,9 +52,32 @@ public interface EventMapper {
             source = "ewmShortUserDto")
     @Mapping(target = "location",
             source = "locationDto")
+    @Mapping(target = "confirmedRequests",
+            source = "confirmedRequests")
     EventFullDto eventToEventFullDto (Event event,
                                       CategoryDto categoryDto,
                                       EwmShortUserDto ewmShortUserDto,
-                                      LocationDto locationDto);
+                                      LocationDto locationDto,
+                                      Integer confirmedRequests);
+
+    @Mapping(target = "id",
+            source = "event.id")
+    @Mapping(target = "category",
+            source = "categoryDto")
+    @Mapping(target = "initiator",
+            source = "initiator")
+    @Mapping(target = "confirmedRequests",
+            source = "confirmedRequests")
+    EventShortDto eventToEventShortDto(Event event,
+                                       CategoryDto categoryDto,
+                                       EwmShortUserDto initiator,
+                                       Integer confirmedRequests);
+//    todo написать получение подтверённых запросов на участие
+
+
+    Event updateEventAdminRequestToEvent(
+            UpdateEventAdminRequest updateEventAdminRequest,
+            Category category
+    );
 
 }

@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.category.model.dto.CategoryDto;
+import ru.practicum.ewm.enums.StateAction;
+import ru.practicum.ewm.location.model.dto.LocationDto;
 import ru.practicum.ewm.user.model.dto.EwmShortUserDto;
 
 @Builder
@@ -14,23 +16,25 @@ import ru.practicum.ewm.user.model.dto.EwmShortUserDto;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class EventShortDto {
-
-    private long id;
+public class UpdateEventAdminRequest {
 
     private String annotation;
 
-    private CategoryDto category;
+    private Category category;
 
-    private int confirmedRequests;
+    private String description;
 
     private String eventDate;
 
-    private EwmShortUserDto initiator;
+    private LocationDto location;
 
     private boolean paid;
 
-    private String title;
+    private int participantLimit;
 
-    private int views;
+    private boolean requestModeration;
+
+    private String stateAction;
+
+    private String title;
 }

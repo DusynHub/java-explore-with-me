@@ -13,13 +13,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.event.model.dto.EventFullDto;
+import ru.practicum.ewm.event.model.dto.EventShortDto;
 import ru.practicum.ewm.event.model.dto.NewEventDto;
 import ru.practicum.ewm.event.service.EventService;
 
 import javax.validation.Valid;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -36,24 +34,32 @@ public class PrivateEventController {
     public EventFullDto postEvent(
             @PathVariable String userIdString,
             @RequestBody @Valid NewEventDto newEventDto
-            ){
-        log.info("[Private Controller] received a request POST /users/{}/events", userIdString);
+    ) {
+        log.info("[Private Event Controller] received a request POST /users/{}/events", userIdString);
         long userId = Long.parseLong(userIdString);
 
         return eventService.postEvent(newEventDto, userId);
     }
 
     @GetMapping
-    public List<EventFullDto> getEvents(
+    public List<EventShortDto> getUserEvents(
             @PathVariable String userIdString,
             @RequestParam(defaultValue = "0") Integer from,
-            @RequestParam(defaultValue = "10") Integer size
-    ){
-        log.info("[Private Controller] received a request POST /users/{}/events", userIdString);
+            @RequestParam(defaultValue = "10") Integer size) {
+        log.info("[Private Event Controller] received a request POST /users/{}/events", userIdString);
         long userId = Long.parseLong(userIdString);
 
-        return eventService.getEvents(userId, from, size);
+        return eventService.getUserEvents(userId, from, size);
     }
 
+    @GetMapping("/{eventIdString}")
+    public EventFullDto getUserEventById(
+            @PathVariable String userIdString,
+            @PathVariable String eventIdString) {
+        log.info("[Private Event Controller] received a request POST /users/{}/events/{}", userIdString, eventIdString);
+        long userId = Long.parseLong(userIdString);
+        long eventId = Long.parseLong(eventIdString);
+        return eventService.getUserEventById(userId, eventId);
+    }
 
 }

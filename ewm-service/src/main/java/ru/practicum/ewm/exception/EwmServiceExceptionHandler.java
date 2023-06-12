@@ -28,21 +28,21 @@ public class EwmServiceExceptionHandler {
     @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleException(Throwable e) {
         log.warn("[HTTP STATUS 500] {} ", e.getMessage(), e);
-        return makeErrorResponse(e, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+        return makeErrorResponse( HttpStatus.INTERNAL_SERVER_ERROR, e, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
     }
 
     @ExceptionHandler
     @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleRuntimeException(final RuntimeException e) {
         log.warn("[HTTP STATUS 500] {} ", e.getMessage(), e);
-        return makeErrorResponse(e, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+        return makeErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
     }
 
     @ExceptionHandler
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationException(final ValidationException e) {
         log.warn("[HTTP STATUS 400] {} ", e.getMessage(), e);
-        return makeErrorResponse(e, BAD_REQUEST_REASON);
+        return makeErrorResponse(HttpStatus.BAD_REQUEST, e, BAD_REQUEST_REASON);
     }
 
     @ExceptionHandler
@@ -51,27 +51,42 @@ public class EwmServiceExceptionHandler {
             final MethodArgumentNotValidException e
     ) {
         log.warn("[HTTP STATUS 400] {} ", e.getMessage(), e);
-        return makeErrorResponse(e, BAD_REQUEST_REASON);
+        return makeErrorResponse(HttpStatus.BAD_REQUEST, e, BAD_REQUEST_REASON);
     }
 
     @ExceptionHandler
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     public ErrorResponse handleResourceNotFoundException(final ResourceNotFoundException e) {
         log.warn("[HTTP STATUS 404] {} ", e.getMessage(), e);
-        return makeErrorResponse(e, e.getMessage());
+        return makeErrorResponse(HttpStatus.NOT_FOUND, e, e.getMessage());
     }
 
     @ExceptionHandler
-    @ResponseStatus(code = HttpStatus.NOT_FOUND)
+    @ResponseStatus(code = HttpStatus.CONFLICT)
     public ErrorResponse handleConstraintViolationException(final ConstraintViolationException e) {
         log.warn("[HTTP STATUS 409] {} ", e.getMessage(), e);
-        return makeErrorResponse(e, CONSTRAINT_VIOLATION_EXCEPTION_REASON);
+        return makeErrorResponse( HttpStatus.CONFLICT, e, CONSTRAINT_VIOLATION_EXCEPTION_REASON);
     }
 
-    private ErrorResponse makeErrorResponse(Throwable e, String reason) {
+    @ExceptionHandler
+    @ResponseStatus(code = HttpStatus.FORBIDDEN)
+    public ErrorResponse handleResourceNotAvailableException(final ResourceNotAvailableException e) {
+        log.warn("[HTTP STATUS 403] {} ", e.getMessage(), e);
+        return makeErrorResponse( HttpStatus.FORBIDDEN, e, e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(code = HttpStatus.CONFLICT)
+    public ErrorResponse handleInvalidResourceException(final InvalidResourceException e) {
+        log.warn("[HTTP STATUS 409] {} ", e.getMessage(), e);
+        return makeErrorResponse(HttpStatus.FORBIDDEN, e, e.getMessage());
+    }
+
+
+    private ErrorResponse makeErrorResponse(HttpStatus httpStatus, Throwable e, String reason) {
 
         return new ErrorResponse(
-                HttpStatus.BAD_REQUEST,
+                httpStatus,
                 reason,
                 e.getLocalizedMessage(),
                 LocalDateTime.now().format(formatter)

@@ -57,4 +57,6 @@ public class EventFullDto {
     private State state;
 
     private int views;
+
+    private int confirmedRequests;
 }

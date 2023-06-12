@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.enums.State;
 import ru.practicum.ewm.user.model.EwmUser;
@@ -31,6 +32,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Event {
 
 //  obligatory fields
@@ -44,6 +46,7 @@ public class Event {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id",  nullable = false)
+    @ToString.Exclude
     private Category category;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
@@ -51,6 +54,7 @@ public class Event {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "initiator_id",  nullable = false)
+    @ToString.Exclude
     private EwmUser initiator;
 
     @Column(name = "lat")
