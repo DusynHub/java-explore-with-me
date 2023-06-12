@@ -2,6 +2,8 @@ package ru.practicum.ewm.user.repository;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
 import ru.practicum.ewm.user.model.EwmUser;
 import java.util.List;
@@ -9,7 +11,7 @@ import java.util.List;
 /**
  * EwmUser Repository for Explore-With-Me
  */
-public interface EwmUserRepository extends JpaRepository<EwmUser, Long> {
+public interface EwmUserRepository extends JpaRepository<EwmUser, Long>, QuerydslPredicateExecutor {
 
     /**
      * Method to get all users by ids list

@@ -59,4 +59,12 @@ public interface CategoryService {
      * @return required category
      */
     Category getCategoryEntity(long categoryId);
+
+    /**
+     * Method to get list of categories by ids
+     *
+     * @param categoryIds category ids
+     * @return required categories
+     */
+    List<CategoryDto> findAllById(List<Long> categoryIds);
 }

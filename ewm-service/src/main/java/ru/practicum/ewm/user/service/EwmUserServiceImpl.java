@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.exception.ResourceNotFoundException;
 import ru.practicum.ewm.user.model.EwmUser;
+import ru.practicum.ewm.user.model.dto.EwmShortUserDto;
 import ru.practicum.ewm.user.model.dto.EwmUserDto;
 import ru.practicum.ewm.user.model.dto.EwmUserMapper;
 import ru.practicum.ewm.user.repository.EwmUserRepository;
@@ -73,5 +74,13 @@ public class EwmUserServiceImpl implements EwmUserService {
             );
         }
         ewmUserRepository.deleteById(userId);
+    }
+
+    @Override
+    public List<EwmShortUserDto> findAllBy(List<Long> userIds) {
+        return ewmUserRepository.findAllById(userIds)
+                .stream()
+                .map(EwmUserMapper.INSTANCE::ewmUserToEwmShortUserDto)
+                .collect(Collectors.toList());
     }
 }

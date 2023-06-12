@@ -19,5 +19,5 @@ public interface EventService {
      */
     EventFullDto postEvent (NewEventDto newEventDto, long initiator);
 
-    List<EventFullDto> getEvents (long userId ,int from, int size);
+    List<EventFullDto> getEvents (long userId , int from, int size);
 }

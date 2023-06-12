@@ -92,4 +92,12 @@ public class CategoryServiceImpl implements CategoryService {
                 )
         );
     }
+
+    @Override
+    public List<CategoryDto> findAllById(List<Long> categoryIds) {
+        return categoryRepository.findAllById(categoryIds)
+                .stream()
+                .map(CategoryMapper.INSTANCE::categoryToCategoryDto)
+                .collect(Collectors.toList());
+    }
 }

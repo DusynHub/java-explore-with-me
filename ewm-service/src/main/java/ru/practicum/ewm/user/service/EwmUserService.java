@@ -1,6 +1,7 @@
 package ru.practicum.ewm.user.service;
 
 import ru.practicum.ewm.user.model.EwmUser;
+import ru.practicum.ewm.user.model.dto.EwmShortUserDto;
 import ru.practicum.ewm.user.model.dto.EwmUserDto;
 
 import java.util.List;
@@ -43,4 +44,14 @@ public interface EwmUserService {
      * @param userId id of the user to be deleted
      */
     void deleteUser(long userId);
+
+    /**
+     * Method to get user list by ids
+     *
+     * @param userIds user ids
+     * @return  user list
+     */
+    List<EwmShortUserDto> findAllBy(List<Long> userIds);
+
+
 }
