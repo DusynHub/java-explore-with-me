@@ -133,12 +133,6 @@
             <version>5.0.0</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>ru.practicum</groupId>
-            <artifactId>stats-client-module</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
         <!--query dsl dependencies-->
 
         <dependency>
@@ -146,6 +140,25 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
             <version>2.9.7</version>
         </dependency>
+
+        <!--stats module dependencies-->
+
+        <dependency>
+            <groupId>ru.practicum</groupId>
+            <artifactId>stats-client-module</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>ru.practicum</groupId>
+            <artifactId>stats-common-dto-module</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!--stats module dependencies-->
+
     </dependencies>
 
     <build>

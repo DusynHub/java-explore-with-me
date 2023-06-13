@@ -72,7 +72,20 @@ public interface EventService {
     EventFullDto updateEventById(long eventId, UpdateEventAdminRequest updateEventAdminRequest);
 
 
-
+    /**
+     * Method to get events from users
+     *
+     * @param text search condition in annotation and description
+     * @param categories categories ids
+     * @param paid should event be paid
+     * @param rangeStart start of date range
+     * @param rangeEnd end of date range
+     * @param onlyAvailable should event be available
+     * @param Sort sort condition
+     * @param from the number of events that need to be skipped to form the current set
+     * @param size number of events on the page
+     * @return required events
+     */
     List<EventShortDto> getEvents(
                                     String text,
                                     List<Long> categories,
@@ -82,6 +95,18 @@ public interface EventService {
                                     boolean onlyAvailable,
                                     String Sort,
                                     int from,
-                                    int size);
+                                    int size,
+                                    String clientIp,
+                                    String endpointPath);
+
+    /**
+     * Method to get event by id
+     *
+     * @param eventId event id
+     * @param clientIp client ip
+     * @param eventId path of endpoint
+     * @return required event
+     */
+    EventFullDto getEventById(long eventId, String clientIp, String endpointPath);
 
 }

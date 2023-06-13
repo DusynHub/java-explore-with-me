@@ -1,5 +1,7 @@
 package ru.practicum.ewm.event.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -42,7 +44,6 @@ public class AdminEventController {
             @RequestParam(defaultValue = "10") Integer size) {
         log.info("[Admin Event Controller] received a request GET /admin/events");
 
-
         LocalDateTime rangeStart = null;
         if(rangeEndString != null) {
             String decodedRangeStart = URLDecoder.decode(rangeStartString, StandardCharsets.UTF_8);
@@ -67,11 +68,17 @@ public class AdminEventController {
     @PatchMapping("/{eventIdString}")
     public EventFullDto patchEventById(
             @PathVariable String eventIdString,
-            @RequestBody UpdateEventAdminRequest updateEventAdminRequest){
+            @RequestBody UpdateEventAdminRequest updateEventAdminRequest) throws JsonProcessingException {
         log.info("[Admin Event Controller] received a request PATCH /admin/events/{}", eventIdString);
         long eventId = Long.parseLong(eventIdString);
 
-        System.out.println(updateEventAdminRequest);
+        ObjectMapper mapper =  new ObjectMapper();
+        mapper.findAndRegisterModules();
+
+
+        String s = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(updateEventAdminRequest);
+        System.out.println(s);
+
 
         return eventService.updateEventById(eventId, updateEventAdminRequest);
     }

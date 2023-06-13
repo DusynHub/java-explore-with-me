@@ -55,11 +55,14 @@ public interface EventMapper {
             source = "locationDto")
     @Mapping(target = "confirmedRequests",
             source = "confirmedRequests")
+    @Mapping(target = "views",
+            source = "viewsStats")
     EventFullDto eventToEventFullDto (Event event,
                                       CategoryDto categoryDto,
                                       EwmShortUserDto ewmShortUserDto,
                                       LocationDto locationDto,
-                                      Integer confirmedRequests);
+                                      Integer confirmedRequests,
+                                      Long viewsStats);
 
     @Mapping(target = "id",
             source = "event.id")
@@ -69,10 +72,15 @@ public interface EventMapper {
             source = "initiator")
     @Mapping(target = "confirmedRequests",
             source = "confirmedRequests")
+    @Mapping(target = "eventDate",
+            expression = "java(event.getEventDate().format(formatter))")
+    @Mapping(target = "views",
+            source = "viewsStats")
     EventShortDto eventToEventShortDto(Event event,
                                        CategoryDto categoryDto,
                                        EwmShortUserDto initiator,
-                                       Integer confirmedRequests);
+                                       Integer confirmedRequests,
+                                       Long viewsStats);
 //    todo написать получение подтверённых запросов на участие
 
 
@@ -80,7 +88,9 @@ public interface EventMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "lat", source = "locationDto.lat")
     @Mapping(target = "lon", source = "locationDto.lon")
-    @Mapping(target="category", source="categoryToUpdate")
+    @Mapping(conditionExpression = "java(updateEventAdminRequest.getCategory() != 0L || categoryToUpdate != null)",
+            target="category",
+            source="categoryToUpdate")
     @Mapping(target = "state", source = "state")
     @Mapping(target = "eventDate",
             source =  "updateEventAdminRequest.eventDate",

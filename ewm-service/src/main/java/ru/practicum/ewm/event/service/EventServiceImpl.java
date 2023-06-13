@@ -7,8 +7,11 @@ import com.querydsl.core.types.dsl.Expressions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.common.stats.dto.EndpointHitDto;
+import ru.practicum.common.stats.dto.ViewStatsDto;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.category.model.dto.CategoryDto;
 import ru.practicum.ewm.category.service.CategoryService;
@@ -34,6 +37,7 @@ import ru.practicum.ewm.util.OffsetPageRequest;
 import ru.practicum.stats.client.StatsClient;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -43,6 +47,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @Transactional(readOnly = true)
 public class EventServiceImpl implements EventService {
+
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private final ObjectMapper objectMapper;
 
@@ -59,7 +65,6 @@ public class EventServiceImpl implements EventService {
     @Transactional
     public EventFullDto postEvent(NewEventDto newEventDto, long initiator) {
         log.info("[Event Service] received a private request to save new event");
-
 
         EwmUser initiatorUser = ewmUserService.getEwmUserEntityById(initiator);
         Category categoryInEvent = categoryService.getCategoryEntity(newEventDto.getCategory());
@@ -86,7 +91,8 @@ public class EventServiceImpl implements EventService {
                 categoryDto,
                 ewmShortUserDto,
                 newEventDto.getLocation(),
-                1
+                1,
+                0L
         );
     }
 
@@ -155,33 +161,35 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventFullDto updateEventById(long eventId, UpdateEventAdminRequest updateEventAdminRequest) {
-        log.info("[Event Service] received an admin request to patch event by id");
+    public EventFullDto updateEventById(long eventId,
+                                        UpdateEventAdminRequest updateEventAdminRequest) {
+        log.info("[Event Service] received an admin request to patch event by id = '{}'", eventId);
         if (!eventRepository.existsById(eventId)) {
             throw new ResourceNotFoundException(
-                    String.format("Event with id = '%d' not found", eventId));
-        }
-
+                    String.format("Event with id = '%d' not found", eventId));}
         Event eventToUpdate = eventRepository.findById(eventId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                String.format("Event with id = '%d' not found", eventId)));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("Event with id = '%d' not found", eventId)));
 
+        if (eventToUpdate.getEventDate().minusHours(1).isBefore(LocalDateTime.now())) {
+            throw new InvalidResourceException(
+                    "The start date of the event to be changed must be no earlier than one hour from the publication date.");}
 
         if (eventToUpdate.getState() != State.PENDING) {
             throw new InvalidResourceException(
-                    "Cannot publish the event because it's not in the right state: PUBLISHED");
-        }
+                    "Cannot publish the event because it's not in the right state: PUBLISHED or CANCELLED");}
 
         State updatedState = State.getStateFromStateAction(
                 StateAction.getStateAction(updateEventAdminRequest.getStateAction()));
 
-        Category category = categoryService.getCategoryEntity(updateEventAdminRequest.getCategory());
+        if (updatedState == State.PUBLISHED) {
+            eventToUpdate.setPublishedOn(LocalDateTime.now());}
 
-        if (updateEventAdminRequest.getCategory() != eventToUpdate.getCategory().getId()) {
-            category = categoryService.getCategoryEntity(updateEventAdminRequest.getCategory());
+        Category category = categoryService.getCategoryEntity(eventToUpdate.getCategory().getId());
 
-        }
+        if (updateEventAdminRequest.getCategory() != eventToUpdate.getCategory().getId()
+                && updateEventAdminRequest.getCategory() != 0) {
+            category = categoryService.getCategoryEntity(updateEventAdminRequest.getCategory());}
 
         EventMapper.INSTANCE.updateEventAdminRequestToEvent(
                 updateEventAdminRequest,
@@ -195,7 +203,6 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    @Transactional
     public List<EventShortDto> getEvents(String text,
                                          List<Long> categories,
                                          boolean paid,
@@ -204,7 +211,9 @@ public class EventServiceImpl implements EventService {
                                          boolean onlyAvailable,
                                          String sort,
                                          int from,
-                                         int size) {
+                                         int size,
+                                         String clientIp,
+                                         String endpointPath) {
         log.info("[Event Service] received a public request to get events");
 
         BooleanExpression expression = Expressions.asBoolean(true).eq(true);
@@ -230,13 +239,73 @@ public class EventServiceImpl implements EventService {
         }
 
         Sort getEvetnsSort = Sort.by(Sort.Direction.ASC, "eventDate");
-        if(sort.equals("VIEWS")){
+        if (sort.equals("VIEWS")) {
             getEvetnsSort = Sort.by(Sort.Direction.ASC, "views");
         }
 
         OffsetPageRequest pageRequest = OffsetPageRequest.of(from, size, getEvetnsSort);
         List<Event> resultEvents = eventRepository.findAll(expression, pageRequest).getContent();
+
+        ResponseEntity<EndpointHitDto> endpointHitDtoResponseEntity = statsClient.postStat(
+                "ewv-service",
+                endpointPath,
+                clientIp,
+                LocalDateTime.now().format(formatter)
+        );
+
+
+        System.out.println("*********СОХРАНЕНИЕ**********");
+        System.out.println("*********СОХРАНЕНИЕ**********");
+        System.out.println("*********СОХРАНЕНИЕ**********");
+        System.out.println("*********СОХРАНЕНИЕ**********");
+        System.out.println("*********СОХРАНЕНИЕ**********");
+        System.out.println("*********СОХРАНЕНИЕ**********");
+        System.out.println(endpointHitDtoResponseEntity.getBody());
+
+        ResponseEntity<List<ViewStatsDto>> viewStatsDto = statsClient.getStat(
+                LocalDateTime.now().minusYears(50).format(formatter),
+                LocalDateTime.now().plusYears(50).format(formatter),
+                List.of(endpointPath),
+                false
+        );
+
+
+        System.out.println("*********СТАТИСТИКА**********");
+        System.out.println("*********СТАТИСТИКА**********");
+        System.out.println("*********СТАТИСТИКА**********");
+        System.out.println("*********СТАТИСТИКА**********");
+        System.out.println("*********СТАТИСТИКА**********");
+        System.out.println("*********СТАТИСТИКА**********");
+        System.out.println("*********СТАТИСТИКА**********");
+        System.out.println(viewStatsDto.getBody());
+
         return makeEvenShortDtoFromEventsList(resultEvents);
+    }
+
+    @Override
+    public EventFullDto getEventById(long eventId, String clientIp, String endpointPath) {
+        log.info("[Event Service] received a public request to get event by id");
+
+        Event requiredEvent = eventRepository.findById(eventId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                String.format("Event with id = '%d' not found", eventId))
+                        );
+        if(requiredEvent.getState() != State.PUBLISHED){
+            throw new InvalidResourceException(
+                    String.format("Event should be published, but state was '%s'", requiredEvent.getState())
+            );
+        }
+
+        statsClient.postStat(
+                "ewv-service",
+                endpointPath,
+                clientIp,
+                LocalDateTime.now().format(formatter)
+        );
+
+        return makeEventFullDtoFromEvent(requiredEvent);
+
     }
 
     private List<EventFullDto> makeEventFullDtoFromEvents(List<Event> events) {
@@ -253,12 +322,36 @@ public class EventServiceImpl implements EventService {
                 .stream()
                 .collect(Collectors.toMap(EwmShortUserDto::getId, ewmShortUserDto -> ewmShortUserDto));
 
+        List<String> endpoints = events.stream().map((event) ->
+                new StringBuilder()
+                        .append(" /events/")
+                        .append(event.getId()).toString())
+                .collect(Collectors.toList());
+
+        List<ViewStatsDto> stats = statsClient.getStat(
+            LocalDateTime.now().minusYears(50).format(formatter),
+            LocalDateTime.now().plusYears(50).format(formatter),
+                endpoints,
+                false
+        ).getBody();
+
+        Map<String, Long> views = stats.stream()
+                .collect(
+                        Collectors.toMap(
+                                ViewStatsDto::getUri,
+                                ViewStatsDto::getHits
+                        )
+                );
+
         return events.stream()
                 .map(event -> EventMapper.INSTANCE.eventToEventFullDto(event,
                         categoryDtos.get(event.getCategory().getId()),
                         ewmUserDtos.get(event.getInitiator().getId()),
                         LocationDto.builder().lat(event.getLat()).lon(event.getLon()).build(),
-                        1
+                        1,
+                        views.get(new StringBuilder()
+                                .append(" /events/")
+                                .append(event.getId()).toString())
                 )).collect(Collectors.toList());
     }
 
@@ -271,13 +364,31 @@ public class EventServiceImpl implements EventService {
                 ewmUserService.getEwmUserEntityById(singleEvent.getInitiator().getId())
         );
 
+        List<ViewStatsDto> stats = statsClient.getStat(
+                LocalDateTime.now().minusYears(50).format(formatter),
+                LocalDateTime.now().plusYears(50).format(formatter),
+                List.of(new StringBuilder().append("/event/").append(singleEvent.getId()).toString()),
+                false
+        ).getBody();
+
+        Map<String, Long> views = stats.stream()
+                .collect(
+                        Collectors.toMap(
+                                ViewStatsDto::getUri,
+                                ViewStatsDto::getHits
+                        )
+                );
+
         return EventMapper.INSTANCE.eventToEventFullDto(singleEvent,
                 categoryDto,
                 ewmShortUserDto,
                 LocationDto.builder()
                         .lat(singleEvent.getLat())
                         .lon(singleEvent.getLon()).build(),
-                1);
+                1,
+                views.get(new StringBuilder()
+                        .append(" /events/")
+                        .append(singleEvent.getId()).toString()));
     }
 
 
@@ -294,11 +405,37 @@ public class EventServiceImpl implements EventService {
                 .stream()
                 .collect(Collectors.toMap(EwmShortUserDto::getId, ewmShortUserDto -> ewmShortUserDto));
 
+
+        List<String> endpoints = events.stream().map((event) ->
+                        new StringBuilder()
+                                .append(" /events/")
+                                .append(event.getId()).toString())
+                .collect(Collectors.toList());
+
+        List<ViewStatsDto> stats = statsClient.getStat(
+                LocalDateTime.now().minusYears(50).format(formatter),
+                LocalDateTime.now().plusYears(50).format(formatter),
+                endpoints,
+                false
+        ).getBody();
+
+        Map<String, Long> views = stats.stream()
+                .collect(
+                        Collectors.toMap(
+                                ViewStatsDto::getUri,
+                                ViewStatsDto::getHits
+                        )
+                );
+
+
         return events.stream()
                 .map(event -> EventMapper.INSTANCE.eventToEventShortDto(event,
                         categoryDtos.get(event.getCategory().getId()),
                         ewmUserDtos.get(event.getInitiator().getId()),
-                        1
+                        1,
+                        views.get(new StringBuilder()
+                                .append(" /events/")
+                                .append(event.getId()).toString())
                 )).collect(Collectors.toList());
     }
 }
