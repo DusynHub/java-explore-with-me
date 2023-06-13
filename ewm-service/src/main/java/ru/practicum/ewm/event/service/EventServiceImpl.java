@@ -304,6 +304,24 @@ public class EventServiceImpl implements EventService {
                 LocalDateTime.now().format(formatter)
         );
 
+        ResponseEntity<List<ViewStatsDto>> viewStatsDto = statsClient.getStat(
+                LocalDateTime.now().minusYears(50).format(formatter),
+                LocalDateTime.now().plusYears(50).format(formatter),
+                List.of(endpointPath),
+                false
+        );
+
+
+        System.out.println("*********СТАТИСТИКА**********");
+        System.out.println("*********СТАТИСТИКА**********");
+        System.out.println("*********СТАТИСТИКА**********");
+        System.out.println("*********СТАТИСТИКА**********");
+        System.out.println("*********СТАТИСТИКА**********");
+        System.out.println("*********СТАТИСТИКА**********");
+        System.out.println("*********СТАТИСТИКА**********");
+        System.out.println(viewStatsDto.getBody());
+
+
         return makeEventFullDtoFromEvent(requiredEvent);
 
     }
@@ -368,7 +386,7 @@ public class EventServiceImpl implements EventService {
                 LocalDateTime.now().minusYears(50).format(formatter),
                 LocalDateTime.now().plusYears(50).format(formatter),
                 List.of(new StringBuilder().append("/event/").append(singleEvent.getId()).toString()),
-                false
+                true
         ).getBody();
 
         Map<String, Long> views = stats.stream()
@@ -387,7 +405,7 @@ public class EventServiceImpl implements EventService {
                         .lon(singleEvent.getLon()).build(),
                 1,
                 views.get(new StringBuilder()
-                        .append(" /events/")
+                        .append("/events/")
                         .append(singleEvent.getId()).toString()));
     }
 
@@ -408,7 +426,7 @@ public class EventServiceImpl implements EventService {
 
         List<String> endpoints = events.stream().map((event) ->
                         new StringBuilder()
-                                .append(" /events/")
+                                .append("/events/")
                                 .append(event.getId()).toString())
                 .collect(Collectors.toList());
 
@@ -434,7 +452,7 @@ public class EventServiceImpl implements EventService {
                         ewmUserDtos.get(event.getInitiator().getId()),
                         1,
                         views.get(new StringBuilder()
-                                .append(" /events/")
+                                .append("/events/")
                                 .append(event.getId()).toString())
                 )).collect(Collectors.toList());
     }
