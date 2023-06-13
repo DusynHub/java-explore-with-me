@@ -6,6 +6,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.category.model.Category;
@@ -57,7 +58,7 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional
     public EventFullDto postEvent(NewEventDto newEventDto, long initiator) {
-        log.info("[Event Service] received a request to save new event");
+        log.info("[Event Service] received a private request to save new event");
 
 
         EwmUser initiatorUser = ewmUserService.getEwmUserEntityById(initiator);
@@ -100,7 +101,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDto getUserEventById(long userId, long eventId) {
-        log.info("[Event Service] received a request to get user event by id");
+        log.info("[Event Service] received a private request to get user event by id");
         Event requiredEvent = eventRepository.findById(eventId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
@@ -124,7 +125,7 @@ public class EventServiceImpl implements EventService {
                                                LocalDateTime rangeEnd,
                                                Integer from,
                                                Integer size) {
-        log.info("[Event Service] received a request to get events by admin");
+        log.info("[Event Service] received an admin request to get events");
         BooleanExpression expression = Expressions.asBoolean(true).eq(true);
 
         if (users != null) {
@@ -155,7 +156,7 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional
     public EventFullDto updateEventById(long eventId, UpdateEventAdminRequest updateEventAdminRequest) {
-
+        log.info("[Event Service] received an admin request to patch event by id");
         if (!eventRepository.existsById(eventId)) {
             throw new ResourceNotFoundException(
                     String.format("Event with id = '%d' not found", eventId));
@@ -175,7 +176,8 @@ public class EventServiceImpl implements EventService {
         State updatedState = State.getStateFromStateAction(
                 StateAction.getStateAction(updateEventAdminRequest.getStateAction()));
 
-        Category category =  categoryService.getCategoryEntity(updateEventAdminRequest.getCategory());;
+        Category category = categoryService.getCategoryEntity(updateEventAdminRequest.getCategory());
+
         if (updateEventAdminRequest.getCategory() != eventToUpdate.getCategory().getId()) {
             category = categoryService.getCategoryEntity(updateEventAdminRequest.getCategory());
 
@@ -190,6 +192,51 @@ public class EventServiceImpl implements EventService {
 
         Event updatedEvent = eventRepository.save(eventToUpdate);
         return makeEventFullDtoFromEvent(updatedEvent);
+    }
+
+    @Override
+    @Transactional
+    public List<EventShortDto> getEvents(String text,
+                                         List<Long> categories,
+                                         boolean paid,
+                                         LocalDateTime rangeStart,
+                                         LocalDateTime rangeEnd,
+                                         boolean onlyAvailable,
+                                         String sort,
+                                         int from,
+                                         int size) {
+        log.info("[Event Service] received a public request to get events");
+
+        BooleanExpression expression = Expressions.asBoolean(true).eq(true);
+
+        if (text != null) {
+            expression = expression.and(QEvent.event.annotation.containsIgnoreCase(text))
+                    .or(QEvent.event.description.containsIgnoreCase(text));
+        }
+
+        if (categories != null) {
+            expression = expression.and(QEvent.event.category.id.in(categories));
+        }
+
+        if (rangeStart == null && rangeEnd == null) {
+            expression = expression.and(QEvent.event.eventDate.after(LocalDateTime.now()));
+        } else {
+            expression = expression.and(QEvent.event.eventDate.after(rangeStart))
+                    .and(QEvent.event.eventDate.before(rangeEnd));
+        }
+
+        if (onlyAvailable) {
+            expression = expression.and(QEvent.event.participantLimit.goe(0));
+        }
+
+        Sort getEvetnsSort = Sort.by(Sort.Direction.ASC, "eventDate");
+        if(sort.equals("VIEWS")){
+            getEvetnsSort = Sort.by(Sort.Direction.ASC, "views");
+        }
+
+        OffsetPageRequest pageRequest = OffsetPageRequest.of(from, size, getEvetnsSort);
+        List<Event> resultEvents = eventRepository.findAll(expression, pageRequest).getContent();
+        return makeEvenShortDtoFromEventsList(resultEvents);
     }
 
     private List<EventFullDto> makeEventFullDtoFromEvents(List<Event> events) {

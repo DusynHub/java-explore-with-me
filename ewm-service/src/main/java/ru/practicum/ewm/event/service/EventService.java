@@ -70,4 +70,18 @@ public interface EventService {
      * @return updated event
      */
     EventFullDto updateEventById(long eventId, UpdateEventAdminRequest updateEventAdminRequest);
+
+
+
+    List<EventShortDto> getEvents(
+                                    String text,
+                                    List<Long> categories,
+                                    boolean paid,
+                                    LocalDateTime rangeStart,
+                                    LocalDateTime rangeEnd,
+                                    boolean onlyAvailable,
+                                    String Sort,
+                                    int from,
+                                    int size);
+
 }
