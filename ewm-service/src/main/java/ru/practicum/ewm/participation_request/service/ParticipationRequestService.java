@@ -8,8 +8,6 @@ public interface ParticipationRequestService {
     /**
      * Method to post new participation request to event
      *
-     * @param participationRequestDto  participation request
-     * @return posted participation request
      */
-    ParticipationRequestDto postRequest(ParticipationRequestDto participationRequestDto);
+    ParticipationRequestDto postRequest(long userId, long eventId);
 }

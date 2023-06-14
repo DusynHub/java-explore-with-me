@@ -60,6 +60,16 @@ public interface CategoryService {
      */
     Category getCategoryEntity(long categoryId);
 
+
+    /**
+     * Method to get category by id
+     *
+     * @param categoryId category id
+     * @return required category Proxy
+     */
+    Category getCategoryProxyById(long categoryId);
+
+
     /**
      * Method to get list of categories by ids
      *

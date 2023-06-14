@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.practicum.ewm.enums.Status;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
@@ -25,8 +26,8 @@ public class ParticipationRequestDto {
     @Positive
     private long requester;
 
-    @NotBlank
-    private String status;
+
+    private Status status;
 
     @NotBlank
     private String created;

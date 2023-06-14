@@ -26,7 +26,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public CategoryDto saveCategory(NewCategoryDto newCategoryDto) {
-        log.info("[Service] received a request to save category");
+        log.info("[Category Service] received a request to save category");
         Category categoryToSave = CategoryMapper.INSTANCE.newCategoryDtoToCategory(newCategoryDto);
         return  CategoryMapper.INSTANCE.categoryToCategoryDto(
                 categoryRepository.save(categoryToSave)
@@ -36,7 +36,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public CategoryDto patchCategory(long id, NewCategoryDto newCategoryDto) {
-        log.info("[Service] received a request to patch category");
+        log.info("[Category Service] received a request to patch category");
         categoryRepository.updateCategoryById(id, newCategoryDto.getName());
         return CategoryMapper.INSTANCE.categoryToCategoryDto(
                 categoryRepository.findById(id).orElseThrow(
@@ -50,7 +50,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public void deleteCategory(long categoryId) {
-        log.info("[Service] received a request to delete category");
+        log.info("[Category Service] received a request to delete category");
         if (!categoryRepository.existsById(categoryId)) {
             throw new ResourceNotFoundException(
                     String.format("User with id = '%d' not found", categoryId)
@@ -64,7 +64,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryDto> getAllCategories(Integer fromLine, Integer size){
-        log.info("[Service] received a request to delete category");
+        log.info("[Category Service] received a request to delete category");
         OffsetPageRequest pageRequest = OffsetPageRequest.of(fromLine, size);
         return categoryRepository.findAllBy(pageRequest)
                 .stream()
@@ -74,7 +74,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto getCategory(long categoryId){
-        log.info("[Service] received a request to get category with id = '{}'", categoryId);
+        log.info("[Category Service] received a request to get category with id = '{}'", categoryId);
         return CategoryMapper.INSTANCE.categoryToCategoryDto(
             categoryRepository.findById(categoryId).orElseThrow(
                 () -> new ResourceNotFoundException(
@@ -86,11 +86,18 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category getCategoryEntity(long categoryId) {
+        log.info("[Category Service] received a request to get category entity with id = '{}'", categoryId);
         return categoryRepository.findById(categoryId).orElseThrow(
                 () -> new ResourceNotFoundException(
                         String.format("Category with id = '%d' not found", categoryId)
                 )
         );
+    }
+
+    @Override
+    public Category getCategoryProxyById(long categoryId) {
+        log.info("[Category Service] received a request to get category proxy with id = '{}'", categoryId);
+        return categoryRepository.getReferenceById(categoryId);
     }
 
     @Override

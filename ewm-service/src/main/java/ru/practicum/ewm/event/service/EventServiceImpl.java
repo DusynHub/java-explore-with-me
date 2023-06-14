@@ -1,6 +1,5 @@
 package ru.practicum.ewm.event.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -67,17 +66,16 @@ public class EventServiceImpl implements EventService {
         log.info("[Event Service] received a private request to save new event");
 
         EwmUser initiatorUser = ewmUserService.getEwmUserEntityById(initiator);
-        Category categoryInEvent = categoryService.getCategoryEntity(newEventDto.getCategory());
+//        Category categoryInEvent = categoryService.getCategoryEntity(newEventDto.getCategory());
         Event eventToSave = EventMapper.INSTANCE.newEventDtoToEvent(
                 newEventDto,
                 initiatorUser,
-                categoryInEvent
+                categoryService.getCategoryProxyById(newEventDto.getCategory())
         );
 
         eventToSave.setState(State.PENDING);
-
+        eventToSave.setCurrentParticipantsAmount(0);
         Event savedEvent = eventRepository.save(eventToSave);
-
 
         CategoryDto categoryDto = categoryService.getCategory(newEventDto.getCategory());
         EwmShortUserDto ewmShortUserDto = EwmUserMapper.INSTANCE.ewmUserToEwmShortUserDto(
@@ -94,6 +92,12 @@ public class EventServiceImpl implements EventService {
                 1,
                 0L
         );
+    }
+
+    @Override
+    public int increaseByNumberCurrentParticipantsAmountByEventId(int number, long eventId) {
+        log.info("[Event Service] received a request to get update event field 'currentParticipantsAmount'");
+        return eventRepository.increaseByNumberCurrentParticipantsAmountByEventId(number, eventId);
     }
 
     @Override
@@ -166,30 +170,35 @@ public class EventServiceImpl implements EventService {
         log.info("[Event Service] received an admin request to patch event by id = '{}'", eventId);
         if (!eventRepository.existsById(eventId)) {
             throw new ResourceNotFoundException(
-                    String.format("Event with id = '%d' not found", eventId));}
+                    String.format("Event with id = '%d' not found", eventId));
+        }
         Event eventToUpdate = eventRepository.findById(eventId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         String.format("Event with id = '%d' not found", eventId)));
 
         if (eventToUpdate.getEventDate().minusHours(1).isBefore(LocalDateTime.now())) {
             throw new InvalidResourceException(
-                    "The start date of the event to be changed must be no earlier than one hour from the publication date.");}
+                    "The start date of the event to be changed must be no earlier than one hour from the publication date.");
+        }
 
         if (eventToUpdate.getState() != State.PENDING) {
             throw new InvalidResourceException(
-                    "Cannot publish the event because it's not in the right state: PUBLISHED or CANCELLED");}
+                    "Cannot publish the event because it's not in the right state: PUBLISHED or CANCELLED");
+        }
 
         State updatedState = State.getStateFromStateAction(
                 StateAction.getStateAction(updateEventAdminRequest.getStateAction()));
 
         if (updatedState == State.PUBLISHED) {
-            eventToUpdate.setPublishedOn(LocalDateTime.now());}
+            eventToUpdate.setPublishedOn(LocalDateTime.now());
+        }
 
         Category category = categoryService.getCategoryEntity(eventToUpdate.getCategory().getId());
 
         if (updateEventAdminRequest.getCategory() != eventToUpdate.getCategory().getId()
                 && updateEventAdminRequest.getCategory() != 0) {
-            category = categoryService.getCategoryEntity(updateEventAdminRequest.getCategory());}
+            category = categoryService.getCategoryEntity(updateEventAdminRequest.getCategory());
+        }
 
         EventMapper.INSTANCE.updateEventAdminRequestToEvent(
                 updateEventAdminRequest,
@@ -290,8 +299,8 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
                                 String.format("Event with id = '%d' not found", eventId))
-                        );
-        if(requiredEvent.getState() != State.PUBLISHED){
+                );
+        if (requiredEvent.getState() != State.PUBLISHED) {
             throw new InvalidResourceException(
                     String.format("Event should be published, but state was '%s'", requiredEvent.getState())
             );
@@ -326,6 +335,16 @@ public class EventServiceImpl implements EventService {
 
     }
 
+    @Override
+    public Event getEventEntityById(long eventId) {
+        return eventRepository.findById(eventId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                String.format("Event with id = '%d' not found", eventId)
+                        )
+                );
+    }
+
     private List<EventFullDto> makeEventFullDtoFromEvents(List<Event> events) {
 
 //        todo получение подтверждённых запросов на участие и просмотров
@@ -341,14 +360,14 @@ public class EventServiceImpl implements EventService {
                 .collect(Collectors.toMap(EwmShortUserDto::getId, ewmShortUserDto -> ewmShortUserDto));
 
         List<String> endpoints = events.stream().map((event) ->
-                new StringBuilder()
-                        .append(" /events/")
-                        .append(event.getId()).toString())
+                        new StringBuilder()
+                                .append(" /events/")
+                                .append(event.getId()).toString())
                 .collect(Collectors.toList());
 
         List<ViewStatsDto> stats = statsClient.getStat(
-            LocalDateTime.now().minusYears(50).format(formatter),
-            LocalDateTime.now().plusYears(50).format(formatter),
+                LocalDateTime.now().minusYears(50).format(formatter),
+                LocalDateTime.now().plusYears(50).format(formatter),
                 endpoints,
                 false
         ).getBody();

@@ -34,10 +34,16 @@ public class EwmUserServiceImpl implements EwmUserService {
     }
 
     @Override
+    public EwmUser getEwmUserProxyById(long ewmUserId) {
+        log.info("[Ewm Service] received a request to get user proxy");
+        return ewmUserRepository.getReferenceById(ewmUserId);
+    }
+
+    @Override
     public List<EwmUserDto> getAllUsersOrUsersByIds(List<Long> ewmUserIds,
                                                     Integer from,
                                                     Integer size) {
-        log.info("[Service] received a request to get all users");
+        log.info("[Ewm Service] received a request to get all users");
         if (ewmUserIds != null) {
             return ewmUserRepository.findAllByIdIn(ewmUserIds).stream()
                     .map(EwmUserMapper.INSTANCE::ewmUserToEwmUserDto)

@@ -1,5 +1,6 @@
 package ru.practicum.ewm.event.service;
 
+import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.model.dto.EventFullDto;
 import ru.practicum.ewm.event.model.dto.EventShortDto;
 import ru.practicum.ewm.event.model.dto.NewEventDto;
@@ -21,6 +22,16 @@ public interface EventService {
      * @return saved event
      */
     EventFullDto postEvent (NewEventDto newEventDto, long initiator);
+
+
+    /**
+     * Method to update field
+     *
+     * @param eventId new event
+     * @return number of changed rows
+     */
+    int increaseByNumberCurrentParticipantsAmountByEventId (int number, long eventId);
+
 
     /**
      * Method to get events posted by user
@@ -104,9 +115,17 @@ public interface EventService {
      *
      * @param eventId event id
      * @param clientIp client ip
-     * @param eventId path of endpoint
+     * @param endpointPath path of endpoint
      * @return required event
      */
     EventFullDto getEventById(long eventId, String clientIp, String endpointPath);
+
+    /**
+     * Method to get event entity by id
+     *
+     * @param eventId event id
+     * @return required event
+     */
+    Event getEventEntityById(long eventId);
 
 }
