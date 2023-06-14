@@ -25,12 +25,22 @@ public interface EventService {
 
 
     /**
-     * Method to update field
+     * Method to increase current participants amount
      *
-     * @param eventId new event
+     * @param number amount to increase
+     * @param eventId event id
      * @return number of changed rows
      */
     int increaseByNumberCurrentParticipantsAmountByEventId (int number, long eventId);
+
+    /**
+     * Method to decrease current participants amount
+     *
+     * @param number amount to decrease
+     * @param eventId event id
+     * @return number of changed rows
+     */
+     int decreaseByNumberCurrentParticipantsAmountByEventId(int number, long eventId);
 
 
     /**

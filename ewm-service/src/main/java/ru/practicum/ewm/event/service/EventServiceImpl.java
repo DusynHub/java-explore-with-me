@@ -89,15 +89,20 @@ public class EventServiceImpl implements EventService {
                 categoryDto,
                 ewmShortUserDto,
                 newEventDto.getLocation(),
-                1,
                 0L
         );
     }
 
     @Override
     public int increaseByNumberCurrentParticipantsAmountByEventId(int number, long eventId) {
-        log.info("[Event Service] received a request to get update event field 'currentParticipantsAmount'");
+        log.info("[Event Service] received a request to increase event field 'currentParticipantsAmount'");
         return eventRepository.increaseByNumberCurrentParticipantsAmountByEventId(number, eventId);
+    }
+
+    @Override
+    public int decreaseByNumberCurrentParticipantsAmountByEventId(int number, long eventId) {
+        log.info("[Event Service] received a request to decrease event field 'currentParticipantsAmount'");
+        return eventRepository.decreaseByNumberCurrentParticipantsAmountByEventId(number, eventId);
     }
 
     @Override
@@ -385,7 +390,6 @@ public class EventServiceImpl implements EventService {
                         categoryDtos.get(event.getCategory().getId()),
                         ewmUserDtos.get(event.getInitiator().getId()),
                         LocationDto.builder().lat(event.getLat()).lon(event.getLon()).build(),
-                        1,
                         views.get(new StringBuilder()
                                 .append(" /events/")
                                 .append(event.getId()).toString())
@@ -422,7 +426,6 @@ public class EventServiceImpl implements EventService {
                 LocationDto.builder()
                         .lat(singleEvent.getLat())
                         .lon(singleEvent.getLon()).build(),
-                1,
                 views.get(new StringBuilder()
                         .append("/events/")
                         .append(singleEvent.getId()).toString()));
@@ -463,7 +466,6 @@ public class EventServiceImpl implements EventService {
                                 ViewStatsDto::getHits
                         )
                 );
-
 
         return events.stream()
                 .map(event -> EventMapper.INSTANCE.eventToEventShortDto(event,

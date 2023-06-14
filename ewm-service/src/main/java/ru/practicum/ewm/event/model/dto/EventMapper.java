@@ -54,14 +54,13 @@ public interface EventMapper {
     @Mapping(target = "location",
             source = "locationDto")
     @Mapping(target = "confirmedRequests",
-            source = "confirmedRequests")
+            source = "event.currentParticipantsAmount")
     @Mapping(target = "views",
             source = "viewsStats")
     EventFullDto eventToEventFullDto (Event event,
                                       CategoryDto categoryDto,
                                       EwmShortUserDto ewmShortUserDto,
                                       LocationDto locationDto,
-                                      Integer confirmedRequests,
                                       Long viewsStats);
 
     @Mapping(target = "id",

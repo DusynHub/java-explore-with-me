@@ -17,4 +17,8 @@ public interface EventRepository extends JpaRepository<Event, Long>, QuerydslPre
     @Query("update Event e set e.currentParticipantsAmount = e.currentParticipantsAmount + :number where e.id = :eventId")
     int increaseByNumberCurrentParticipantsAmountByEventId(@Param("number") int number, @Param("eventId") long eventId);
 
+    @Modifying(clearAutomatically = true)
+    @Query("update Event e set e.currentParticipantsAmount = e.currentParticipantsAmount - :number where e.id = :eventId")
+    int decreaseByNumberCurrentParticipantsAmountByEventId(@Param("number") int number, @Param("eventId") long eventId);
+
 }

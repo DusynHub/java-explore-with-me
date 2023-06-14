@@ -3,6 +3,7 @@ package ru.practicum.ewm.event.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
@@ -27,6 +28,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "event", schema = "public")
 @Builder
+@Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -95,72 +97,4 @@ public class Event {
 
     @Column(name = "views")
     private int views;
-
-    public long getId() {
-        return this.id;
-    }
-
-    public String getAnnotation() {
-        return this.annotation;
-    }
-
-    public Category getCategory() {
-        return this.category;
-    }
-
-    public LocalDateTime getEventDate() {
-        return this.eventDate;
-    }
-
-    public EwmUser getInitiator() {
-        return this.initiator;
-    }
-
-    public double getLat() {
-        return this.lat;
-    }
-
-    public double getLon() {
-        return this.lon;
-    }
-
-    public boolean isPaid() {
-        return this.paid;
-    }
-
-    public String getTitle() {
-        return this.title;
-    }
-
-    public String getDescription() {
-        return this.description;
-    }
-
-    public LocalDateTime getCreatedOn() {
-        return this.createdOn;
-    }
-
-    public LocalDateTime getPublishedOn() {
-        return this.publishedOn;
-    }
-
-    public int getParticipantLimit() {
-        return this.participantLimit;
-    }
-
-    public int getCurrentParticipantsAmount() {
-        return this.currentParticipantsAmount;
-    }
-
-    public boolean isRequestModeration() {
-        return this.requestModeration;
-    }
-
-    public State getState() {
-        return this.state;
-    }
-
-    public int getViews() {
-        return this.views;
-    }
 }
