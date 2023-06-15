@@ -6,8 +6,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
 import ru.practicum.ewm.enums.Status;
-import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.participation_request.model.ParticipationRequest;
+
+import java.util.List;
 
 public interface ParticipationRequestRepository extends JpaRepository<ParticipationRequest, Long>, QuerydslPredicateExecutor<ParticipationRequest> {
 
@@ -19,4 +20,12 @@ public interface ParticipationRequestRepository extends JpaRepository<Participat
     int cancelParticipationRequest(
             @Param("status") Status status,
             @Param("participationRequest") long participationRequest);
+
+    @Modifying(clearAutomatically = true)
+    @Query("update ParticipationRequest p set p.status = :status  where p.id = :participationRequestIds")
+    int changeParticipationRequests(
+            @Param("status") Status status,
+            @Param("participationRequestIds") List<Long> participationRequestIds);
+
+
 }

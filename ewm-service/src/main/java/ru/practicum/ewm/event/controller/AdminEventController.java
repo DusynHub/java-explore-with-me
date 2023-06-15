@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.event.model.dto.EventFullDto;
-import ru.practicum.ewm.event.model.dto.UpdateEventAdminRequest;
+import ru.practicum.ewm.event.model.dto.UpdateEventRequest;
 import ru.practicum.ewm.event.service.EventService;
 
 import java.net.URLDecoder;
@@ -34,7 +34,7 @@ public class AdminEventController {
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @GetMapping
-    public List<EventFullDto> geEventsByAdmin(
+    public List<EventFullDto> getEventsByAdmin(
             @RequestParam(required = false) List<Long> users,
             @RequestParam(required = false)  List<String> states,
             @RequestParam(required = false)  List<Long> categories,
@@ -68,18 +68,16 @@ public class AdminEventController {
     @PatchMapping("/{eventIdString}")
     public EventFullDto patchEventById(
             @PathVariable String eventIdString,
-            @RequestBody UpdateEventAdminRequest updateEventAdminRequest) throws JsonProcessingException {
+            @RequestBody UpdateEventRequest updateEventRequest) throws JsonProcessingException {
         log.info("[Admin Event Controller] received a request PATCH /admin/events/{}", eventIdString);
         long eventId = Long.parseLong(eventIdString);
 
         ObjectMapper mapper =  new ObjectMapper();
         mapper.findAndRegisterModules();
-
-
-        String s = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(updateEventAdminRequest);
+        String s = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(updateEventRequest);
         System.out.println(s);
 
 
-        return eventService.updateEventById(eventId, updateEventAdminRequest);
+        return eventService.updateEventByIdFromAdmin(eventId, updateEventRequest);
     }
 }

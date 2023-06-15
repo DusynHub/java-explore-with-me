@@ -14,11 +14,11 @@ import ru.practicum.ewm.event.model.Event;
 public interface EventRepository extends JpaRepository<Event, Long>, QuerydslPredicateExecutor<Event> {
 
     @Modifying(clearAutomatically = true)
-    @Query("update Event e set e.currentParticipantsAmount = e.currentParticipantsAmount + :number where e.id = :eventId")
-    int increaseByNumberCurrentParticipantsAmountByEventId(@Param("number") int number, @Param("eventId") long eventId);
+    @Query("update Event e set e.confirmedRequests = e.confirmedRequests + :number where e.id = :eventId")
+    int increaseByNumberConfirmedByEventId(@Param("number") int number, @Param("eventId") long eventId);
 
     @Modifying(clearAutomatically = true)
-    @Query("update Event e set e.currentParticipantsAmount = e.currentParticipantsAmount - :number where e.id = :eventId")
-    int decreaseByNumberCurrentParticipantsAmountByEventId(@Param("number") int number, @Param("eventId") long eventId);
+    @Query("update Event e set e.confirmedRequests = e.confirmedRequests - :number where e.id = :eventId")
+    int decreaseByNumberConfirmedByEventId(@Param("number") int number, @Param("eventId") long eventId);
 
 }

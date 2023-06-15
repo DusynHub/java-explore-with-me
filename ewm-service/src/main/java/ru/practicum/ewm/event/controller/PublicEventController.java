@@ -2,7 +2,6 @@ package ru.practicum.ewm.event.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,14 +31,14 @@ public class PublicEventController {
     private final EventService eventService;
 
     @GetMapping
-    public List<EventShortDto> geEvents(
+    public List<EventShortDto> getEvents(
             @RequestParam(required = false) String text,
             @RequestParam(required = false)  List<Long> categories,
             @RequestParam(defaultValue = "false")  boolean paid,
             @RequestParam(name = "rangeStart", required= false ) String rangeStartString,
             @RequestParam(name = "rangeEnd", required= false ) String rangeEndString,
             @RequestParam(defaultValue = "false")  boolean onlyAvailable,
-            @RequestParam String sort,
+            @RequestParam(defaultValue = "EVENT_DATE") String sort,
             @RequestParam(defaultValue = "0") int from,
             @RequestParam(defaultValue = "10") int size,
             HttpServletRequest request) {

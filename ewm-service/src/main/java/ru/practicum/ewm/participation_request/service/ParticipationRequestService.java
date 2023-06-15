@@ -34,4 +34,15 @@ public interface ParticipationRequestService {
      * @return required participation requests
      */
     List<ParticipationRequestDto> getUserParticipationRequests(long userId);
+
+//    /**
+//     * Method to get user participation requests for specific event
+//     *
+//     * @param userId user id
+//     * @param eventId event id
+//     * @return participation requests for specific event
+//     */
+//    List<ParticipationRequestDto> getParticipationRequestsInEvent(long userId, long eventId);
 }
+
+

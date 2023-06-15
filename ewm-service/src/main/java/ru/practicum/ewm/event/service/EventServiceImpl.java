@@ -1,6 +1,5 @@
 package ru.practicum.ewm.event.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import lombok.RequiredArgsConstructor;
@@ -16,18 +15,26 @@ import ru.practicum.ewm.category.model.dto.CategoryDto;
 import ru.practicum.ewm.category.service.CategoryService;
 import ru.practicum.ewm.enums.State;
 import ru.practicum.ewm.enums.StateAction;
+import ru.practicum.ewm.enums.Status;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.model.QEvent;
 import ru.practicum.ewm.event.model.dto.EventFullDto;
 import ru.practicum.ewm.event.model.dto.EventMapper;
 import ru.practicum.ewm.event.model.dto.EventShortDto;
 import ru.practicum.ewm.event.model.dto.NewEventDto;
-import ru.practicum.ewm.event.model.dto.UpdateEventAdminRequest;
+import ru.practicum.ewm.event.model.dto.UpdateEventRequest;
 import ru.practicum.ewm.event.repository.EventRepository;
 import ru.practicum.ewm.exception.InvalidResourceException;
 import ru.practicum.ewm.exception.ResourceNotAvailableException;
 import ru.practicum.ewm.exception.ResourceNotFoundException;
 import ru.practicum.ewm.location.model.dto.LocationDto;
+import ru.practicum.ewm.participation_request.model.ParticipationRequest;
+import ru.practicum.ewm.participation_request.model.QParticipationRequest;
+import ru.practicum.ewm.participation_request.model.dto.ParticipationChangeStatusRequest;
+import ru.practicum.ewm.participation_request.model.dto.ParticipationChangeStatusResult;
+import ru.practicum.ewm.participation_request.model.dto.ParticipationRequestDto;
+import ru.practicum.ewm.participation_request.model.dto.ParticipationRequestMapper;
+import ru.practicum.ewm.participation_request.repository.ParticipationRequestRepository;
 import ru.practicum.ewm.user.model.EwmUser;
 import ru.practicum.ewm.user.model.dto.EwmShortUserDto;
 import ru.practicum.ewm.user.model.dto.EwmUserMapper;
@@ -35,11 +42,14 @@ import ru.practicum.ewm.user.service.EwmUserService;
 import ru.practicum.ewm.util.OffsetPageRequest;
 import ru.practicum.stats.client.StatsClient;
 
+import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 @RequiredArgsConstructor
@@ -49,7 +59,7 @@ public class EventServiceImpl implements EventService {
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    private final ObjectMapper objectMapper;
+    private final ParticipationRequestRepository participationRequestRepository;
 
     private final CategoryService categoryService;
 
@@ -74,7 +84,7 @@ public class EventServiceImpl implements EventService {
         );
 
         eventToSave.setState(State.PENDING);
-        eventToSave.setCurrentParticipantsAmount(0);
+        eventToSave.setConfirmedRequests(0);
         Event savedEvent = eventRepository.save(eventToSave);
 
         CategoryDto categoryDto = categoryService.getCategory(newEventDto.getCategory());
@@ -94,15 +104,15 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public int increaseByNumberCurrentParticipantsAmountByEventId(int number, long eventId) {
+    public int increaseByNumberConfirmedByEventId(int number, long eventId) {
         log.info("[Event Service] received a request to increase event field 'currentParticipantsAmount'");
-        return eventRepository.increaseByNumberCurrentParticipantsAmountByEventId(number, eventId);
+        return eventRepository.increaseByNumberConfirmedByEventId(number, eventId);
     }
 
     @Override
-    public int decreaseByNumberCurrentParticipantsAmountByEventId(int number, long eventId) {
+    public int decreaseByNumberConfirmedByEventId(int number, long eventId) {
         log.info("[Event Service] received a request to decrease event field 'currentParticipantsAmount'");
-        return eventRepository.decreaseByNumberCurrentParticipantsAmountByEventId(number, eventId);
+        return eventRepository.decreaseByNumberConfirmedByEventId(number, eventId);
     }
 
     @Override
@@ -117,12 +127,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventFullDto getUserEventById(long userId, long eventId) {
         log.info("[Event Service] received a private request to get user event by id");
-        Event requiredEvent = eventRepository.findById(eventId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                String.format("Event with id = '%d' not found", eventId)
-                        )
-                );
+        Event requiredEvent = getEventEntityById(eventId);
 
         if (requiredEvent.getInitiator().getId() != userId) {
             throw new ResourceNotAvailableException(
@@ -170,19 +175,18 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventFullDto updateEventById(long eventId,
-                                        UpdateEventAdminRequest updateEventAdminRequest) {
+    public EventFullDto updateEventByIdFromAdmin(long eventId,
+                                                 UpdateEventRequest updateEventRequest) {
         log.info("[Event Service] received an admin request to patch event by id = '{}'", eventId);
         if (!eventRepository.existsById(eventId)) {
             throw new ResourceNotFoundException(
                     String.format("Event with id = '%d' not found", eventId));
         }
-        Event eventToUpdate = eventRepository.findById(eventId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Event with id = '%d' not found", eventId)));
+        Event eventToUpdate = getEventEntityById(eventId);
 
-        if (eventToUpdate.getEventDate().minusHours(1).isBefore(LocalDateTime.now())) {
-            throw new InvalidResourceException(
+        LocalDateTime newDate = LocalDateTime.parse(updateEventRequest.getEventDate(), formatter);
+        if (newDate.minusHours(1).isBefore(LocalDateTime.now())) {
+            throw new ValidationException(
                     "The start date of the event to be changed must be no earlier than one hour from the publication date.");
         }
 
@@ -191,8 +195,12 @@ public class EventServiceImpl implements EventService {
                     "Cannot publish the event because it's not in the right state: PUBLISHED or CANCELLED");
         }
 
-        State updatedState = State.getStateFromStateAction(
-                StateAction.getStateAction(updateEventAdminRequest.getStateAction()));
+        State updatedState = eventToUpdate.getState();
+
+        if(updateEventRequest.getStateAction()!= null){
+            updatedState = State.getStateFromStateAction(
+                    StateAction.getStateAction(updateEventRequest.getStateAction()));
+        }
 
         if (updatedState == State.PUBLISHED) {
             eventToUpdate.setPublishedOn(LocalDateTime.now());
@@ -200,21 +208,74 @@ public class EventServiceImpl implements EventService {
 
         Category category = categoryService.getCategoryEntity(eventToUpdate.getCategory().getId());
 
-        if (updateEventAdminRequest.getCategory() != eventToUpdate.getCategory().getId()
-                && updateEventAdminRequest.getCategory() != 0) {
-            category = categoryService.getCategoryEntity(updateEventAdminRequest.getCategory());
+        if (updateEventRequest.getCategory() != eventToUpdate.getCategory().getId()
+                && updateEventRequest.getCategory() != 0) {
+            category = categoryService.getCategoryEntity(updateEventRequest.getCategory());
         }
 
         EventMapper.INSTANCE.updateEventAdminRequestToEvent(
-                updateEventAdminRequest,
+                updateEventRequest,
                 category,
-                updateEventAdminRequest.getLocation(),
+                updateEventRequest.getLocation(),
                 updatedState,
                 eventToUpdate);
 
         Event updatedEvent = eventRepository.save(eventToUpdate);
         return makeEventFullDtoFromEvent(updatedEvent);
     }
+
+    @Override
+    @Transactional
+    public EventFullDto updateEventByIdFromUser(long userId, long eventId,
+                                                UpdateEventRequest updateEventRequest) {
+        log.info("[Event Service] received an private request from user with id = '{}'to patch event by id = '{}'", userId, eventId);
+        if (!eventRepository.existsById(eventId)) {
+            throw new ResourceNotFoundException(
+                    String.format("Event with id = '%d' not found", eventId));
+        }
+        Event eventToUpdate = getEventEntityById(eventId);
+
+        LocalDateTime newDate = LocalDateTime.parse(updateEventRequest.getEventDate(), formatter);
+        if (newDate.minusHours(2).isBefore(LocalDateTime.now())) {
+            throw new ValidationException(
+                    "The start date of the event to be changed must be no earlier than one hour from the publication date.");
+        }
+
+        if (eventToUpdate.getState() == State.PUBLISHED) {
+            throw new InvalidResourceException(
+                    "Cannot publish the event because it's not in the right state: PUBLISHED or CANCELLED");
+        }
+
+        if (eventToUpdate.getInitiator().getId() != userId) {
+            throw new InvalidResourceException(
+                    String.format("Cannot patch event with id = '%s' from user with id = '%s'", eventId, userId)
+            );
+        }
+
+        String stateAction = updateEventRequest.getStateAction();
+
+        State updatedState = State.getStateFromStateAction(
+                StateAction.getStateAction(updateEventRequest.getStateAction()));
+
+
+        Category category = categoryService.getCategoryEntity(eventToUpdate.getCategory().getId());
+
+        if (updateEventRequest.getCategory() != eventToUpdate.getCategory().getId()
+                && updateEventRequest.getCategory() != 0) {
+            category = categoryService.getCategoryEntity(updateEventRequest.getCategory());
+        }
+
+        EventMapper.INSTANCE.updateEventUserRequestToEvent(
+                updateEventRequest,
+                category,
+                updateEventRequest.getLocation(),
+                updatedState,
+                eventToUpdate);
+
+        Event updatedEvent = eventRepository.save(eventToUpdate);
+        return makeEventFullDtoFromEvent(updatedEvent);
+    }
+
 
     @Override
     public List<EventShortDto> getEvents(String text,
@@ -229,6 +290,12 @@ public class EventServiceImpl implements EventService {
                                          String clientIp,
                                          String endpointPath) {
         log.info("[Event Service] received a public request to get events");
+
+        if(rangeStart.isAfter(rangeEnd)){
+            throw new ValidationException(
+                    "Start date must be before End"
+            );
+        }
 
         BooleanExpression expression = Expressions.asBoolean(true).eq(true);
 
@@ -260,39 +327,36 @@ public class EventServiceImpl implements EventService {
         OffsetPageRequest pageRequest = OffsetPageRequest.of(from, size, getEvetnsSort);
         List<Event> resultEvents = eventRepository.findAll(expression, pageRequest).getContent();
 
-        ResponseEntity<EndpointHitDto> endpointHitDtoResponseEntity = statsClient.postStat(
+        statsClient.postStat(
                 "ewv-service",
                 endpointPath,
                 clientIp,
                 LocalDateTime.now().format(formatter)
         );
-
-
-        System.out.println("*********СОХРАНЕНИЕ**********");
-        System.out.println("*********СОХРАНЕНИЕ**********");
-        System.out.println("*********СОХРАНЕНИЕ**********");
-        System.out.println("*********СОХРАНЕНИЕ**********");
-        System.out.println("*********СОХРАНЕНИЕ**********");
-        System.out.println("*********СОХРАНЕНИЕ**********");
-        System.out.println(endpointHitDtoResponseEntity.getBody());
-
-        ResponseEntity<List<ViewStatsDto>> viewStatsDto = statsClient.getStat(
-                LocalDateTime.now().minusYears(50).format(formatter),
-                LocalDateTime.now().plusYears(50).format(formatter),
-                List.of(endpointPath),
-                false
-        );
-
-
-        System.out.println("*********СТАТИСТИКА**********");
-        System.out.println("*********СТАТИСТИКА**********");
-        System.out.println("*********СТАТИСТИКА**********");
-        System.out.println("*********СТАТИСТИКА**********");
-        System.out.println("*********СТАТИСТИКА**********");
-        System.out.println("*********СТАТИСТИКА**********");
-        System.out.println("*********СТАТИСТИКА**********");
-        System.out.println(viewStatsDto.getBody());
-
+//        System.out.println("*********СОХРАНЕНИЕ**********");
+//        System.out.println("*********СОХРАНЕНИЕ**********");
+//        System.out.println("*********СОХРАНЕНИЕ**********");
+//        System.out.println("*********СОХРАНЕНИЕ**********");
+//        System.out.println("*********СОХРАНЕНИЕ**********");
+//        System.out.println("*********СОХРАНЕНИЕ**********");
+//        System.out.println(endpointHitDtoResponseEntity.getBody());
+//
+//        ResponseEntity<List<ViewStatsDto>> viewStatsDto = statsClient.getStat(
+//                LocalDateTime.now().minusYears(50).format(formatter),
+//                LocalDateTime.now().plusYears(50).format(formatter),
+//                List.of(endpointPath),
+//                false
+//        );
+//
+//
+//        System.out.println("*********СТАТИСТИКА**********");
+//        System.out.println("*********СТАТИСТИКА**********");
+//        System.out.println("*********СТАТИСТИКА**********");
+//        System.out.println("*********СТАТИСТИКА**********");
+//        System.out.println("*********СТАТИСТИКА**********");
+//        System.out.println("*********СТАТИСТИКА**********");
+//        System.out.println("*********СТАТИСТИКА**********");
+//        System.out.println(viewStatsDto.getBody());
         return makeEvenShortDtoFromEventsList(resultEvents);
     }
 
@@ -300,14 +364,11 @@ public class EventServiceImpl implements EventService {
     public EventFullDto getEventById(long eventId, String clientIp, String endpointPath) {
         log.info("[Event Service] received a public request to get event by id");
 
-        Event requiredEvent = eventRepository.findById(eventId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                String.format("Event with id = '%d' not found", eventId))
-                );
+        Event requiredEvent = getEventEntityById(eventId);
+
         if (requiredEvent.getState() != State.PUBLISHED) {
-            throw new InvalidResourceException(
-                    String.format("Event should be published, but state was '%s'", requiredEvent.getState())
+            throw new ResourceNotFoundException(
+                    String.format("Event should be PUBLISHED, but state was '%s'", requiredEvent.getState())
             );
         }
 
@@ -317,25 +378,20 @@ public class EventServiceImpl implements EventService {
                 clientIp,
                 LocalDateTime.now().format(formatter)
         );
-
-        ResponseEntity<List<ViewStatsDto>> viewStatsDto = statsClient.getStat(
-                LocalDateTime.now().minusYears(50).format(formatter),
-                LocalDateTime.now().plusYears(50).format(formatter),
-                List.of(endpointPath),
-                false
-        );
-
-
-        System.out.println("*********СТАТИСТИКА**********");
-        System.out.println("*********СТАТИСТИКА**********");
-        System.out.println("*********СТАТИСТИКА**********");
-        System.out.println("*********СТАТИСТИКА**********");
-        System.out.println("*********СТАТИСТИКА**********");
-        System.out.println("*********СТАТИСТИКА**********");
-        System.out.println("*********СТАТИСТИКА**********");
-        System.out.println(viewStatsDto.getBody());
-
-
+//        ResponseEntity<List<ViewStatsDto>> viewStatsDto = statsClient.getStat(
+//                LocalDateTime.now().minusYears(50).format(formatter),
+//                LocalDateTime.now().plusYears(50).format(formatter),
+//                List.of(endpointPath),
+//                false
+//        );
+//        System.out.println("*********СТАТИСТИКА**********");
+//        System.out.println("*********СТАТИСТИКА**********");
+//        System.out.println("*********СТАТИСТИКА**********");
+//        System.out.println("*********СТАТИСТИКА**********");
+//        System.out.println("*********СТАТИСТИКА**********");
+//        System.out.println("*********СТАТИСТИКА**********");
+//        System.out.println("*********СТАТИСТИКА**********");
+//        System.out.println(viewStatsDto.getBody());
         return makeEventFullDtoFromEvent(requiredEvent);
 
     }
@@ -348,6 +404,144 @@ public class EventServiceImpl implements EventService {
                                 String.format("Event with id = '%d' not found", eventId)
                         )
                 );
+    }
+
+    @Override
+    public List<ParticipationRequestDto> getParticipationRequestsInEvent(long userId, long eventId) {
+        log.info("[Event Service] received a private request to get participation" +
+                        " requests to event with id ='{} from user with id = '{}'",
+                eventId,
+                userId);
+        BooleanExpression byEvent = QParticipationRequest.participationRequest.event.id.eq(eventId);
+        Iterable<ParticipationRequest> iterable = participationRequestRepository.findAll(byEvent);
+        return StreamSupport.stream(iterable.spliterator(), false)
+                .map(ParticipationRequestMapper.INSTANCE::participationRequestToParticipationRequestDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public ParticipationChangeStatusResult patchParticipationRequestsStatusInEvent(
+            long userId,
+            long eventId,
+            ParticipationChangeStatusRequest changeStatusRequest) {
+        log.info("[Event Service] received private request PATCH /users/{}/events/{}/requests",
+                userId,
+                eventId);
+        Event requiredEvent = getEventEntityById(eventId);
+        Status newStatus = changeStatusRequest.getStatus();
+
+        List<ParticipationRequest> pendingRequests = StreamSupport.stream(
+                participationRequestRepository.findAllById(changeStatusRequest.getRequestIds()).spliterator(), false).collect(Collectors.toList());
+
+        int availableConfirmations = requiredEvent.getParticipantLimit() - requiredEvent.getConfirmedRequests();
+        boolean isRequestNeedModeration = requiredEvent.isRequestModeration();
+        List<ParticipationRequestDto> confirmedRequests = new ArrayList<>();
+        List<ParticipationRequestDto> rejectedRequests = new ArrayList<>();
+        int confirmedRequestsCount = 0;
+
+        if (availableConfirmations <= 0) {
+            throw new InvalidResourceException(
+                    "Partition requests does not need conformation");
+        }
+
+        for (ParticipationRequest participationRequest : pendingRequests) {
+            if (participationRequest.getStatus() != Status.PENDING) {
+                throw new InvalidResourceException(
+                        String.format("The participation request must have 'PENDING' but was '%s'", participationRequest.getStatus()));
+            }
+
+            if(newStatus == Status.REJECTED){
+                participationRequest.setStatus(newStatus);
+                rejectedRequests.add(ParticipationRequestMapper.INSTANCE.participationRequestToParticipationRequestDto(
+                                participationRequest));
+            }
+
+            if(newStatus == Status.CONFIRMED && confirmedRequestsCount < availableConfirmations){
+                participationRequest.setStatus(newStatus);
+                confirmedRequestsCount++;
+                confirmedRequests.add(ParticipationRequestMapper.INSTANCE.participationRequestToParticipationRequestDto(
+                                participationRequest));
+            } else {
+                participationRequest.setStatus(Status.REJECTED);
+                rejectedRequests.add(ParticipationRequestMapper.INSTANCE.participationRequestToParticipationRequestDto(
+                                participationRequest));
+            }
+        }
+
+        eventRepository.increaseByNumberConfirmedByEventId(confirmedRequestsCount, eventId);
+
+
+//        Event requiredEvent = getEventEntityById(eventId);
+//        BooleanExpression byPendingStatus = QParticipationRequest.participationRequest.status.eq(Status.PENDING);
+//        Sort sortByCreatedDesc = Sort.by(Sort.Direction.DESC, "created");
+//        List<ParticipationRequest> pendingRequests = StreamSupport.stream(
+//                participationRequestRepository.findAll(byPendingStatus, sortByCreatedDesc).spliterator(), false
+//        ).collect(Collectors.toList());
+//
+//
+//        int availableConfirmations = requiredEvent.getParticipantLimit() - requiredEvent.getConfirmedRequests();
+//        int requiredConformations = pendingRequests.size();
+//        boolean canConfirmAllPendingRequests = availableConfirmations >= requiredConformations;
+//        boolean isRequestNeedModeration = requiredEvent.isRequestModeration();
+//        List<ParticipationRequestDto> confirmedRequests = new ArrayList<>(0);
+//        List<ParticipationRequestDto> rejectedRequests = new ArrayList<>(0);;
+//        List<Long> requestsIdsToConfirm;
+//        List<Long> requestsIdsToCancel;
+//
+//        if (!isRequestNeedModeration || canConfirmAllPendingRequests) {
+//            requestsIdsToConfirm = pendingRequests.stream()
+//                    .map(ParticipationRequest::getId)
+//                    .collect(Collectors.toList());
+//            participationRequestRepository.changeParticipationRequests(Status.CONFIRMED, requestsIdsToConfirm);
+//            eventRepository.increaseByNumberConfirmedByEventId(requestsIdsToConfirm.size(), eventId);
+//            pendingRequests.forEach(requestToConfirm -> requestToConfirm.setStatus(Status.CONFIRMED));
+//            confirmedRequests = pendingRequests.stream()
+//                    .map(
+//                            ParticipationRequestMapper.INSTANCE::participationRequestToParticipationRequestDto
+//                    ).collect(Collectors.toList());
+//            rejectedRequests = new ArrayList<>(0);
+//        }
+//
+//        if(availableConfirmations == 0){
+//            requestsIdsToConfirm = pendingRequests.stream()
+//                    .map(ParticipationRequest::getId)
+//                    .collect(Collectors.toList());
+//            participationRequestRepository.changeParticipationRequests(Status.CANCELED, requestsIdsToConfirm);
+//            pendingRequests.forEach(requestToConfirm -> requestToConfirm.setStatus(Status.CANCELED));
+//            confirmedRequests = new ArrayList<>(0);
+//            rejectedRequests = pendingRequests.stream()
+//                    .map(
+//                            ParticipationRequestMapper.INSTANCE::participationRequestToParticipationRequestDto
+//                    ).collect(Collectors.toList());
+//        }
+//
+//        if(!canConfirmAllPendingRequests){
+//
+//            List<ParticipationRequest> pendingToConfirmRequests = pendingRequests.subList(0,availableConfirmations);
+//            requestsIdsToConfirm = pendingToConfirmRequests.stream()
+//                    .map(ParticipationRequest::getId)
+//                    .collect(Collectors.toList());
+//            participationRequestRepository.changeParticipationRequests(Status.CONFIRMED, requestsIdsToConfirm);
+//            pendingToConfirmRequests.forEach(requestToConfirm -> requestToConfirm.setStatus(Status.CANCELED));
+//            confirmedRequests = pendingToConfirmRequests.stream()
+//                    .map(
+//                            ParticipationRequestMapper.INSTANCE::participationRequestToParticipationRequestDto
+//                    ).collect(Collectors.toList());
+//
+//            List<ParticipationRequest> pendingToCancelRequests = pendingRequests.subList(2,requiredConformations);
+//            requestsIdsToCancel = pendingToCancelRequests.stream()
+//                    .map(ParticipationRequest::getId)
+//                    .collect(Collectors.toList());
+//            participationRequestRepository.changeParticipationRequests(Status.CANCELED, requestsIdsToCancel);
+//            pendingToCancelRequests.forEach(requestToCancel-> requestToCancel.setStatus(Status.CANCELED));
+//
+//            rejectedRequests = pendingToCancelRequests.stream()
+//                    .map(
+//                            ParticipationRequestMapper.INSTANCE::participationRequestToParticipationRequestDto
+//                    ).collect(Collectors.toList());
+//        }
+        return new ParticipationChangeStatusResult(confirmedRequests, rejectedRequests);
     }
 
     private List<EventFullDto> makeEventFullDtoFromEvents(List<Event> events) {
@@ -430,7 +624,6 @@ public class EventServiceImpl implements EventService {
                         .append("/events/")
                         .append(singleEvent.getId()).toString()));
     }
-
 
     private List<EventShortDto> makeEvenShortDtoFromEventsList(List<Event> events) {
 

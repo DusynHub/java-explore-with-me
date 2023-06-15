@@ -85,8 +85,8 @@ public class Event {
     @Column(name = "participant_limit")
     private int participantLimit;
 
-    @Column(name = "current_participant_amount")
-    private int currentParticipantsAmount;
+    @Column(name = "confirmed_requests")
+    private int confirmedRequests;
 
     @Column(name = "request_moderation")
     private boolean requestModeration;

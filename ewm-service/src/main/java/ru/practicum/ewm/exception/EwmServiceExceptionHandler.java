@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -21,7 +22,7 @@ public class EwmServiceExceptionHandler {
     private static final String BAD_REQUEST_REASON = "Incorrectly made request.";
     private static final String CONSTRAINT_VIOLATION_EXCEPTION_REASON
             = "Integrity constraint has been violated.";
-
+    private static final String NOT_FOUND_REASON = "The required object was not found.";
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @ExceptionHandler
@@ -41,6 +42,15 @@ public class EwmServiceExceptionHandler {
     @ExceptionHandler
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationException(final ValidationException e) {
+        log.warn("[HTTP STATUS 400] {} ", e.getMessage(), e);
+        return makeErrorResponse(HttpStatus.BAD_REQUEST, e, BAD_REQUEST_REASON);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleMissingServletRequestParameterException(
+            final MissingServletRequestParameterException e
+    ) {
         log.warn("[HTTP STATUS 400] {} ", e.getMessage(), e);
         return makeErrorResponse(HttpStatus.BAD_REQUEST, e, BAD_REQUEST_REASON);
     }

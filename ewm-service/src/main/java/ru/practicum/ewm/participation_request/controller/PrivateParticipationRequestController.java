@@ -60,4 +60,5 @@ public class PrivateParticipationRequestController {
 
         return participationRequestService.getUserParticipationRequests(userId);
     }
+
 }

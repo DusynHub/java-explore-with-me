@@ -26,6 +26,7 @@ public interface EventMapper {
 
     EventMapper INSTANCE = Mappers.getMapper(EventMapper.class);
 
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "initiator",
             source = "initiatorUser")
     @Mapping(target = "lat",
@@ -34,12 +35,12 @@ public interface EventMapper {
             source = "newEventDto.location.lon")
     @Mapping(target = "category",
             source = "category")
-    @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdOn",
             expression= "java(LocalDateTime.now())")
     @Mapping(target = "eventDate",
             source =  "newEventDto.eventDate",
             dateFormat = "yyyy-MM-dd HH:mm:ss")
+    @Mapping(target = "paid", source = "newEventDto.paid")
     Event newEventDtoToEvent (NewEventDto newEventDto,
                               EwmUser initiatorUser,
                               Category category);
@@ -54,9 +55,11 @@ public interface EventMapper {
     @Mapping(target = "location",
             source = "locationDto")
     @Mapping(target = "confirmedRequests",
-            source = "event.currentParticipantsAmount")
+            source = "event.confirmedRequests")
     @Mapping(target = "views",
             source = "viewsStats")
+    @Mapping(target = "paid",
+            source = "event.paid")
     EventFullDto eventToEventFullDto (Event event,
                                       CategoryDto categoryDto,
                                       EwmShortUserDto ewmShortUserDto,
@@ -75,6 +78,8 @@ public interface EventMapper {
             expression = "java(event.getEventDate().format(formatter))")
     @Mapping(target = "views",
             source = "viewsStats")
+    @Mapping(target = "paid",
+            source = "event.paid")
     EventShortDto eventToEventShortDto(Event event,
                                        CategoryDto categoryDto,
                                        EwmShortUserDto initiator,
@@ -87,15 +92,41 @@ public interface EventMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "lat", source = "locationDto.lat")
     @Mapping(target = "lon", source = "locationDto.lon")
-    @Mapping(conditionExpression = "java(updateEventAdminRequest.getCategory() != 0L || categoryToUpdate != null)",
+    @Mapping(conditionExpression = "java(updateEventRequest.getCategory() != 0L || categoryToUpdate != null)",
             target="category",
             source="categoryToUpdate")
+    @Mapping(target = "paid", source = "updateEventRequest.paid")
     @Mapping(target = "state", source = "state")
     @Mapping(target = "eventDate",
-            source =  "updateEventAdminRequest.eventDate",
+            source = "updateEventRequest.eventDate",
             dateFormat = "yyyy-MM-dd HH:mm:ss")
+    @Mapping(conditionExpression = "java(updateEventRequest.getParticipantLimit() != 0)",
+            target="participantLimit",
+            source= "updateEventRequest.participantLimit")
     void updateEventAdminRequestToEvent(
-            UpdateEventAdminRequest updateEventAdminRequest,
+            UpdateEventRequest updateEventRequest,
+            Category categoryToUpdate,
+            LocationDto locationDto,
+            State state,
+            @MappingTarget Event eventToUpdate);
+
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "lat", source = "locationDto.lat")
+    @Mapping(target = "lon", source = "locationDto.lon")
+    @Mapping(conditionExpression = "java(updateEventUserRequest.getCategory() != 0L || categoryToUpdate != null)",
+            target="category",
+            source="categoryToUpdate")
+    @Mapping(target = "paid", ignore = true)
+    @Mapping(target = "state", source = "state")
+    @Mapping(target = "eventDate",
+            source =  "updateEventUserRequest.eventDate",
+            dateFormat = "yyyy-MM-dd HH:mm:ss")
+    @Mapping(conditionExpression = "java(updateEventUserRequest.getParticipantLimit() != 0)",
+            target="participantLimit",
+            source="updateEventUserRequest.participantLimit")
+    void updateEventUserRequestToEvent(
+            UpdateEventRequest updateEventUserRequest,
             Category categoryToUpdate,
             LocationDto locationDto,
             State state,

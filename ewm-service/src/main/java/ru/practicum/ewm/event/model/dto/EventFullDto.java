@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import ru.practicum.ewm.category.model.dto.CategoryDto;
 import ru.practicum.ewm.enums.State;
 import ru.practicum.ewm.location.model.dto.LocationDto;
@@ -19,6 +20,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class EventFullDto {
 
 //  obligatory fields

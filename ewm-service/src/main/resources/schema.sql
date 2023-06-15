@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS event
     created_on                 TIMESTAMP WITHOUT TIME ZONE,
     published_on               TIMESTAMP WITHOUT TIME ZONE,
     participant_limit          INT,
-    current_participant_amount INT,
+    confirmed_requests         INT,
     request_moderation         BOOLEAN,
     views                      INT,
     state_action               VARCHAR(50),

@@ -59,7 +59,7 @@ public class ParticipationRequestImpl implements ParticipationRequestService {
             );
         }
 
-        int res = targetEvent.getParticipantLimit() - targetEvent.getCurrentParticipantsAmount();
+        int res = targetEvent.getParticipantLimit() - targetEvent.getConfirmedRequests();
 
         if (targetEvent.getParticipantLimit() != 0 && res < 0) {
             throw new InvalidResourceException(
@@ -71,7 +71,7 @@ public class ParticipationRequestImpl implements ParticipationRequestService {
 
         if (targetEvent.isRequestModeration()) {
             status = Status.CONFIRMED;
-            eventService.increaseByNumberCurrentParticipantsAmountByEventId(1, eventId);
+            eventService.increaseByNumberConfirmedByEventId(1, eventId);
         }
 
         ParticipationRequest requestToSave = ParticipationRequest.builder()
@@ -106,7 +106,7 @@ public class ParticipationRequestImpl implements ParticipationRequestService {
         }
 
         if(participationRequestToCancel.getStatus() == Status.CONFIRMED){
-            eventService.increaseByNumberCurrentParticipantsAmountByEventId(1,
+            eventService.decreaseByNumberConfirmedByEventId(1,
                     participationRequestToCancel.getEvent().getId());
         }
 
@@ -120,7 +120,7 @@ public class ParticipationRequestImpl implements ParticipationRequestService {
     @Override
     @Transactional
     public List<ParticipationRequestDto> getUserParticipationRequests(long userId) {
-        log.info("[Private Participation Request Controller] " +
+        log.info("[Participation Request Service] " +
                 "received a request to get participation requests of user with id ='{}'", userId);
 
         BooleanExpression findByRequesterId = QParticipationRequest.participationRequest.requester.id.eq(userId);
@@ -129,4 +129,20 @@ public class ParticipationRequestImpl implements ParticipationRequestService {
                 .map(ParticipationRequestMapper.INSTANCE::participationRequestToParticipationRequestDto)
                 .collect(Collectors.toList());
     }
+
+//    @Override
+//    public List<ParticipationRequestDto> getParticipationRequestsInEvent(long userId, long eventId) {
+//        log.info("[Participation Request Service] received a request to get participation" +
+//                        " requests to event with id ='{} from user with id = '{}'",
+//                eventId,
+//                userId);
+//
+//        BooleanExpression byEvent = QParticipationRequest.participationRequest.event.id.eq(eventId);
+//
+//        Iterable<ParticipationRequest> iterable = participationRequestRepository.findAll(byEvent);
+//
+//        return StreamSupport.stream(iterable.spliterator(), false)
+//                .map(ParticipationRequestMapper.INSTANCE::participationRequestToParticipationRequestDto)
+//                .collect(Collectors.toList());
+//    }
 }
