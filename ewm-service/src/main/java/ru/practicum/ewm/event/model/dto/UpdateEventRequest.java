@@ -18,7 +18,7 @@ public class UpdateEventRequest {
 
     private String annotation;
 
-    private long category;
+    private Long category;
 
     private String description;
 
@@ -26,11 +26,11 @@ public class UpdateEventRequest {
 
     private LocationDto location;
 
-    private boolean paid;
+    private Boolean paid;
 
-    private int participantLimit;
+    private Integer participantLimit;
 
-    private boolean requestModeration;
+    private Boolean requestModeration;
 
     private String stateAction;
 

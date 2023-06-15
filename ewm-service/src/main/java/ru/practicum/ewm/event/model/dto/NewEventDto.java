@@ -28,7 +28,7 @@ public class NewEventDto {
     private String annotation;
 
     @Positive
-    private long category;
+    private Long category;
 
     @NotBlank(message = "Description can't be blank")
     @Size(min = 20, message = "Description length is smaller than 20")
@@ -43,12 +43,12 @@ public class NewEventDto {
     @NotNull(message = "Location must not be null")
     private LocationDto location;
 
-    private boolean paid;
+    private Boolean paid;
 
     @Positive(message = "Participant limit must not be positive")
-    private int participantLimit;
+    private Integer participantLimit;
 
-    private boolean requestModeration;
+    private Boolean requestModeration;
 
     @NotBlank(message = "Title can't be blank")
     @Size(min = 3, message = "Title length is smaller than 20")

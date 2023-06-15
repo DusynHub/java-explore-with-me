@@ -18,13 +18,13 @@ import javax.validation.constraints.Positive;
 @AllArgsConstructor
 public class ParticipationRequestDto {
 
-    private long id;
+    private Long id;
 
     @Positive
-    private long event;
+    private Long event;
 
     @Positive
-    private long requester;
+    private Long requester;
 
 
     private Status status;

@@ -1,13 +1,14 @@
 package ru.practicum.ewm.user.model.dto;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.factory.Mappers;
 import ru.practicum.ewm.user.model.EwmUser;
 
 /**
  * Mapper for EwmUser
  */
-@Mapper
+@Mapper(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface EwmUserMapper {
 
     EwmUserMapper INSTANCE = Mappers.getMapper(EwmUserMapper.class);

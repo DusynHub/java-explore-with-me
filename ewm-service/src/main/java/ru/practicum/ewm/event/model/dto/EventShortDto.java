@@ -16,21 +16,21 @@ import ru.practicum.ewm.user.model.dto.EwmShortUserDto;
 @AllArgsConstructor
 public class EventShortDto {
 
-    private long id;
+    private Long id;
 
     private String annotation;
 
     private CategoryDto category;
 
-    private int confirmedRequests;
+    private Integer confirmedRequests;
 
     private String eventDate;
 
     private EwmShortUserDto initiator;
 
-    private boolean paid;
+    private Boolean paid;
 
     private String title;
 
-    private int views;
+    private Integer views;
 }

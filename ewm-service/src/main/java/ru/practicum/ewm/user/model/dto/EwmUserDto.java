@@ -23,7 +23,7 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 public class EwmUserDto {
 
-    private long id;
+    private Long id;
 
     @NotBlank(message = "Name can't be blank")
     @Size(min = 2, message = "Name length is smaller than 2")

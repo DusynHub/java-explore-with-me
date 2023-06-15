@@ -38,7 +38,7 @@ public class EventFullDto {
 
     private LocationDto location;
 
-    private boolean paid;
+    private Boolean paid;
 
     private String title;
 
@@ -52,13 +52,13 @@ public class EventFullDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime publishedOn;
 
-    private int participantLimit;
+    private Integer participantLimit;
 
-    private boolean requestModeration;
+    private Boolean requestModeration;
 
     private State state;
 
-    private long views;
+    private Long views;
 
-    private int confirmedRequests;
+    private Integer confirmedRequests;
 }

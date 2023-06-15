@@ -14,7 +14,7 @@ import javax.persistence.Column;
 @AllArgsConstructor
 public class LocationDto {
 
-    private double lat;
+    private Double lat;
 
-    private  double lon;
+    private Double lon;
 }

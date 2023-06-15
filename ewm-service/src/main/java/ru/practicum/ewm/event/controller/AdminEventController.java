@@ -16,6 +16,7 @@ import ru.practicum.ewm.event.model.dto.EventFullDto;
 import ru.practicum.ewm.event.model.dto.UpdateEventRequest;
 import ru.practicum.ewm.event.service.EventService;
 
+import javax.validation.Valid;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -68,7 +69,7 @@ public class AdminEventController {
     @PatchMapping("/{eventIdString}")
     public EventFullDto patchEventById(
             @PathVariable String eventIdString,
-            @RequestBody UpdateEventRequest updateEventRequest) throws JsonProcessingException {
+            @RequestBody @Valid UpdateEventRequest updateEventRequest) throws JsonProcessingException {
         log.info("[Admin Event Controller] received a request PATCH /admin/events/{}", eventIdString);
         long eventId = Long.parseLong(eventIdString);
 

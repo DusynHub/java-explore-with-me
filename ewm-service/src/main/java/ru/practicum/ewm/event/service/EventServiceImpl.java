@@ -184,13 +184,16 @@ public class EventServiceImpl implements EventService {
         }
         Event eventToUpdate = getEventEntityById(eventId);
 
-        LocalDateTime newDate = LocalDateTime.parse(updateEventRequest.getEventDate(), formatter);
-        if (newDate.minusHours(1).isBefore(LocalDateTime.now())) {
-            throw new ValidationException(
-                    "The start date of the event to be changed must be no earlier than one hour from the publication date.");
+        if(updateEventRequest.getEventDate() != null ){
+            LocalDateTime newDate = LocalDateTime.parse(updateEventRequest.getEventDate(), formatter);
+            if (newDate.minusHours(1).isBefore(LocalDateTime.now())) {
+                throw new ValidationException(
+                        "The start date of the event to be changed must be no earlier than one hour from the publication date.");
+            }
         }
 
-        if (eventToUpdate.getState() != State.PENDING) {
+
+        if (eventToUpdate.getState() != null && eventToUpdate.getState() != State.PENDING) {
             throw new InvalidResourceException(
                     "Cannot publish the event because it's not in the right state: PUBLISHED or CANCELLED");
         }
@@ -208,7 +211,7 @@ public class EventServiceImpl implements EventService {
 
         Category category = categoryService.getCategoryEntity(eventToUpdate.getCategory().getId());
 
-        if (updateEventRequest.getCategory() != eventToUpdate.getCategory().getId()
+        if (updateEventRequest.getCategory() != null && updateEventRequest.getCategory() != eventToUpdate.getCategory().getId()
                 && updateEventRequest.getCategory() != 0) {
             category = categoryService.getCategoryEntity(updateEventRequest.getCategory());
         }
@@ -235,18 +238,22 @@ public class EventServiceImpl implements EventService {
         }
         Event eventToUpdate = getEventEntityById(eventId);
 
-        LocalDateTime newDate = LocalDateTime.parse(updateEventRequest.getEventDate(), formatter);
-        if (newDate.minusHours(2).isBefore(LocalDateTime.now())) {
-            throw new ValidationException(
-                    "The start date of the event to be changed must be no earlier than one hour from the publication date.");
+
+        if(updateEventRequest.getEventDate() != null ){
+            LocalDateTime newDate = LocalDateTime.parse(updateEventRequest.getEventDate(), formatter);
+            if (newDate.minusHours(1).isBefore(LocalDateTime.now())) {
+                throw new ValidationException(
+                        "The start date of the event to be changed must be no earlier than one hour from the publication date.");
+            }
         }
 
-        if (eventToUpdate.getState() == State.PUBLISHED) {
+
+        if (eventToUpdate.getState() != null &&  eventToUpdate.getState() == State.PUBLISHED) {
             throw new InvalidResourceException(
                     "Cannot publish the event because it's not in the right state: PUBLISHED or CANCELLED");
         }
 
-        if (eventToUpdate.getInitiator().getId() != userId) {
+        if (eventToUpdate.getInitiator() != null && eventToUpdate.getInitiator().getId() != userId) {
             throw new InvalidResourceException(
                     String.format("Cannot patch event with id = '%s' from user with id = '%s'", eventId, userId)
             );
@@ -255,12 +262,12 @@ public class EventServiceImpl implements EventService {
         String stateAction = updateEventRequest.getStateAction();
 
         State updatedState = State.getStateFromStateAction(
-                StateAction.getStateAction(updateEventRequest.getStateAction()));
+                StateAction.getStateAction(stateAction));
 
 
         Category category = categoryService.getCategoryEntity(eventToUpdate.getCategory().getId());
 
-        if (updateEventRequest.getCategory() != eventToUpdate.getCategory().getId()
+        if (updateEventRequest.getCategory()  != null && updateEventRequest.getCategory() != eventToUpdate.getCategory().getId()
                 && updateEventRequest.getCategory() != 0) {
             category = categoryService.getCategoryEntity(updateEventRequest.getCategory());
         }
@@ -308,12 +315,8 @@ public class EventServiceImpl implements EventService {
             expression = expression.and(QEvent.event.category.id.in(categories));
         }
 
-        if (rangeStart == null && rangeEnd == null) {
-            expression = expression.and(QEvent.event.eventDate.after(LocalDateTime.now()));
-        } else {
-            expression = expression.and(QEvent.event.eventDate.after(rangeStart))
-                    .and(QEvent.event.eventDate.before(rangeEnd));
-        }
+        expression = expression.and(QEvent.event.eventDate.after(rangeStart))
+                .and(QEvent.event.eventDate.before(rangeEnd));
 
         if (onlyAvailable) {
             expression = expression.and(QEvent.event.participantLimit.goe(0));

@@ -83,7 +83,7 @@ public class PrivateEventController {
     public EventFullDto patchUserEventById(
             @PathVariable String userIdString,
             @PathVariable String eventIdString,
-            @RequestBody UpdateEventRequest updateEventRequest) throws JsonProcessingException {
+            @RequestBody @Valid  UpdateEventRequest updateEventRequest) throws JsonProcessingException {
         log.info("[Private Event Controller] received a request PATCH /users/{}/events/{}",
                 userIdString,
                 eventIdString);
@@ -121,7 +121,7 @@ public class PrivateEventController {
     public ParticipationChangeStatusResult patchParticipationRequestsInEvent(
             @PathVariable String userIdString,
             @PathVariable String eventIdString,
-            @RequestBody ParticipationChangeStatusRequest changeStatusRequest) throws JsonProcessingException {
+            @RequestBody @Valid  ParticipationChangeStatusRequest changeStatusRequest) throws JsonProcessingException {
         log.info("[Private Event Controller] received private request PATCH /users/{}/events/{}/requests",
                 userIdString,
                 eventIdString);
