@@ -11,6 +11,7 @@ import ru.practicum.ewm.participation_request.model.dto.ParticipationRequestDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Service to Events
@@ -166,5 +167,21 @@ public interface EventService {
             long eventId,
             ParticipationChangeStatusRequest changeStatusRequest
     );
+
+    /**
+     * Method to gent event entities
+     *
+     * @param eventIds event ids
+     * @return required events
+     */
+    List<Event> getEventsById(Set<Long> eventIds);
+
+    /**
+     * Method to make from Event list EventShortDto list
+     *
+     * @param events Event list
+     * @return EventShortDto list
+     */
+     List<EventShortDto> makeEvenShortDtoFromEventsList(List<Event> events);
 
 }

@@ -47,7 +47,6 @@ public class PrivateEventController {
         return eventService.getUserEvents(userId, from, size);
     }
 
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public EventFullDto postEvent(

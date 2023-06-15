@@ -59,9 +59,9 @@ public class ParticipationRequestImpl implements ParticipationRequestService {
             );
         }
 
-        int res = targetEvent.getParticipantLimit() - targetEvent.getConfirmedRequests();
+        int availableConfirmations = targetEvent.getParticipantLimit() - targetEvent.getConfirmedRequests();
 
-        if (targetEvent.getParticipantLimit() != 0 && res < 0) {
+        if (targetEvent.getParticipantLimit() != 0 && availableConfirmations <= 0) {
             throw new InvalidResourceException(
                     "Event participation limit reached maximum"
             );
@@ -69,7 +69,7 @@ public class ParticipationRequestImpl implements ParticipationRequestService {
 
         Status status = Status.PENDING;
 
-        if (targetEvent.isRequestModeration()) {
+        if (!targetEvent.isRequestModeration() || targetEvent.getParticipantLimit() == 0) {
             status = Status.CONFIRMED;
             eventService.increaseByNumberConfirmedByEventId(1, eventId);
         }

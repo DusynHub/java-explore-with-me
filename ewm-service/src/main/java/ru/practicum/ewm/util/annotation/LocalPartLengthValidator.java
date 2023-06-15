@@ -9,7 +9,7 @@ public class LocalPartLengthValidator implements ConstraintValidator<LocalPartLe
     public boolean isValid(String value, ConstraintValidatorContext constraintValidatorContext) {
 
         if (value == null || value.isBlank()) {
-            return false;
+            return true;
         }
         int start = value.indexOf('@');
         String localPart = value.substring(0, start + 1);

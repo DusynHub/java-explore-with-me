@@ -3,6 +3,7 @@ package ru.practicum.ewm.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -68,12 +69,26 @@ public class EwmServiceExceptionHandler {
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     public ErrorResponse handleResourceNotFoundException(final ResourceNotFoundException e) {
         log.warn("[HTTP STATUS 404] {} ", e.getMessage(), e);
-        return makeErrorResponse(HttpStatus.NOT_FOUND, e, e.getMessage());
+        return makeErrorResponse(HttpStatus.NOT_FOUND, e, NOT_FOUND_REASON);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(code = HttpStatus.CONFLICT)
+    public ErrorResponse handleResourceConflictException(final ResourceConflictException e) {
+        log.warn("[HTTP STATUS 409] {} ", e.getMessage(), e);
+        return makeErrorResponse( HttpStatus.CONFLICT, e,"For the requested operation the conditions are not met.");
     }
 
     @ExceptionHandler
     @ResponseStatus(code = HttpStatus.CONFLICT)
     public ErrorResponse handleConstraintViolationException(final ConstraintViolationException e) {
+        log.warn("[HTTP STATUS 409] {} ", e.getMessage(), e);
+        return makeErrorResponse( HttpStatus.CONFLICT, e, CONSTRAINT_VIOLATION_EXCEPTION_REASON);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(code = HttpStatus.CONFLICT)
+    public ErrorResponse handleDataIntegrityViolationException(final DataIntegrityViolationException e) {
         log.warn("[HTTP STATUS 409] {} ", e.getMessage(), e);
         return makeErrorResponse( HttpStatus.CONFLICT, e, CONSTRAINT_VIOLATION_EXCEPTION_REASON);
     }
@@ -89,7 +104,7 @@ public class EwmServiceExceptionHandler {
     @ResponseStatus(code = HttpStatus.CONFLICT)
     public ErrorResponse handleInvalidResourceException(final InvalidResourceException e) {
         log.warn("[HTTP STATUS 409] {} ", e.getMessage(), e);
-        return makeErrorResponse(HttpStatus.FORBIDDEN, e, e.getMessage());
+        return makeErrorResponse(HttpStatus.FORBIDDEN, e, "Invalid Resource Exception");
     }
 
 

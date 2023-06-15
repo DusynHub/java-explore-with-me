@@ -1,7 +1,9 @@
 package ru.practicum.ewm.category.service;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.category.model.Category;
@@ -9,11 +11,16 @@ import ru.practicum.ewm.category.model.dto.CategoryDto;
 import ru.practicum.ewm.category.model.dto.CategoryMapper;
 import ru.practicum.ewm.category.model.dto.NewCategoryDto;
 import ru.practicum.ewm.category.repository.CategoryRepository;
+import ru.practicum.ewm.event.model.Event;
+import ru.practicum.ewm.event.model.QEvent;
+import ru.practicum.ewm.event.repository.EventRepository;
+import ru.practicum.ewm.exception.ResourceConflictException;
 import ru.practicum.ewm.exception.ResourceNotFoundException;
 import ru.practicum.ewm.util.OffsetPageRequest;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +29,7 @@ import java.util.stream.Collectors;
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final EventRepository eventRepository;
 
     @Override
     @Transactional
@@ -57,7 +65,14 @@ public class CategoryServiceImpl implements CategoryService {
             );
         }
 
-//        TODO нужно дописать проверку наличия событий с такой категорией, если есть то выбросить ошибку конфликт с кодом 409
+        BooleanExpression findByCategory = QEvent.event.category.id.eq(categoryId);
+
+        List<Event> eventsLinkedToCategory = StreamSupport.stream(eventRepository.findAll(findByCategory).spliterator(), false)
+                .collect(Collectors.toList());
+
+        if(!eventsLinkedToCategory.isEmpty()){
+            throw new ResourceConflictException("The category is not empty");
+        }
 
         categoryRepository.deleteById(categoryId);
     }

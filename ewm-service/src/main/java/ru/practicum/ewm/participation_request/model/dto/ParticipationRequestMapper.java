@@ -5,7 +5,6 @@ import org.mapstruct.Mapping;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.factory.Mappers;
 import ru.practicum.ewm.event.model.Event;
-import ru.practicum.ewm.event.model.dto.EventMapper;
 import ru.practicum.ewm.participation_request.model.ParticipationRequest;
 import ru.practicum.ewm.user.model.EwmUser;
 

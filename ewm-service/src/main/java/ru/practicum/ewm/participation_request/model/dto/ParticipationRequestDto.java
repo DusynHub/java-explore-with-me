@@ -26,7 +26,6 @@ public class ParticipationRequestDto {
     @Positive
     private Long requester;
 
-
     private Status status;
 
     @NotBlank

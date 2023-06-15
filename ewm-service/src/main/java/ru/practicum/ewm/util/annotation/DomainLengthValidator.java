@@ -9,7 +9,7 @@ public class DomainLengthValidator implements ConstraintValidator<DomainLength, 
     public boolean isValid(String value, ConstraintValidatorContext constraintValidatorContext) {
 
         if (value == null || value.isBlank()) {
-            return false;
+            return true;
         }
 
         int domainStart = value.indexOf('@');

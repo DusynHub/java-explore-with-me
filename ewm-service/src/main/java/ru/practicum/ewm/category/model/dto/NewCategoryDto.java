@@ -18,6 +18,8 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 public class NewCategoryDto {
 
+    private Long id;
+
     @NotBlank(message = "Name can't be blank")
     @Size(min = 1, message = "Name length is smaller than 1")
     @Size(max = 50, message = "Name length is bigger than 50")

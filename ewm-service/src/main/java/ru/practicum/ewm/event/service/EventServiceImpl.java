@@ -5,10 +5,8 @@ import com.querydsl.core.types.dsl.Expressions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.common.stats.dto.EndpointHitDto;
 import ru.practicum.common.stats.dto.ViewStatsDto;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.category.model.dto.CategoryDto;
@@ -48,6 +46,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -77,8 +77,12 @@ public class EventServiceImpl implements EventService {
 
         EwmUser initiatorUser = ewmUserService.getEwmUserEntityById(initiator);
 //        Category categoryInEvent = categoryService.getCategoryEntity(newEventDto.getCategory());
+        if(newEventDto.getRequestModeration() == null){
+            newEventDto.setRequestModeration(true);
+        }
         Event eventToSave = EventMapper.INSTANCE.newEventDtoToEvent(
                 newEventDto,
+                newEventDto.getLocation(),
                 initiatorUser,
                 categoryService.getCategoryProxyById(newEventDto.getCategory())
         );
@@ -93,7 +97,13 @@ public class EventServiceImpl implements EventService {
         );
 
 
-//        todo добавить получение request
+
+        System.out.println("newEventDto.getRequestModeration() = " + newEventDto.getRequestModeration());
+        System.out.println("newEventDto.getRequestModeration() = " + newEventDto.getRequestModeration());
+        System.out.println("newEventDto.getRequestModeration() = " + newEventDto.getRequestModeration());
+        System.out.println("newEventDto.getRequestModeration() = " + newEventDto.getRequestModeration());
+        System.out.println("newEventDto.getRequestModeration() = " + newEventDto.getRequestModeration());
+
         return EventMapper.INSTANCE.eventToEventFullDto(
                 savedEvent,
                 categoryDto,
@@ -185,7 +195,7 @@ public class EventServiceImpl implements EventService {
         Event eventToUpdate = getEventEntityById(eventId);
 
         if(updateEventRequest.getEventDate() != null ){
-            LocalDateTime newDate = LocalDateTime.parse(updateEventRequest.getEventDate(), formatter);
+            LocalDateTime newDate = updateEventRequest.getEventDate();
             if (newDate.minusHours(1).isBefore(LocalDateTime.now())) {
                 throw new ValidationException(
                         "The start date of the event to be changed must be no earlier than one hour from the publication date.");
@@ -199,7 +209,6 @@ public class EventServiceImpl implements EventService {
         }
 
         State updatedState = eventToUpdate.getState();
-
         if(updateEventRequest.getStateAction()!= null){
             updatedState = State.getStateFromStateAction(
                     StateAction.getStateAction(updateEventRequest.getStateAction()));
@@ -240,7 +249,7 @@ public class EventServiceImpl implements EventService {
 
 
         if(updateEventRequest.getEventDate() != null ){
-            LocalDateTime newDate = LocalDateTime.parse(updateEventRequest.getEventDate(), formatter);
+            LocalDateTime newDate = updateEventRequest.getEventDate();
             if (newDate.minusHours(1).isBefore(LocalDateTime.now())) {
                 throw new ValidationException(
                         "The start date of the event to be changed must be no earlier than one hour from the publication date.");
@@ -259,11 +268,11 @@ public class EventServiceImpl implements EventService {
             );
         }
 
-        String stateAction = updateEventRequest.getStateAction();
-
-        State updatedState = State.getStateFromStateAction(
-                StateAction.getStateAction(stateAction));
-
+        State updatedState = eventToUpdate.getState();
+        if(updateEventRequest.getStateAction()!= null){
+            updatedState = State.getStateFromStateAction(
+                    StateAction.getStateAction(updateEventRequest.getStateAction()));
+        }
 
         Category category = categoryService.getCategoryEntity(eventToUpdate.getCategory().getId());
 
@@ -298,7 +307,7 @@ public class EventServiceImpl implements EventService {
                                          String endpointPath) {
         log.info("[Event Service] received a public request to get events");
 
-        if(rangeStart.isAfter(rangeEnd)){
+        if(rangeStart != null && rangeEnd != null && rangeStart.isAfter(rangeEnd)){
             throw new ValidationException(
                     "Start date must be before End"
             );
@@ -315,19 +324,22 @@ public class EventServiceImpl implements EventService {
             expression = expression.and(QEvent.event.category.id.in(categories));
         }
 
-        expression = expression.and(QEvent.event.eventDate.after(rangeStart))
-                .and(QEvent.event.eventDate.before(rangeEnd));
+        expression = expression.and(QEvent.event.eventDate.after(Objects.requireNonNullElseGet(rangeStart, LocalDateTime::now)));
+
+        if (rangeEnd != null) {
+            expression = expression.and(QEvent.event.eventDate.before(rangeEnd));
+        }
 
         if (onlyAvailable) {
             expression = expression.and(QEvent.event.participantLimit.goe(0));
         }
 
-        Sort getEvetnsSort = Sort.by(Sort.Direction.ASC, "eventDate");
+        Sort getEventsSort = Sort.by(Sort.Direction.ASC, "eventDate");
         if (sort.equals("VIEWS")) {
-            getEvetnsSort = Sort.by(Sort.Direction.ASC, "views");
+            getEventsSort = Sort.by(Sort.Direction.ASC, "views");
         }
 
-        OffsetPageRequest pageRequest = OffsetPageRequest.of(from, size, getEvetnsSort);
+        OffsetPageRequest pageRequest = OffsetPageRequest.of(from, size, getEventsSort);
         List<Event> resultEvents = eventRepository.findAll(expression, pageRequest).getContent();
 
         statsClient.postStat(
@@ -547,9 +559,13 @@ public class EventServiceImpl implements EventService {
         return new ParticipationChangeStatusResult(confirmedRequests, rejectedRequests);
     }
 
-    private List<EventFullDto> makeEventFullDtoFromEvents(List<Event> events) {
+    @Override
+    public List<Event> getEventsById(Set<Long> eventIds) {
+        log.info("[Event Service] received a request to get event entities by ids");
+        return eventRepository.findAllById(eventIds);
+    }
 
-//        todo получение подтверждённых запросов на участие и просмотров
+    private List<EventFullDto> makeEventFullDtoFromEvents(List<Event> events) {
 
         List<Long> categoryIds = events.stream().map((event) -> event.getCategory().getId()).collect(Collectors.toList());
         Map<Long, CategoryDto> categoryDtos = categoryService.findAllById(categoryIds)
@@ -595,8 +611,6 @@ public class EventServiceImpl implements EventService {
 
     private EventFullDto makeEventFullDtoFromEvent(Event singleEvent) {
 
-//        todo получение подтверждённых запросов на участие и просмотров
-
         CategoryDto categoryDto = categoryService.getCategory(singleEvent.getCategory().getId());
         EwmShortUserDto ewmShortUserDto = EwmUserMapper.INSTANCE.ewmUserToEwmShortUserDto(
                 ewmUserService.getEwmUserEntityById(singleEvent.getInitiator().getId())
@@ -628,9 +642,8 @@ public class EventServiceImpl implements EventService {
                         .append(singleEvent.getId()).toString()));
     }
 
-    private List<EventShortDto> makeEvenShortDtoFromEventsList(List<Event> events) {
+    public List<EventShortDto> makeEvenShortDtoFromEventsList(List<Event> events) {
 
-//        todo получение подтверждённых запросов на участие и просмотров
         List<Long> categoryIds = events.stream().map((event) -> event.getCategory().getId()).collect(Collectors.toList());
         Map<Long, CategoryDto> categoryDtos = categoryService.findAllById(categoryIds)
                 .stream()

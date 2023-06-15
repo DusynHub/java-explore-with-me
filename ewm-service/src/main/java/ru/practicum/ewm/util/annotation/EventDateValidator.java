@@ -11,6 +11,9 @@ public class EventDateValidator implements ConstraintValidator<EventDateValidati
 
         LocalDateTime earliestAvailableDate = LocalDateTime.now().plusHours(2);
 
-        return value.isAfter(earliestAvailableDate);
+        if(value!=null){
+            return value.isAfter(earliestAvailableDate);
+        }
+        return true;
     }
 }

@@ -47,20 +47,19 @@ public class PublicEventController {
         log.info("endpoint path: {}", request.getRequestURI());
 
 
-        LocalDateTime rangeStart = LocalDateTime.now();
+        LocalDateTime rangeStart = null;
         if(rangeEndString != null) {
             String decodedRangeStart = URLDecoder.decode(rangeStartString, StandardCharsets.UTF_8);
             rangeStart = LocalDateTime.parse(decodedRangeStart, formatter);
         }
 
-        LocalDateTime rangeEnd = LocalDateTime.now();
+        LocalDateTime rangeEnd = null;
         if(rangeEndString != null){
             String decodedRangeEnd = URLDecoder.decode(rangeEndString, StandardCharsets.UTF_8);
             rangeEnd = LocalDateTime.parse(decodedRangeEnd, formatter);
         }
 
-        return eventService.getEvents(
-                text,
+        return eventService.getEvents(text,
                 categories,
                 paid,
                 rangeStart,
