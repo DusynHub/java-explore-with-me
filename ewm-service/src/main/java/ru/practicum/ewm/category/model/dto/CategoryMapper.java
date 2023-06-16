@@ -1,9 +1,7 @@
 package ru.practicum.ewm.category.model.dto;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
-import org.springframework.stereotype.Component;
 import ru.practicum.ewm.category.model.Category;
 
 /**
