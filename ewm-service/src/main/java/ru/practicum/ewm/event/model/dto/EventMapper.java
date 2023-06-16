@@ -42,6 +42,7 @@ public interface EventMapper {
             dateFormat = "yyyy-MM-dd HH:mm:ss")
     @Mapping(target = "paid", source = "newEventDto.paid")
     Event newEventDtoToEvent (NewEventDto newEventDto,
+                              LocationDto locationDto,
                               EwmUser initiatorUser,
                               Category category);
 
@@ -85,22 +86,19 @@ public interface EventMapper {
                                        EwmShortUserDto initiator,
                                        Integer confirmedRequests,
                                        Long viewsStats);
-//    todo написать получение подтверённых запросов на участие
 
 
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "lat", source = "locationDto.lat")
     @Mapping(target = "lon", source = "locationDto.lon")
-    @Mapping(conditionExpression = "java(updateEventRequest.getCategory() != 0L || categoryToUpdate != null)",
+    @Mapping(conditionExpression = "java(categoryToUpdate != null)",
             target="category",
             source="categoryToUpdate")
-    @Mapping(target = "paid", source = "updateEventRequest.paid")
     @Mapping(target = "state", source = "state")
     @Mapping(target = "eventDate",
-            source = "updateEventRequest.eventDate",
-            dateFormat = "yyyy-MM-dd HH:mm:ss")
-    @Mapping(conditionExpression = "java(updateEventRequest.getParticipantLimit() != 0)",
+            source = "updateEventRequest.eventDate")
+    @Mapping(conditionExpression = "java(updateEventRequest.getParticipantLimit() != null)",
             target="participantLimit",
             source= "updateEventRequest.participantLimit")
     void updateEventAdminRequestToEvent(
@@ -114,15 +112,15 @@ public interface EventMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "lat", source = "locationDto.lat")
     @Mapping(target = "lon", source = "locationDto.lon")
-    @Mapping(conditionExpression = "java(updateEventUserRequest.getCategory() != 0L || categoryToUpdate != null)",
+    @Mapping(conditionExpression = "java(categoryToUpdate != null)",
             target="category",
             source="categoryToUpdate")
-    @Mapping(target = "paid", ignore = true)
+    @Mapping(target = "paid",
+            source = "updateEventUserRequest.paid")
     @Mapping(target = "state", source = "state")
     @Mapping(target = "eventDate",
-            source =  "updateEventUserRequest.eventDate",
-            dateFormat = "yyyy-MM-dd HH:mm:ss")
-    @Mapping(conditionExpression = "java(updateEventUserRequest.getParticipantLimit() != 0)",
+            source =  "updateEventUserRequest.eventDate")
+    @Mapping(conditionExpression = "java(updateEventUserRequest.getParticipantLimit() != null)",
             target="participantLimit",
             source="updateEventUserRequest.participantLimit")
     void updateEventUserRequestToEvent(

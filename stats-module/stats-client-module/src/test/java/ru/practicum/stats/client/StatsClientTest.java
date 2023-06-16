@@ -31,7 +31,7 @@ class StatsClientTest {
     private final String baseUrl = UriComponentsBuilder.newInstance().scheme(protocol).host(host)
             .port(port).toUriString();
 
-    private final StatsClient statsClient = new StatsServiceImpl(baseUrl);
+    private final StatsClient statsClient = new StatsClientImpl(baseUrl);
 
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -41,7 +41,7 @@ class StatsClientTest {
     void whenGetStats_thenReturnOk() throws JsonProcessingException {
         String startDate = "2022-09-06 12:00:54";
         String endDate = "2022-02-07 11:11:55";
-        List<String> uriL = List.of("/event");
+        List<String> uriL = List.of("/events");
         boolean uniques = false;
 
         mapper.findAndRegisterModules();
@@ -55,7 +55,7 @@ class StatsClientTest {
                                 .withPath("/stats")
                                 .withQueryStringParameter("start", "2022-09-06%2012:00:54")
                                 .withQueryStringParameter("end", "2022-02-07%2011:11:55")
-                                .withQueryStringParameter("uri", "/event")
+                                .withQueryStringParameter("uris", "/events")
                                 .withQueryStringParameter("unique", "false")
                 )
                 .respond(

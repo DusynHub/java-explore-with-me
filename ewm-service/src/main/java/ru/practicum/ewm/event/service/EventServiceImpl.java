@@ -5,8 +5,11 @@ import com.querydsl.core.types.dsl.Expressions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import ru.practicum.common.stats.dto.EndpointHitDto;
 import ru.practicum.common.stats.dto.ViewStatsDto;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.category.model.dto.CategoryDto;
@@ -39,6 +42,7 @@ import ru.practicum.ewm.user.model.dto.EwmUserMapper;
 import ru.practicum.ewm.user.service.EwmUserService;
 import ru.practicum.ewm.util.OffsetPageRequest;
 import ru.practicum.stats.client.StatsClient;
+import ru.practicum.stats.client.StatsClientImpl;
 
 import javax.validation.ValidationException;
 import java.time.LocalDateTime;
@@ -156,6 +160,13 @@ public class EventServiceImpl implements EventService {
                                                Integer from,
                                                Integer size) {
         log.info("[Event Service] received an admin request to get events");
+
+        if(rangeStart != null && rangeEnd != null && rangeStart.isAfter(rangeEnd)){
+            throw new ValidationException(
+                    "Start date must be before End"
+            );
+        }
+
         BooleanExpression expression = Expressions.asBoolean(true).eq(true);
 
         if (users != null) {
@@ -188,10 +199,7 @@ public class EventServiceImpl implements EventService {
     public EventFullDto updateEventByIdFromAdmin(long eventId,
                                                  UpdateEventRequest updateEventRequest) {
         log.info("[Event Service] received an admin request to patch event by id = '{}'", eventId);
-        if (!eventRepository.existsById(eventId)) {
-            throw new ResourceNotFoundException(
-                    String.format("Event with id = '%d' not found", eventId));
-        }
+        checkEventExistenceById(eventId);
         Event eventToUpdate = getEventEntityById(eventId);
 
         if(updateEventRequest.getEventDate() != null ){
@@ -241,10 +249,7 @@ public class EventServiceImpl implements EventService {
     public EventFullDto updateEventByIdFromUser(long userId, long eventId,
                                                 UpdateEventRequest updateEventRequest) {
         log.info("[Event Service] received an private request from user with id = '{}'to patch event by id = '{}'", userId, eventId);
-        if (!eventRepository.existsById(eventId)) {
-            throw new ResourceNotFoundException(
-                    String.format("Event with id = '%d' not found", eventId));
-        }
+        checkEventExistenceById(eventId);
         Event eventToUpdate = getEventEntityById(eventId);
 
 
@@ -342,36 +347,38 @@ public class EventServiceImpl implements EventService {
         OffsetPageRequest pageRequest = OffsetPageRequest.of(from, size, getEventsSort);
         List<Event> resultEvents = eventRepository.findAll(expression, pageRequest).getContent();
 
-        statsClient.postStat(
+        ResponseEntity<EndpointHitDto> endpointHitDtoResponseEntity = statsClient.postStat(
                 "ewv-service",
                 endpointPath,
                 clientIp,
                 LocalDateTime.now().format(formatter)
         );
-//        System.out.println("*********СОХРАНЕНИЕ**********");
-//        System.out.println("*********СОХРАНЕНИЕ**********");
-//        System.out.println("*********СОХРАНЕНИЕ**********");
-//        System.out.println("*********СОХРАНЕНИЕ**********");
-//        System.out.println("*********СОХРАНЕНИЕ**********");
-//        System.out.println("*********СОХРАНЕНИЕ**********");
-//        System.out.println(endpointHitDtoResponseEntity.getBody());
-//
-//        ResponseEntity<List<ViewStatsDto>> viewStatsDto = statsClient.getStat(
-//                LocalDateTime.now().minusYears(50).format(formatter),
-//                LocalDateTime.now().plusYears(50).format(formatter),
-//                List.of(endpointPath),
-//                false
-//        );
-//
-//
-//        System.out.println("*********СТАТИСТИКА**********");
-//        System.out.println("*********СТАТИСТИКА**********");
-//        System.out.println("*********СТАТИСТИКА**********");
-//        System.out.println("*********СТАТИСТИКА**********");
-//        System.out.println("*********СТАТИСТИКА**********");
-//        System.out.println("*********СТАТИСТИКА**********");
-//        System.out.println("*********СТАТИСТИКА**********");
-//        System.out.println(viewStatsDto.getBody());
+
+
+        System.out.println("*********СОХРАНЕНИЕ**********");
+        System.out.println("*********СОХРАНЕНИЕ**********");
+        System.out.println("*********СОХРАНЕНИЕ**********");
+        System.out.println("*********СОХРАНЕНИЕ**********");
+        System.out.println("*********СОХРАНЕНИЕ**********");
+        System.out.println("*********СОХРАНЕНИЕ**********");
+        System.out.println(endpointHitDtoResponseEntity.getBody());
+
+        ResponseEntity<List<ViewStatsDto>> viewStatsDto = statsClient.getStat(
+                LocalDateTime.now().minusYears(50).format(formatter),
+                LocalDateTime.now().plusYears(50).format(formatter),
+                List.of(endpointPath),
+                false
+        );
+
+
+        System.out.println("*********СТАТИСТИКА**********");
+        System.out.println("*********СТАТИСТИКА**********");
+        System.out.println("*********СТАТИСТИКА**********");
+        System.out.println("*********СТАТИСТИКА**********");
+        System.out.println("*********СТАТИСТИКА**********");
+        System.out.println("*********СТАТИСТИКА**********");
+        System.out.println("*********СТАТИСТИКА**********");
+        System.out.println(viewStatsDto.getBody());
         return makeEvenShortDtoFromEventsList(resultEvents);
     }
 
@@ -393,20 +400,20 @@ public class EventServiceImpl implements EventService {
                 clientIp,
                 LocalDateTime.now().format(formatter)
         );
-//        ResponseEntity<List<ViewStatsDto>> viewStatsDto = statsClient.getStat(
-//                LocalDateTime.now().minusYears(50).format(formatter),
-//                LocalDateTime.now().plusYears(50).format(formatter),
-//                List.of(endpointPath),
-//                false
-//        );
-//        System.out.println("*********СТАТИСТИКА**********");
-//        System.out.println("*********СТАТИСТИКА**********");
-//        System.out.println("*********СТАТИСТИКА**********");
-//        System.out.println("*********СТАТИСТИКА**********");
-//        System.out.println("*********СТАТИСТИКА**********");
-//        System.out.println("*********СТАТИСТИКА**********");
-//        System.out.println("*********СТАТИСТИКА**********");
-//        System.out.println(viewStatsDto.getBody());
+        ResponseEntity<List<ViewStatsDto>> viewStatsDto = statsClient.getStat(
+                LocalDateTime.now().minusYears(50).format(formatter),
+                LocalDateTime.now().plusYears(50).format(formatter),
+                List.of(endpointPath),
+                false
+        );
+        System.out.println("*********СТАТИСТИКА**********");
+        System.out.println("*********СТАТИСТИКА**********");
+        System.out.println("*********СТАТИСТИКА**********");
+        System.out.println("*********СТАТИСТИКА**********");
+        System.out.println("*********СТАТИСТИКА**********");
+        System.out.println("*********СТАТИСТИКА**********");
+        System.out.println("*********СТАТИСТИКА**********");
+        System.out.println(viewStatsDto.getBody());
         return makeEventFullDtoFromEvent(requiredEvent);
 
     }
@@ -565,6 +572,52 @@ public class EventServiceImpl implements EventService {
         return eventRepository.findAllById(eventIds);
     }
 
+    @Override
+    public List<EventShortDto> makeEvenShortDtoFromEventsList(List<Event> events) {
+
+        List<Long> categoryIds = events.stream().map((event) -> event.getCategory().getId()).collect(Collectors.toList());
+        Map<Long, CategoryDto> categoryDtos = categoryService.findAllById(categoryIds)
+                .stream()
+                .collect(Collectors.toMap(CategoryDto::getId, categoryDto -> categoryDto));
+
+        List<Long> ewmUserIds = events.stream().map((event) -> event.getInitiator().getId()).collect(Collectors.toList());
+        Map<Long, EwmShortUserDto> ewmUserDtos = ewmUserService.findAllBy(ewmUserIds)
+                .stream()
+                .collect(Collectors.toMap(EwmShortUserDto::getId, ewmShortUserDto -> ewmShortUserDto));
+
+
+        List<String> endpoints = events.stream().map((event) ->
+                        new StringBuilder()
+                                .append("/events/")
+                                .append(event.getId()).toString())
+                .collect(Collectors.toList());
+
+        List<ViewStatsDto> stats = statsClient.getStat(
+                LocalDateTime.now().minusYears(50).format(formatter),
+                LocalDateTime.now().plusYears(50).format(formatter),
+                endpoints,
+                false
+        ).getBody();
+
+        Map<String, Long> views = stats.stream()
+                .collect(
+                        Collectors.toMap(
+                                ViewStatsDto::getUri,
+                                ViewStatsDto::getHits
+                        )
+                );
+
+        return events.stream()
+                .map(event -> EventMapper.INSTANCE.eventToEventShortDto(event,
+                        categoryDtos.get(event.getCategory().getId()),
+                        ewmUserDtos.get(event.getInitiator().getId()),
+                        1,
+                        views.getOrDefault(new StringBuilder()
+                                .append("/events/")
+                                .append(event.getId()).toString(), 0L)
+                )).collect(Collectors.toList());
+    }
+
     private List<EventFullDto> makeEventFullDtoFromEvents(List<Event> events) {
 
         List<Long> categoryIds = events.stream().map((event) -> event.getCategory().getId()).collect(Collectors.toList());
@@ -619,7 +672,7 @@ public class EventServiceImpl implements EventService {
         List<ViewStatsDto> stats = statsClient.getStat(
                 LocalDateTime.now().minusYears(50).format(formatter),
                 LocalDateTime.now().plusYears(50).format(formatter),
-                List.of(new StringBuilder().append("/event/").append(singleEvent.getId()).toString()),
+                List.of(new StringBuilder().append("/events/").append(singleEvent.getId()).toString()),
                 true
         ).getBody();
 
@@ -642,48 +695,10 @@ public class EventServiceImpl implements EventService {
                         .append(singleEvent.getId()).toString()));
     }
 
-    public List<EventShortDto> makeEvenShortDtoFromEventsList(List<Event> events) {
-
-        List<Long> categoryIds = events.stream().map((event) -> event.getCategory().getId()).collect(Collectors.toList());
-        Map<Long, CategoryDto> categoryDtos = categoryService.findAllById(categoryIds)
-                .stream()
-                .collect(Collectors.toMap(CategoryDto::getId, categoryDto -> categoryDto));
-
-        List<Long> ewmUserIds = events.stream().map((event) -> event.getInitiator().getId()).collect(Collectors.toList());
-        Map<Long, EwmShortUserDto> ewmUserDtos = ewmUserService.findAllBy(ewmUserIds)
-                .stream()
-                .collect(Collectors.toMap(EwmShortUserDto::getId, ewmShortUserDto -> ewmShortUserDto));
-
-
-        List<String> endpoints = events.stream().map((event) ->
-                        new StringBuilder()
-                                .append("/events/")
-                                .append(event.getId()).toString())
-                .collect(Collectors.toList());
-
-        List<ViewStatsDto> stats = statsClient.getStat(
-                LocalDateTime.now().minusYears(50).format(formatter),
-                LocalDateTime.now().plusYears(50).format(formatter),
-                endpoints,
-                false
-        ).getBody();
-
-        Map<String, Long> views = stats.stream()
-                .collect(
-                        Collectors.toMap(
-                                ViewStatsDto::getUri,
-                                ViewStatsDto::getHits
-                        )
-                );
-
-        return events.stream()
-                .map(event -> EventMapper.INSTANCE.eventToEventShortDto(event,
-                        categoryDtos.get(event.getCategory().getId()),
-                        ewmUserDtos.get(event.getInitiator().getId()),
-                        1,
-                        views.get(new StringBuilder()
-                                .append("/events/")
-                                .append(event.getId()).toString())
-                )).collect(Collectors.toList());
+    private void checkEventExistenceById(long eventId) {
+        if (!eventRepository.existsById(eventId)) {
+            throw new ResourceNotFoundException(
+                    String.format("Event with id = '%d' not found", eventId));
+        }
     }
 }

@@ -20,13 +20,13 @@ import java.util.List;
 
 @Service
 @PropertySource(value = "classpath:stats-application.properties")
-public class StatsServiceImpl implements StatsClient {
+public class StatsClientImpl implements StatsClient {
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private final WebClient webClient;
 
-    public StatsServiceImpl(@Value("${stats-server.url}") String serverUrl) {
+    public StatsClientImpl(@Value("${stats-server.url}") String serverUrl) {
         System.out.println(serverUrl);
         webClient = WebClient.builder()
                 .baseUrl(serverUrl)
@@ -35,13 +35,12 @@ public class StatsServiceImpl implements StatsClient {
 
     @Override
     public ResponseEntity<List<ViewStatsDto>> getStat(String start, String end, List<String> uri, boolean unique) {
-
         return webClient.get()
                 .uri(UriComponentsBuilder
                         .fromUriString("/stats")
                         .queryParam("start", start)
                         .queryParam("end", end)
-                        .queryParam("uri", uri)
+                        .queryParam("uris", uri)
                         .queryParam("unique", unique)
                         .build().encode().toUriString())
                 .retrieve()
@@ -51,7 +50,6 @@ public class StatsServiceImpl implements StatsClient {
 
     @Override
     public ResponseEntity<EndpointHitDto> postStat(String app, String uri, String ip, String timestamp) {
-
         String decodedDate = URLDecoder.decode(timestamp, StandardCharsets.UTF_8);
 
         EndpointHitDto endpointHitDto = EndpointHitDto.builder()

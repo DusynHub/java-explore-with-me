@@ -66,6 +66,16 @@ public class EwmServiceExceptionHandler {
     }
 
     @ExceptionHandler
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleNumberFormatException(
+            final NumberFormatException e
+    ) {
+        log.warn("[HTTP STATUS 400] {} ", e.getMessage(), e);
+        return makeErrorResponse(HttpStatus.BAD_REQUEST, e, BAD_REQUEST_REASON);
+    }
+
+
+    @ExceptionHandler
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     public ErrorResponse handleResourceNotFoundException(final ResourceNotFoundException e) {
         log.warn("[HTTP STATUS 404] {} ", e.getMessage(), e);

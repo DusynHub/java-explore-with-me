@@ -15,9 +15,11 @@ import ru.practicum.common.stats.model.QEndpointHit;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -81,6 +83,20 @@ public class StatsServerServiceImpl implements StatsServerService {
                                                    boolean unique) {
         log.info("[StatsService] получение статистики по частоте использвоания эндпоинтов");
 
+        if(start != null && end != null && start.isAfter(end)){
+            throw new ValidationException(
+                    "Start date must be before End"
+            );
+        }
+
+
+        BooleanExpression expression = QEndpointHit.endpointHit.timestamp.after(
+                Objects.requireNonNullElseGet(start, LocalDateTime::now));
+
+        if (end != null) {
+            expression = expression.and(QEndpointHit.endpointHit.timestamp.before(end));
+        }
+
         BooleanExpression byUri;
         QBean<ViewStatsDto> viewStats;
         if (endpoints.isEmpty()) {
@@ -105,6 +121,7 @@ public class StatsServerServiceImpl implements StatsServerService {
 
         JPAQuery<ViewStatsDto> query = jpaQueryFactory.from(qEndpointHit)
                 .where(byUri)
+                .where(expression)
                 .groupBy(qEndpointHit.app, qEndpointHit.uri)
                 .select(viewStats);
 
