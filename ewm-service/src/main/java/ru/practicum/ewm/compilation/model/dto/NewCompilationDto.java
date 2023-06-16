@@ -23,6 +23,5 @@ public class NewCompilationDto {
     @Size(max = 50, message = "Title length is bigger than 50")
     private String title;
 
-
     private Set<Long> events;
 }

@@ -14,7 +14,7 @@ public interface CompilationService {
      * @param newCompilationDto newCompilationDto
      * @return saved compilation
      */
-    CompilationDto postCompilation (NewCompilationDto newCompilationDto);
+    CompilationDto postCompilation(NewCompilationDto newCompilationDto);
 
     /**
      * Method to delete compilation by id
@@ -26,7 +26,7 @@ public interface CompilationService {
     /**
      * Method to patch compilation by id
      *
-     * @param compilationId id of compilation to be updated
+     * @param compilationId       id of compilation to be updated
      * @param patchCompilationDto new compilation fields
      * @return updated compilation
      */
@@ -36,8 +36,8 @@ public interface CompilationService {
      * Method to get pinned or not compilations
      *
      * @param pinned compilation pinned status
-     * @param from first compilation in result
-     * @param size page size
+     * @param from   first compilation in result
+     * @param size   page size
      * @return required compilations
      */
     List<CompilationDto> getCompilationsFromUser(Boolean pinned, int from, int size);

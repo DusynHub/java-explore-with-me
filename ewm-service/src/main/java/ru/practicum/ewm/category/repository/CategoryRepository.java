@@ -15,7 +15,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     /**
      * Method for admin to change existing category name
      *
-     * @param id category id which name has to be changed
+     * @param id      category id which name has to be changed
      * @param newName new name of the category
      */
     @Modifying

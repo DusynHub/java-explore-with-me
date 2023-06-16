@@ -17,11 +17,11 @@ public interface CategoryService {
     CategoryDto saveCategory(NewCategoryDto newCategoryDto);
 
     /**
-     * Method to update category name by id
+     * Method to patch category name by id
      *
-     * @param id category id to be updated
+     * @param id             category id to be patched
      * @param newCategoryDto that contains new category name
-     * @return updated category
+     * @return patched category
      */
     CategoryDto patchCategory(long id, NewCategoryDto newCategoryDto);
 
@@ -30,23 +30,23 @@ public interface CategoryService {
      * Method to delete category by id
      *
      * @param id category id to be deleted
-     *
      */
     void deleteCategory(long id);
 
     /**
      * Method to get all categories
      *
-     * @param fromLine first category
-     * @param size page size
+     * @param fromLine first category in list
+     * @param size     page size
      * @return required category list
      */
-    List<CategoryDto> getAllCategories(Integer fromLine, Integer size);
+    List<CategoryDto> getAllCategories(int fromLine, int size);
+
 
     /**
      * Method to get category by id
      *
-     * @param categoryId category id
+     * @param categoryId required category id
      * @return required category dto
      */
     CategoryDto getCategory(long categoryId);
@@ -55,7 +55,7 @@ public interface CategoryService {
     /**
      * Method to get category by id
      *
-     * @param categoryId category id
+     * @param categoryId required category id
      * @return required category
      */
     Category getCategoryEntity(long categoryId);

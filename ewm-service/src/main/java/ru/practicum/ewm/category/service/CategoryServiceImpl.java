@@ -3,7 +3,6 @@ package ru.practicum.ewm.category.service;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.category.model.Category;
@@ -34,9 +33,9 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public CategoryDto saveCategory(NewCategoryDto newCategoryDto) {
-        log.info("[Category Service] received a request to save category");
+        log.info("[Category Service] received an admin request to save category");
         Category categoryToSave = CategoryMapper.INSTANCE.newCategoryDtoToCategory(newCategoryDto);
-        return  CategoryMapper.INSTANCE.categoryToCategoryDto(
+        return CategoryMapper.INSTANCE.categoryToCategoryDto(
                 categoryRepository.save(categoryToSave)
         );
     }
@@ -44,21 +43,18 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public CategoryDto patchCategory(long id, NewCategoryDto newCategoryDto) {
-        log.info("[Category Service] received a request to patch category");
-        categoryRepository.updateCategoryById(id, newCategoryDto.getName());
+        log.info("[Category Service] received an admin request to patch category");
+        Category categoryToBePatched = getCategoryByIdMandatory(id);
+        CategoryMapper.INSTANCE.newCategoryDtoToCategory(newCategoryDto, categoryToBePatched);
         return CategoryMapper.INSTANCE.categoryToCategoryDto(
-                categoryRepository.findById(id).orElseThrow(
-                        () -> new ResourceNotFoundException(
-                                String.format("Category with id = '%d' not found", id)
-                        )
-                )
+                categoryRepository.save(categoryToBePatched)
         );
     }
 
     @Override
     @Transactional
     public void deleteCategory(long categoryId) {
-        log.info("[Category Service] received a request to delete category");
+        log.info("[Category Service] received an admin request to delete category");
         if (!categoryRepository.existsById(categoryId)) {
             throw new ResourceNotFoundException(
                     String.format("User with id = '%d' not found", categoryId)
@@ -67,10 +63,11 @@ public class CategoryServiceImpl implements CategoryService {
 
         BooleanExpression findByCategory = QEvent.event.category.id.eq(categoryId);
 
-        List<Event> eventsLinkedToCategory = StreamSupport.stream(eventRepository.findAll(findByCategory).spliterator(), false)
-                .collect(Collectors.toList());
+        List<Event> eventsLinkedToCategory = StreamSupport.stream(
+                eventRepository.findAll(findByCategory).spliterator(), false
+        ).collect(Collectors.toList());
 
-        if(!eventsLinkedToCategory.isEmpty()){
+        if (!eventsLinkedToCategory.isEmpty()) {
             throw new ResourceConflictException("The category is not empty");
         }
 
@@ -78,8 +75,8 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryDto> getAllCategories(Integer fromLine, Integer size){
-        log.info("[Category Service] received a request to delete category");
+    public List<CategoryDto> getAllCategories(int fromLine, int size) {
+        log.info("[Category Service] received a public request to get all categories");
         OffsetPageRequest pageRequest = OffsetPageRequest.of(fromLine, size);
         return categoryRepository.findAllBy(pageRequest)
                 .stream()
@@ -88,25 +85,17 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDto getCategory(long categoryId){
-        log.info("[Category Service] received a request to get category with id = '{}'", categoryId);
+    public CategoryDto getCategory(long categoryId) {
+        log.info("[Category Service] received a public request to get category with id = '{}'", categoryId);
         return CategoryMapper.INSTANCE.categoryToCategoryDto(
-            categoryRepository.findById(categoryId).orElseThrow(
-                () -> new ResourceNotFoundException(
-                    String.format("Category with id = '%d' not found", categoryId)
-                )
-            )
+                getCategoryByIdMandatory(categoryId)
         );
     }
 
     @Override
     public Category getCategoryEntity(long categoryId) {
         log.info("[Category Service] received a request to get category entity with id = '{}'", categoryId);
-        return categoryRepository.findById(categoryId).orElseThrow(
-                () -> new ResourceNotFoundException(
-                        String.format("Category with id = '%d' not found", categoryId)
-                )
-        );
+        return getCategoryByIdMandatory(categoryId);
     }
 
     @Override
@@ -121,5 +110,13 @@ public class CategoryServiceImpl implements CategoryService {
                 .stream()
                 .map(CategoryMapper.INSTANCE::categoryToCategoryDto)
                 .collect(Collectors.toList());
+    }
+
+    private Category getCategoryByIdMandatory(long id) {
+        return categoryRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException(
+                        String.format("Category with id = '%d' not found", id)
+                )
+        );
     }
 }

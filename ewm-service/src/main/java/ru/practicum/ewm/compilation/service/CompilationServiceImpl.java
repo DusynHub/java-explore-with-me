@@ -15,9 +15,7 @@ import ru.practicum.ewm.compilation.model.dto.NewCompilationDto;
 import ru.practicum.ewm.compilation.model.dto.PatchCompilationDto;
 import ru.practicum.ewm.compilation.repository.CompilationRepository;
 import ru.practicum.ewm.event.model.Event;
-import ru.practicum.ewm.event.model.QEvent;
 import ru.practicum.ewm.event.model.dto.EventShortDto;
-import ru.practicum.ewm.event.repository.EventRepository;
 import ru.practicum.ewm.event.service.EventService;
 import ru.practicum.ewm.exception.ResourceNotFoundException;
 import ru.practicum.ewm.util.OffsetPageRequest;
@@ -28,7 +26,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
@@ -52,7 +49,7 @@ public class CompilationServiceImpl implements CompilationService {
         }
 
         List<Event> eventsToCompilation = new ArrayList<>(0);
-        if(newCompilationDto.getEvents() != null ){
+        if (newCompilationDto.getEvents() != null) {
             eventsToCompilation = eventService.getEventsById(newCompilationDto.getEvents());
         }
 
@@ -90,14 +87,10 @@ public class CompilationServiceImpl implements CompilationService {
         log.info("[Compilation Service] received an admin request PATCH /admin/compilations/{}",
                 compilationId);
         checkCompilationExistenceById(compilationId);
-        Compilation compilationToBePatched = compilationRepository.findById(compilationId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                String.format("Compilation with id = '%s' not found", compilationId))
-                );
+        Compilation compilationToBePatched = getCompilationByIdMandatory(compilationId);
 
         Set<Long> newEventIdsSetToCompilationInSet = patchCompilationDto.getEvents();
-        List<Event> newEventsInList = new ArrayList<>(0);
+        List<Event> newEventsInList;
         Set<Event> newEventSetToCompilation = null;
 
         if (newEventIdsSetToCompilationInSet != null) {
@@ -148,10 +141,7 @@ public class CompilationServiceImpl implements CompilationService {
         log.info("[Public Compilation Controller] received a public " +
                 "request to get compilation with id = '{}'", compilationId);
         checkCompilationExistenceById(compilationId);
-        Compilation requiredCompilation = compilationRepository.findById(compilationId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                String.format("Compilation with id = '%s' not found", compilationId)));
+        Compilation requiredCompilation = getCompilationByIdMandatory(compilationId);
 
         List<EventShortDto> shortEvents = eventService.makeEvenShortDtoFromEventsList(
                         new ArrayList<>(requiredCompilation.getEvents())
@@ -172,5 +162,11 @@ public class CompilationServiceImpl implements CompilationService {
         }
     }
 
-
+    private Compilation getCompilationByIdMandatory(long compilationId) {
+        return compilationRepository.findById(compilationId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                String.format("Compilation with id = '%s' not found", compilationId))
+                );
+    }
 }

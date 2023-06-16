@@ -37,25 +37,17 @@ public class AdminEventController {
     @GetMapping
     public List<EventFullDto> getEventsByAdmin(
             @RequestParam(required = false) List<Long> users,
-            @RequestParam(required = false)  List<String> states,
-            @RequestParam(required = false)  List<Long> categories,
-            @RequestParam(name = "rangeStart", required= false ) String rangeStartString,
-            @RequestParam(name = "rangeEnd", required= false ) String rangeEndString,
+            @RequestParam(required = false) List<String> states,
+            @RequestParam(required = false) List<Long> categories,
+            @RequestParam(name = "rangeStart", required = false) String rangeStartString,
+            @RequestParam(name = "rangeEnd", required = false) String rangeEndString,
             @RequestParam(defaultValue = "0") Integer from,
             @RequestParam(defaultValue = "10") Integer size) {
         log.info("[Admin Event Controller] received a request GET /admin/events");
 
-        LocalDateTime rangeStart = null;
-        if(rangeEndString != null) {
-            String decodedRangeStart = URLDecoder.decode(rangeStartString, StandardCharsets.UTF_8);
-            rangeStart = LocalDateTime.parse(decodedRangeStart, formatter);
-        }
+        LocalDateTime rangeStart = getLocalDateTimeFromRequestParam(rangeStartString, rangeEndString);
 
-        LocalDateTime rangeEnd = null;
-        if(rangeEndString != null){
-            String decodedRangeEnd = URLDecoder.decode(rangeEndString, StandardCharsets.UTF_8);
-            rangeEnd = LocalDateTime.parse(decodedRangeEnd, formatter);
-        }
+        LocalDateTime rangeEnd = getLocalDateTimeFromRequestParam(rangeEndString, rangeEndString);
 
         return eventService.getEventsByAdmin(users,
                 states,
@@ -66,6 +58,15 @@ public class AdminEventController {
                 size);
     }
 
+    private LocalDateTime getLocalDateTimeFromRequestParam(String rangeStartString, String rangeEndString) {
+        LocalDateTime rangeStart = null;
+        if (rangeEndString != null) {
+            String decodedRangeStart = URLDecoder.decode(rangeStartString, StandardCharsets.UTF_8);
+            rangeStart = LocalDateTime.parse(decodedRangeStart, formatter);
+        }
+        return rangeStart;
+    }
+
     @PatchMapping("/{eventIdString}")
     public EventFullDto patchEventById(
             @PathVariable String eventIdString,
@@ -73,7 +74,7 @@ public class AdminEventController {
         log.info("[Admin Event Controller] received a request PATCH /admin/events/{}", eventIdString);
         long eventId = Long.parseLong(eventIdString);
 
-        ObjectMapper mapper =  new ObjectMapper();
+        ObjectMapper mapper = new ObjectMapper();
         mapper.findAndRegisterModules();
         String s = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(updateEventRequest);
         System.out.println(s);

@@ -1,7 +1,6 @@
 package ru.practicum.ewm.compilation.controller;
 
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -32,7 +31,7 @@ public class AdminCompilationController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CompilationDto postCompilation(
-            @RequestBody @Valid NewCompilationDto newCompilationDto){
+            @RequestBody @Valid NewCompilationDto newCompilationDto) {
         log.info("[Admin Compilation Controller] received an admin request POST /admin/compilations");
         return compilationService.postCompilation(newCompilationDto);
     }
@@ -40,7 +39,7 @@ public class AdminCompilationController {
     @DeleteMapping("/{compilationIdInString}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCompilation(
-            @PathVariable String compilationIdInString){
+            @PathVariable String compilationIdInString) {
         log.info("[Admin Compilation Controller] received an admin request DELETE /admin/compilations/{}",
                 compilationIdInString);
         long compilationId = Long.parseLong(compilationIdInString);
@@ -50,7 +49,7 @@ public class AdminCompilationController {
     @PatchMapping("/{compilationIdInString}")
     public CompilationDto patchCompilation(
             @PathVariable String compilationIdInString,
-            @RequestBody @Valid PatchCompilationDto patchCompilationDto){
+            @RequestBody @Valid PatchCompilationDto patchCompilationDto) {
         log.info("[Admin Compilation Controller] received an admin request PATCH /admin/compilations/{}",
                 compilationIdInString);
         long compilationId = Long.parseLong(compilationIdInString);
