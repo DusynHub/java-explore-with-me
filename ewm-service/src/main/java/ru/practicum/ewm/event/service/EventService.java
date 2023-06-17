@@ -90,7 +90,7 @@ public interface EventService {
     /**
      * Method to update event by id from admin
      *
-     * @param eventId                 event id
+     * @param eventId            event id
      * @param updateEventRequest updateEventAdminRequest with event fields need to update
      * @return updated event
      */
@@ -109,7 +109,7 @@ public interface EventService {
      * @param rangeStart    start of date range
      * @param rangeEnd      end of date range
      * @param onlyAvailable should event be available
-     * @param Sort          sort condition
+     * @param sort          sort condition
      * @param from          the number of events that need to be skipped to form the current set
      * @param size          number of events on the page
      * @return required events
@@ -121,7 +121,7 @@ public interface EventService {
             LocalDateTime rangeStart,
             LocalDateTime rangeEnd,
             boolean onlyAvailable,
-            String Sort,
+            String sort,
             int from,
             int size,
             String clientIp,
@@ -157,9 +157,9 @@ public interface EventService {
     /**
      * Method to patch participation requests in specific event from user
      *
-     * @param userId  user id
-     * @param eventId event id
-     * @param changeStatusRequest
+     * @param userId              user id
+     * @param eventId             event id
+     * @param changeStatusRequest new participation request info
      * @return participation requests in specific event from user
      */
     ParticipationChangeStatusResult patchParticipationRequestsStatusInEvent(
@@ -182,6 +182,6 @@ public interface EventService {
      * @param events Event list
      * @return EventShortDto list
      */
-     List<EventShortDto> makeEvenShortDtoFromEventsList(List<Event> events);
+    List<EventShortDto> makeEvenShortDtoFromEventsList(List<Event> events);
 
 }

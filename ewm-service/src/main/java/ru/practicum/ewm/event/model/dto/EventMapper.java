@@ -19,13 +19,17 @@ import java.time.format.DateTimeFormatter;
 /**
  * Mapper for Event
  */
-@Mapper(imports = LocalDateTime.class, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE )
+@Mapper(imports = LocalDateTime.class, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface EventMapper {
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     EventMapper INSTANCE = Mappers.getMapper(EventMapper.class);
 
+    @Mapping(target = "views", ignore = true)
+    @Mapping(target = "state", ignore = true)
+    @Mapping(target = "publishedOn", ignore = true)
+    @Mapping(target = "confirmedRequests", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "initiator",
             source = "initiatorUser")
@@ -36,15 +40,15 @@ public interface EventMapper {
     @Mapping(target = "category",
             source = "category")
     @Mapping(target = "createdOn",
-            expression= "java(LocalDateTime.now())")
+            expression = "java(LocalDateTime.now())")
     @Mapping(target = "eventDate",
-            source =  "newEventDto.eventDate",
+            source = "newEventDto.eventDate",
             dateFormat = "yyyy-MM-dd HH:mm:ss")
     @Mapping(target = "paid", source = "newEventDto.paid")
-    Event newEventDtoToEvent (NewEventDto newEventDto,
-                              LocationDto locationDto,
-                              EwmUser initiatorUser,
-                              Category category);
+    Event newEventDtoToEvent(NewEventDto newEventDto,
+                             LocationDto locationDto,
+                             EwmUser initiatorUser,
+                             Category category);
 
 
     @Mapping(target = "id",
@@ -61,11 +65,11 @@ public interface EventMapper {
             source = "viewsStats")
     @Mapping(target = "paid",
             source = "event.paid")
-    EventFullDto eventToEventFullDto (Event event,
-                                      CategoryDto categoryDto,
-                                      EwmShortUserDto ewmShortUserDto,
-                                      LocationDto locationDto,
-                                      Long viewsStats);
+    EventFullDto eventToEventFullDto(Event event,
+                                     CategoryDto categoryDto,
+                                     EwmShortUserDto ewmShortUserDto,
+                                     LocationDto locationDto,
+                                     Long viewsStats);
 
     @Mapping(target = "id",
             source = "event.id")
@@ -88,19 +92,23 @@ public interface EventMapper {
                                        Long viewsStats);
 
 
-
+    @Mapping(target = "views", ignore = true)
+    @Mapping(target = "publishedOn", ignore = true)
+    @Mapping(target = "initiator", ignore = true)
+    @Mapping(target = "createdOn", ignore = true)
+    @Mapping(target = "confirmedRequests", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "lat", source = "locationDto.lat")
     @Mapping(target = "lon", source = "locationDto.lon")
     @Mapping(conditionExpression = "java(categoryToUpdate != null)",
-            target="category",
-            source="categoryToUpdate")
+            target = "category",
+            source = "categoryToUpdate")
     @Mapping(target = "state", source = "state")
     @Mapping(target = "eventDate",
             source = "updateEventRequest.eventDate")
     @Mapping(conditionExpression = "java(updateEventRequest.getParticipantLimit() != null)",
-            target="participantLimit",
-            source= "updateEventRequest.participantLimit")
+            target = "participantLimit",
+            source = "updateEventRequest.participantLimit")
     void updateEventAdminRequestToEvent(
             UpdateEventRequest updateEventRequest,
             Category categoryToUpdate,
@@ -109,20 +117,25 @@ public interface EventMapper {
             @MappingTarget Event eventToUpdate);
 
 
+    @Mapping(target = "views", ignore = true)
+    @Mapping(target = "publishedOn", ignore = true)
+    @Mapping(target = "initiator", ignore = true)
+    @Mapping(target = "createdOn", ignore = true)
+    @Mapping(target = "confirmedRequests", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "lat", source = "locationDto.lat")
     @Mapping(target = "lon", source = "locationDto.lon")
     @Mapping(conditionExpression = "java(categoryToUpdate != null)",
-            target="category",
-            source="categoryToUpdate")
+            target = "category",
+            source = "categoryToUpdate")
     @Mapping(target = "paid",
             source = "updateEventUserRequest.paid")
     @Mapping(target = "state", source = "state")
     @Mapping(target = "eventDate",
-            source =  "updateEventUserRequest.eventDate")
+            source = "updateEventUserRequest.eventDate")
     @Mapping(conditionExpression = "java(updateEventUserRequest.getParticipantLimit() != null)",
-            target="participantLimit",
-            source="updateEventUserRequest.participantLimit")
+            target = "participantLimit",
+            source = "updateEventUserRequest.participantLimit")
     void updateEventUserRequestToEvent(
             UpdateEventRequest updateEventUserRequest,
             Category categoryToUpdate,

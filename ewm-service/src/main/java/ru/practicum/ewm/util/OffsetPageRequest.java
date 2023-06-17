@@ -8,7 +8,7 @@ public class OffsetPageRequest extends PageRequest {
     private final int fromRow;
 
     protected OffsetPageRequest(int fromRow, int size, Sort sort) {
-        super(fromRow/size, size, sort);
+        super(fromRow / size, size, sort);
         this.fromRow = fromRow;
     }
 

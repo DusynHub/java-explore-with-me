@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 @RestControllerAdvice
 @Slf4j
@@ -30,7 +29,7 @@ public class EwmServiceExceptionHandler {
     @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleException(Throwable e) {
         log.warn("[HTTP STATUS 500] {} ", e.getMessage(), e);
-        return makeErrorResponse( HttpStatus.INTERNAL_SERVER_ERROR, e, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+        return makeErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
     }
 
     @ExceptionHandler
@@ -86,28 +85,28 @@ public class EwmServiceExceptionHandler {
     @ResponseStatus(code = HttpStatus.CONFLICT)
     public ErrorResponse handleResourceConflictException(final ResourceConflictException e) {
         log.warn("[HTTP STATUS 409] {} ", e.getMessage(), e);
-        return makeErrorResponse( HttpStatus.CONFLICT, e,"For the requested operation the conditions are not met.");
+        return makeErrorResponse(HttpStatus.CONFLICT, e, "For the requested operation the conditions are not met.");
     }
 
     @ExceptionHandler
     @ResponseStatus(code = HttpStatus.CONFLICT)
     public ErrorResponse handleConstraintViolationException(final ConstraintViolationException e) {
         log.warn("[HTTP STATUS 409] {} ", e.getMessage(), e);
-        return makeErrorResponse( HttpStatus.CONFLICT, e, CONSTRAINT_VIOLATION_EXCEPTION_REASON);
+        return makeErrorResponse(HttpStatus.CONFLICT, e, CONSTRAINT_VIOLATION_EXCEPTION_REASON);
     }
 
     @ExceptionHandler
     @ResponseStatus(code = HttpStatus.CONFLICT)
     public ErrorResponse handleDataIntegrityViolationException(final DataIntegrityViolationException e) {
         log.warn("[HTTP STATUS 409] {} ", e.getMessage(), e);
-        return makeErrorResponse( HttpStatus.CONFLICT, e, CONSTRAINT_VIOLATION_EXCEPTION_REASON);
+        return makeErrorResponse(HttpStatus.CONFLICT, e, CONSTRAINT_VIOLATION_EXCEPTION_REASON);
     }
 
     @ExceptionHandler
     @ResponseStatus(code = HttpStatus.FORBIDDEN)
     public ErrorResponse handleResourceNotAvailableException(final ResourceNotAvailableException e) {
         log.warn("[HTTP STATUS 403] {} ", e.getMessage(), e);
-        return makeErrorResponse( HttpStatus.FORBIDDEN, e, e.getMessage());
+        return makeErrorResponse(HttpStatus.FORBIDDEN, e, e.getMessage());
     }
 
     @ExceptionHandler

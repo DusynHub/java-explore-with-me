@@ -48,7 +48,7 @@ public class ParticipationRequest {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @Column(name= "created")
+    @Column(name = "created")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime created;
 

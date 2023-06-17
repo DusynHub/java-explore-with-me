@@ -4,7 +4,6 @@ package ru.practicum.ewm.participation_request.service;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.enums.State;
@@ -19,12 +18,10 @@ import ru.practicum.ewm.participation_request.model.dto.ParticipationRequestDto;
 import ru.practicum.ewm.participation_request.model.dto.ParticipationRequestMapper;
 import ru.practicum.ewm.participation_request.repository.ParticipationRequestRepository;
 import ru.practicum.ewm.user.service.EwmUserService;
-import ru.practicum.ewm.util.OffsetPageRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @Service
@@ -105,7 +102,7 @@ public class ParticipationRequestImpl implements ParticipationRequestService {
                             "participation request with id = '%s'", requesterId, requestId));
         }
 
-        if(participationRequestToCancel.getStatus() == Status.CONFIRMED){
+        if (participationRequestToCancel.getStatus() == Status.CONFIRMED) {
             eventService.decreaseByNumberConfirmedByEventId(1,
                     participationRequestToCancel.getEvent().getId());
         }
@@ -125,24 +122,8 @@ public class ParticipationRequestImpl implements ParticipationRequestService {
 
         BooleanExpression findByRequesterId = QParticipationRequest.participationRequest.requester.id.eq(userId);
         Iterable<ParticipationRequest> iterable = participationRequestRepository.findAll(findByRequesterId);
-        return  StreamSupport.stream(iterable.spliterator(), false)
+        return StreamSupport.stream(iterable.spliterator(), false)
                 .map(ParticipationRequestMapper.INSTANCE::participationRequestToParticipationRequestDto)
                 .collect(Collectors.toList());
     }
-
-//    @Override
-//    public List<ParticipationRequestDto> getParticipationRequestsInEvent(long userId, long eventId) {
-//        log.info("[Participation Request Service] received a request to get participation" +
-//                        " requests to event with id ='{} from user with id = '{}'",
-//                eventId,
-//                userId);
-//
-//        BooleanExpression byEvent = QParticipationRequest.participationRequest.event.id.eq(eventId);
-//
-//        Iterable<ParticipationRequest> iterable = participationRequestRepository.findAll(byEvent);
-//
-//        return StreamSupport.stream(iterable.spliterator(), false)
-//                .map(ParticipationRequestMapper.INSTANCE::participationRequestToParticipationRequestDto)
-//                .collect(Collectors.toList());
-//    }
 }

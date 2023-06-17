@@ -1,7 +1,6 @@
 package ru.practicum.ewm.event.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -41,9 +40,8 @@ public class PrivateEventController {
             @PathVariable String userIdString,
             @RequestParam(defaultValue = "0") Integer from,
             @RequestParam(defaultValue = "10") Integer size) {
-        log.info("[Private Event Controller] received a request POST /users/{}/events", userIdString);
+        log.info("[Private Event Controller] received a request GET /users/{}/events", userIdString);
         long userId = Long.parseLong(userIdString);
-
         return eventService.getUserEvents(userId, from, size);
     }
 
@@ -51,19 +49,10 @@ public class PrivateEventController {
     @ResponseStatus(HttpStatus.CREATED)
     public EventFullDto postEvent(
             @PathVariable String userIdString,
-            @RequestBody @Valid NewEventDto newEventDto
-    ) throws JsonProcessingException {
+            @RequestBody @Valid NewEventDto newEventDto) {
         log.info("[Private Event Controller] received a request POST /users/{}/events", userIdString);
         long userId = Long.parseLong(userIdString);
-
-        ObjectMapper mapper =  new ObjectMapper();
-        mapper.findAndRegisterModules();
-        EventFullDto ss = eventService.postEvent(newEventDto, userId);
-        String s = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(ss);
-        System.out.println("postEvent" + s);
-
-//        return eventService.postEvent(newEventDto, userId);
-        return ss;
+        return eventService.postEvent(newEventDto, userId);
     }
 
     @GetMapping("/{eventIdString}")
@@ -82,25 +71,13 @@ public class PrivateEventController {
     public EventFullDto patchUserEventById(
             @PathVariable String userIdString,
             @PathVariable String eventIdString,
-            @RequestBody @Valid  UpdateEventRequest updateEventRequest) throws JsonProcessingException {
+            @RequestBody @Valid UpdateEventRequest updateEventRequest) {
         log.info("[Private Event Controller] received a request PATCH /users/{}/events/{}",
                 userIdString,
                 eventIdString);
         long userId = Long.parseLong(userIdString);
         long eventId = Long.parseLong(eventIdString);
-
-        ObjectMapper mapper =  new ObjectMapper();
-        mapper.findAndRegisterModules();
-
-
-
-
-        EventFullDto ss = eventService.updateEventByIdFromUser(userId, eventId, updateEventRequest);
-        String s = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(ss);
-        System.out.println("patchUserEventById" + s);
-
-//        return eventService.updateEventByIdFromUser(userId, eventId, updateEventAdminRequest);
-        return ss;
+        return eventService.updateEventByIdFromUser(userId, eventId, updateEventRequest);
     }
 
     @GetMapping("/{eventIdString}/requests")
@@ -112,7 +89,6 @@ public class PrivateEventController {
                 eventIdString);
         long userId = Long.parseLong(userIdString);
         long eventId = Long.parseLong(eventIdString);
-
         return eventService.getParticipationRequestsInEvent(userId, eventId);
     }
 
@@ -120,25 +96,13 @@ public class PrivateEventController {
     public ParticipationChangeStatusResult patchParticipationRequestsInEvent(
             @PathVariable String userIdString,
             @PathVariable String eventIdString,
-            @RequestBody @Valid  ParticipationChangeStatusRequest changeStatusRequest) throws JsonProcessingException {
+            @RequestBody @Valid ParticipationChangeStatusRequest changeStatusRequest) {
         log.info("[Private Event Controller] received private request PATCH /users/{}/events/{}/requests",
                 userIdString,
                 eventIdString);
         long userId = Long.parseLong(userIdString);
         long eventId = Long.parseLong(eventIdString);
-
-
-
-        ObjectMapper mapper =  new ObjectMapper();
-        mapper.findAndRegisterModules();
-        String s1 = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(changeStatusRequest);
-        System.out.println("patchParticipationRequestsInEvent" + s1);
-
-        ParticipationChangeStatusResult ss = eventService.patchParticipationRequestsStatusInEvent(userId, eventId, changeStatusRequest);
-        String s = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(ss);
-        System.out.println("patchParticipationRequestsInEvent" + s);
-        return ss;
-//        return eventService.patchParticipationRequestsStatusInEvent(userId, eventId, changeStatusRequest);
+        return eventService.patchParticipationRequestsStatusInEvent(userId, eventId, changeStatusRequest);
     }
 
 }

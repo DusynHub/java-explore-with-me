@@ -27,7 +27,6 @@ public class StatsClientImpl implements StatsClient {
     private final WebClient webClient;
 
     public StatsClientImpl(@Value("${stats-server.url}") String serverUrl) {
-        System.out.println(serverUrl);
         webClient = WebClient.builder()
                 .baseUrl(serverUrl)
                 .build();

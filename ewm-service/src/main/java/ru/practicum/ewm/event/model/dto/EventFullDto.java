@@ -11,7 +11,6 @@ import ru.practicum.ewm.category.model.dto.CategoryDto;
 import ru.practicum.ewm.enums.State;
 import ru.practicum.ewm.location.model.dto.LocationDto;
 import ru.practicum.ewm.user.model.dto.EwmShortUserDto;
-import ru.practicum.ewm.user.model.dto.EwmUserDto;
 
 import java.time.LocalDateTime;
 

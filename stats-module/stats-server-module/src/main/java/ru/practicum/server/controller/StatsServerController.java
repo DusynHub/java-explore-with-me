@@ -35,29 +35,19 @@ public class StatsServerController {
     @SneakyThrows
     @GetMapping("/stats")
     public List<ViewStatsDto> getStat(
-                                      @RequestParam(name = "start" ) String rangeStartString,
-                                      @RequestParam(name = "end" ) String rangeEndString,
-                                      @RequestParam(name = "uris", defaultValue = "") List<String> uris,
-                                      @RequestParam(name = "unique", defaultValue = "false") boolean unique) {
-        log.info("[StatsController] получен запрос GET /stats with start = {}, end = {},  uri = {}, unique = {} " ,
+            @RequestParam(name = "start") String rangeStartString,
+            @RequestParam(name = "end") String rangeEndString,
+            @RequestParam(name = "uris", defaultValue = "") List<String> uris,
+            @RequestParam(name = "unique", defaultValue = "false") boolean unique) {
+        log.info("[StatsController] получен запрос GET /stats with start = {}, end = {},  uri = {}, unique = {} ",
                 rangeStartString,
                 rangeEndString,
                 uris,
                 unique);
-
-
         String decodedRangeStart = URLDecoder.decode(rangeStartString, StandardCharsets.UTF_8);
         LocalDateTime rangeStart = LocalDateTime.parse(decodedRangeStart, formatter);
-
-
         String decodedRangeEnd = URLDecoder.decode(rangeEndString, StandardCharsets.UTF_8);
-        LocalDateTime rangeEnd  = LocalDateTime.parse(decodedRangeEnd, formatter);
-
-//
-//        String decodedStart = URLDecoder.decode(start, StandardCharsets.UTF_8);
-//        String decodedEnd = URLDecoder.decode(end, StandardCharsets.UTF_8);
-//        LocalDateTime startTime = LocalDateTime.parse(decodedStart, formatter);
-//        LocalDateTime endTime = LocalDateTime.parse(decodedEnd, formatter);
+        LocalDateTime rangeEnd = LocalDateTime.parse(decodedRangeEnd, formatter);
         return statsServerService.getEndpointHitsCount(rangeStart, rangeEnd, uris, unique);
     }
 }

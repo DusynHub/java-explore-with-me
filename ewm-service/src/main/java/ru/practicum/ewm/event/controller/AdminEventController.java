@@ -1,7 +1,5 @@
 package ru.practicum.ewm.event.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -44,11 +42,8 @@ public class AdminEventController {
             @RequestParam(defaultValue = "0") Integer from,
             @RequestParam(defaultValue = "10") Integer size) {
         log.info("[Admin Event Controller] received a request GET /admin/events");
-
         LocalDateTime rangeStart = getLocalDateTimeFromRequestParam(rangeStartString, rangeEndString);
-
         LocalDateTime rangeEnd = getLocalDateTimeFromRequestParam(rangeEndString, rangeEndString);
-
         return eventService.getEventsByAdmin(users,
                 states,
                 categories,
@@ -58,6 +53,15 @@ public class AdminEventController {
                 size);
     }
 
+    @PatchMapping("/{eventIdString}")
+    public EventFullDto patchEventById(
+            @PathVariable String eventIdString,
+            @RequestBody @Valid UpdateEventRequest updateEventRequest) {
+        log.info("[Admin Event Controller] received a request PATCH /admin/events/{}", eventIdString);
+        long eventId = Long.parseLong(eventIdString);
+        return eventService.updateEventByIdFromAdmin(eventId, updateEventRequest);
+    }
+
     private LocalDateTime getLocalDateTimeFromRequestParam(String rangeStartString, String rangeEndString) {
         LocalDateTime rangeStart = null;
         if (rangeEndString != null) {
@@ -65,21 +69,5 @@ public class AdminEventController {
             rangeStart = LocalDateTime.parse(decodedRangeStart, formatter);
         }
         return rangeStart;
-    }
-
-    @PatchMapping("/{eventIdString}")
-    public EventFullDto patchEventById(
-            @PathVariable String eventIdString,
-            @RequestBody @Valid UpdateEventRequest updateEventRequest) throws JsonProcessingException {
-        log.info("[Admin Event Controller] received a request PATCH /admin/events/{}", eventIdString);
-        long eventId = Long.parseLong(eventIdString);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.findAndRegisterModules();
-        String s = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(updateEventRequest);
-        System.out.println(s);
-
-
-        return eventService.updateEventByIdFromAdmin(eventId, updateEventRequest);
     }
 }

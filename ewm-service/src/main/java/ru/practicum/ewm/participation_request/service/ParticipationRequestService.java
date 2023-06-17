@@ -10,7 +10,7 @@ public interface ParticipationRequestService {
     /**
      * Method to post new participation request to event
      *
-     * @param userId requester id
+     * @param userId  requester id
      * @param eventId event id
      * @return posted request
      */
@@ -21,7 +21,7 @@ public interface ParticipationRequestService {
      * Method to cancel participation request
      *
      * @param requesterId requester id
-     * @param requestId participation request id
+     * @param requestId   participation request id
      * @return cancelled participation request
      */
     ParticipationRequestDto cancelParticipationRequest(long requesterId, long requestId);
@@ -34,15 +34,6 @@ public interface ParticipationRequestService {
      * @return required participation requests
      */
     List<ParticipationRequestDto> getUserParticipationRequests(long userId);
-
-//    /**
-//     * Method to get user participation requests for specific event
-//     *
-//     * @param userId user id
-//     * @param eventId event id
-//     * @return participation requests for specific event
-//     */
-//    List<ParticipationRequestDto> getParticipationRequestsInEvent(long userId, long eventId);
 }
 
 

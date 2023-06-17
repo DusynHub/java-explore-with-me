@@ -33,11 +33,11 @@ public class PublicEventController {
     @GetMapping
     public List<EventShortDto> getEvents(
             @RequestParam(required = false) String text,
-            @RequestParam(required = false)  List<Long> categories,
-            @RequestParam(defaultValue = "false")  boolean paid,
-            @RequestParam(name = "rangeStart", required= false ) String rangeStartString,
-            @RequestParam(name = "rangeEnd", required= false ) String rangeEndString,
-            @RequestParam(defaultValue = "false")  boolean onlyAvailable,
+            @RequestParam(required = false) List<Long> categories,
+            @RequestParam(defaultValue = "false") boolean paid,
+            @RequestParam(name = "rangeStart", required = false) String rangeStartString,
+            @RequestParam(name = "rangeEnd", required = false) String rangeEndString,
+            @RequestParam(defaultValue = "false") boolean onlyAvailable,
             @RequestParam(defaultValue = "EVENT_DATE") String sort,
             @RequestParam(defaultValue = "0") int from,
             @RequestParam(defaultValue = "10") int size,
@@ -47,17 +47,8 @@ public class PublicEventController {
         log.info("endpoint path: {}", request.getRequestURI());
 
 
-        LocalDateTime rangeStart = null;
-        if(rangeEndString != null) {
-            String decodedRangeStart = URLDecoder.decode(rangeStartString, StandardCharsets.UTF_8);
-            rangeStart = LocalDateTime.parse(decodedRangeStart, formatter);
-        }
-
-        LocalDateTime rangeEnd = null;
-        if(rangeEndString != null){
-            String decodedRangeEnd = URLDecoder.decode(rangeEndString, StandardCharsets.UTF_8);
-            rangeEnd = LocalDateTime.parse(decodedRangeEnd, formatter);
-        }
+        LocalDateTime rangeStart = getLocalDateTimeFromRequestParam(rangeStartString, rangeEndString);
+        LocalDateTime rangeEnd = getLocalDateTimeFromRequestParam(rangeEndString, rangeEndString);
 
         return eventService.getEvents(text,
                 categories,
@@ -81,7 +72,16 @@ public class PublicEventController {
         log.info("client ip: {}", request.getRemoteAddr());
         log.info("endpoint path: {}", request.getRequestURI());
         long eventId = Long.parseLong(eventIdString);
-        return eventService.getEventById(eventId, request.getRemoteAddr(), request.getRequestURI()) ;
+        return eventService.getEventById(eventId, request.getRemoteAddr(), request.getRequestURI());
+    }
+
+    private LocalDateTime getLocalDateTimeFromRequestParam(String rangeStartString, String rangeEndString) {
+        LocalDateTime rangeStart = null;
+        if (rangeEndString != null) {
+            String decodedRangeStart = URLDecoder.decode(rangeStartString, StandardCharsets.UTF_8);
+            rangeStart = LocalDateTime.parse(decodedRangeStart, formatter);
+        }
+        return rangeStart;
     }
 }
 

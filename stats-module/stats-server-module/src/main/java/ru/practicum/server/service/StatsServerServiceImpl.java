@@ -83,7 +83,7 @@ public class StatsServerServiceImpl implements StatsServerService {
                                                    boolean unique) {
         log.info("[StatsService] получение статистики по частоте использвоания эндпоинтов");
 
-        if(start != null && end != null && start.isAfter(end)){
+        if (start != null && end != null && start.isAfter(end)) {
             throw new ValidationException(
                     "Start date must be before End"
             );

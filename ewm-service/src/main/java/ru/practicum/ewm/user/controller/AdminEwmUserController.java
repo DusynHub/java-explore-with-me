@@ -17,7 +17,6 @@ import ru.practicum.ewm.user.model.dto.EwmUserDto;
 import ru.practicum.ewm.user.service.EwmUserService;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Positive;
 import java.util.List;
 
 @RestController
@@ -34,21 +33,21 @@ public class AdminEwmUserController {
             @RequestParam(required = false) List<Long> ids,
             @RequestParam(defaultValue = "0") Integer from,
             @RequestParam(defaultValue = "10") Integer size
-    ){
+    ) {
         log.info("[Admin Controller] received a request GET /admin/users");
         return ewmUserService.getAllUsersOrUsersByIds(ids, from, size);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public EwmUserDto postUser(@RequestBody @Valid EwmUserDto ewmUserDto){
+    public EwmUserDto postUser(@RequestBody @Valid EwmUserDto ewmUserDto) {
         log.info("[Admin Controller] received a request POST /admin/users with body {}", ewmUserDto.toString());
         return ewmUserService.saveUser(ewmUserDto);
     }
 
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(@PathVariable String userId){
+    public void deleteUser(@PathVariable String userId) {
         log.info("[Admin Controller] received a request DELETE /admin/users/{}", userId);
         long userIdLong = Long.parseLong(userId);
         ewmUserService.deleteUser(userIdLong);

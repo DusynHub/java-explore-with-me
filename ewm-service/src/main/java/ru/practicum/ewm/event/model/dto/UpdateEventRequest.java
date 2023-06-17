@@ -10,8 +10,6 @@ import lombok.ToString;
 import ru.practicum.ewm.location.model.dto.LocationDto;
 import ru.practicum.ewm.util.annotation.EventDateValidation;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;

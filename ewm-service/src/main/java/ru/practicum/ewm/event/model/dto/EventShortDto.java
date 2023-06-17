@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.practicum.ewm.category.model.Category;
+
 import ru.practicum.ewm.category.model.dto.CategoryDto;
 import ru.practicum.ewm.user.model.dto.EwmShortUserDto;
 

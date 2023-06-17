@@ -13,9 +13,9 @@ public interface EwmUserMapper {
 
     EwmUserMapper INSTANCE = Mappers.getMapper(EwmUserMapper.class);
 
-    EwmUserDto ewmUserToEwmUserDto (EwmUser ewmUser);
+    EwmUserDto ewmUserToEwmUserDto(EwmUser ewmUser);
 
     EwmUser ewmUserDtoToEwnUserDto(EwmUserDto ewmUserDto);
 
-    EwmShortUserDto ewmUserToEwmShortUserDto (EwmUser ewmUser);
+    EwmShortUserDto ewmUserToEwmShortUserDto(EwmUser ewmUser);
 }
