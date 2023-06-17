@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import ru.practicum.ewm.location.model.dto.LocationDto;
 import ru.practicum.ewm.util.annotation.EventDateValidation;
 
@@ -19,7 +18,6 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class UpdateEventRequest {
 
     @Size(min = 20, message = "Annotation length is smaller than 20")

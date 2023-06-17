@@ -41,7 +41,7 @@ public class AdminEwmUserController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public EwmUserDto postUser(@RequestBody @Valid EwmUserDto ewmUserDto) {
-        log.info("[Admin Controller] received a request POST /admin/users with body {}", ewmUserDto.toString());
+        log.info("[Admin Controller] received a request POST /admin/users");
         return ewmUserService.saveUser(ewmUserDto);
     }
 
