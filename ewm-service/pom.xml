@@ -176,8 +176,8 @@
                     </execution>
                 </executions>
             </plugin>
-        </plugins>
 
+        </plugins>
 
         <pluginManagement>
             <plugins>

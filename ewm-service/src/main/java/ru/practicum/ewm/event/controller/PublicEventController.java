@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.event.model.dto.EventFullDto;
 import ru.practicum.ewm.event.model.dto.EventShortDto;
 import ru.practicum.ewm.event.service.EventService;
+import ru.practicum.ewm.util.DateTimeFormatProvider;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URLDecoder;
@@ -26,7 +27,8 @@ import java.util.List;
 @Validated
 public class PublicEventController {
 
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DateTimeFormatProvider.PATTERN);
 
     private final EventService eventService;
 
@@ -43,12 +45,12 @@ public class PublicEventController {
             @RequestParam(defaultValue = "10") int size,
             HttpServletRequest request) {
         log.info("[Public Event Controller] received a request GET /events");
-        log.info("client ip: {}", request.getRemoteAddr());
-        log.info("endpoint path: {}", request.getRequestURI());
+        log.debug("client ip: {}", request.getRemoteAddr());
+        log.debug("endpoint path: {}", request.getRequestURI());
 
 
-        LocalDateTime rangeStart = getLocalDateTimeFromRequestParam(rangeStartString, rangeEndString);
-        LocalDateTime rangeEnd = getLocalDateTimeFromRequestParam(rangeEndString, rangeEndString);
+        LocalDateTime rangeStart = getLocalDateTimeFromRequestParam(rangeStartString);
+        LocalDateTime rangeEnd = getLocalDateTimeFromRequestParam(rangeEndString);
 
         return eventService.getEvents(text,
                 categories,
@@ -69,19 +71,19 @@ public class PublicEventController {
             @PathVariable String eventIdString,
             HttpServletRequest request) {
         log.info("[Public Event Controller] received a request GET /events/{}", eventIdString);
-        log.info("client ip: {}", request.getRemoteAddr());
-        log.info("endpoint path: {}", request.getRequestURI());
+        log.debug("client ip: {}", request.getRemoteAddr());
+        log.debug("endpoint path: {}", request.getRequestURI());
         long eventId = Long.parseLong(eventIdString);
         return eventService.getEventById(eventId, request.getRemoteAddr(), request.getRequestURI());
     }
 
-    private LocalDateTime getLocalDateTimeFromRequestParam(String rangeStartString, String rangeEndString) {
-        LocalDateTime rangeStart = null;
-        if (rangeEndString != null) {
-            String decodedRangeStart = URLDecoder.decode(rangeStartString, StandardCharsets.UTF_8);
-            rangeStart = LocalDateTime.parse(decodedRangeStart, formatter);
+    private LocalDateTime getLocalDateTimeFromRequestParam(String dateInString) {
+        LocalDateTime localdateTime = null;
+        if (dateInString != null) {
+            String decodedRangeStart = URLDecoder.decode(dateInString, StandardCharsets.UTF_8);
+            localdateTime = LocalDateTime.parse(decodedRangeStart, formatter);
         }
-        return rangeStart;
+        return localdateTime;
     }
 }
 

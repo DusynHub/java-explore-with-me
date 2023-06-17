@@ -2,16 +2,16 @@ package ru.practicum.ewm.user.model.dto;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
-import org.mapstruct.factory.Mappers;
+import org.springframework.stereotype.Service;
 import ru.practicum.ewm.user.model.EwmUser;
 
 /**
  * Mapper for EwmUser
  */
-@Mapper(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+@Mapper(componentModel = "spring",
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+@Service
 public interface EwmUserMapper {
-
-    EwmUserMapper INSTANCE = Mappers.getMapper(EwmUserMapper.class);
 
     EwmUserDto ewmUserToEwmUserDto(EwmUser ewmUser);
 

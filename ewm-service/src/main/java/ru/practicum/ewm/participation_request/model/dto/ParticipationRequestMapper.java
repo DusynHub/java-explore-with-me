@@ -3,16 +3,17 @@ package ru.practicum.ewm.participation_request.model.dto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.NullValuePropertyMappingStrategy;
-import org.mapstruct.factory.Mappers;
+import org.springframework.stereotype.Service;
 import ru.practicum.ewm.participation_request.model.ParticipationRequest;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-@Mapper(imports = LocalDateTime.class, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+@Mapper(componentModel = "spring",
+        imports = LocalDateTime.class,
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+@Service
 public interface ParticipationRequestMapper {
-
-    ParticipationRequestMapper INSTANCE = Mappers.getMapper(ParticipationRequestMapper.class);
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 

@@ -28,14 +28,17 @@ import java.util.stream.StreamSupport;
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
+
     private final EventRepository eventRepository;
+
+    private final CategoryMapper categoryMapper;
 
     @Override
     @Transactional
     public CategoryDto saveCategory(NewCategoryDto newCategoryDto) {
         log.info("[Category Service] received an admin request to save category");
-        Category categoryToSave = CategoryMapper.INSTANCE.newCategoryDtoToCategory(newCategoryDto);
-        return CategoryMapper.INSTANCE.categoryToCategoryDto(
+        Category categoryToSave = categoryMapper.newCategoryDtoToCategory(newCategoryDto);
+        return categoryMapper.categoryToCategoryDto(
                 categoryRepository.save(categoryToSave)
         );
     }
@@ -45,8 +48,8 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDto patchCategory(long id, NewCategoryDto newCategoryDto) {
         log.info("[Category Service] received an admin request to patch category");
         Category categoryToBePatched = getCategoryByIdMandatory(id);
-        CategoryMapper.INSTANCE.newCategoryDtoToCategory(newCategoryDto, categoryToBePatched);
-        return CategoryMapper.INSTANCE.categoryToCategoryDto(
+        categoryMapper.newCategoryDtoToCategory(newCategoryDto, categoryToBePatched);
+        return categoryMapper.categoryToCategoryDto(
                 categoryRepository.save(categoryToBePatched)
         );
     }
@@ -80,14 +83,14 @@ public class CategoryServiceImpl implements CategoryService {
         OffsetPageRequest pageRequest = OffsetPageRequest.of(fromLine, size);
         return categoryRepository.findAllBy(pageRequest)
                 .stream()
-                .map(CategoryMapper.INSTANCE::categoryToCategoryDto)
+                .map(categoryMapper::categoryToCategoryDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public CategoryDto getCategory(long categoryId) {
         log.info("[Category Service] received a public request to get category with id = '{}'", categoryId);
-        return CategoryMapper.INSTANCE.categoryToCategoryDto(
+        return categoryMapper.categoryToCategoryDto(
                 getCategoryByIdMandatory(categoryId)
         );
     }
@@ -108,7 +111,7 @@ public class CategoryServiceImpl implements CategoryService {
     public List<CategoryDto> findAllById(List<Long> categoryIds) {
         return categoryRepository.findAllById(categoryIds)
                 .stream()
-                .map(CategoryMapper.INSTANCE::categoryToCategoryDto)
+                .map(categoryMapper::categoryToCategoryDto)
                 .collect(Collectors.toList());
     }
 

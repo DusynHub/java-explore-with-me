@@ -6,10 +6,10 @@ public enum State {
     PUBLISHED,
     CANCELED;
 
-    public static State getStateFromStateAction(StateAction stateAction) {
-        if (stateAction == StateAction.PUBLISH_EVENT) {
+    public static State getStateFromStateAction(String stateAction) {
+        if (stateAction.equals("PUBLISH_EVENT")) {
             return State.PUBLISHED;
-        } else if (stateAction == StateAction.SEND_TO_REVIEW) {
+        } else if (stateAction.equals("SEND_TO_REVIEW")) {
             return State.PENDING;
         } else {
             return State.CANCELED;

@@ -37,6 +37,7 @@ import ru.practicum.ewm.user.model.EwmUser;
 import ru.practicum.ewm.user.model.dto.EwmShortUserDto;
 import ru.practicum.ewm.user.model.dto.EwmUserMapper;
 import ru.practicum.ewm.user.service.EwmUserService;
+import ru.practicum.ewm.util.DateTimeFormatProvider;
 import ru.practicum.ewm.util.OffsetPageRequest;
 import ru.practicum.stats.client.StatsClient;
 
@@ -57,7 +58,7 @@ import java.util.stream.StreamSupport;
 @Transactional(readOnly = true)
 public class EventServiceImpl implements EventService {
 
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DateTimeFormatProvider.PATTERN);
 
     private final ParticipationRequestRepository participationRequestRepository;
 
@@ -68,6 +69,12 @@ public class EventServiceImpl implements EventService {
     private final EwmUserService ewmUserService;
 
     private final StatsClient statsClient;
+
+    private final EventMapper eventMapper;
+
+    private final ParticipationRequestMapper participationRequestMapper;
+
+    private final EwmUserMapper ewmUserMapper;
 
     private static final String ENDPOINT_PREFIX_TO_SAVE = "/events/";
 
@@ -80,7 +87,7 @@ public class EventServiceImpl implements EventService {
         if (newEventDto.getRequestModeration() == null) {
             newEventDto.setRequestModeration(true);
         }
-        Event eventToSave = EventMapper.INSTANCE.newEventDtoToEvent(
+        Event eventToSave = eventMapper.newEventDtoToEvent(
                 newEventDto,
                 newEventDto.getLocation(),
                 initiatorUser,
@@ -92,11 +99,11 @@ public class EventServiceImpl implements EventService {
         Event savedEvent = eventRepository.save(eventToSave);
 
         CategoryDto categoryDto = categoryService.getCategory(newEventDto.getCategory());
-        EwmShortUserDto ewmShortUserDto = EwmUserMapper.INSTANCE.ewmUserToEwmShortUserDto(
+        EwmShortUserDto ewmShortUserDto = ewmUserMapper.ewmUserToEwmShortUserDto(
                 initiatorUser
         );
 
-        return EventMapper.INSTANCE.eventToEventFullDto(
+        return eventMapper.eventToEventFullDto(
                 savedEvent,
                 categoryDto,
                 ewmShortUserDto,
@@ -206,7 +213,7 @@ public class EventServiceImpl implements EventService {
         State updatedState = eventToUpdate.getState();
         if (updateEventRequest.getStateAction() != null) {
             updatedState = State.getStateFromStateAction(
-                    StateAction.getStateAction(updateEventRequest.getStateAction()));
+                    StateAction.getStateAction(updateEventRequest.getStateAction()).name());
         }
 
         if (updatedState == State.PUBLISHED) {
@@ -220,7 +227,7 @@ public class EventServiceImpl implements EventService {
             category = categoryService.getCategoryEntity(updateEventRequest.getCategory());
         }
 
-        EventMapper.INSTANCE.updateEventAdminRequestToEvent(
+        eventMapper.updateEventAdminRequestToEvent(
                 updateEventRequest,
                 category,
                 updateEventRequest.getLocation(),
@@ -261,7 +268,7 @@ public class EventServiceImpl implements EventService {
         State updatedState = eventToUpdate.getState();
         if (updateEventRequest.getStateAction() != null) {
             updatedState = State.getStateFromStateAction(
-                    StateAction.getStateAction(updateEventRequest.getStateAction()));
+                    StateAction.getStateAction(updateEventRequest.getStateAction()).name());
         }
 
         Category category = categoryService.getCategoryEntity(eventToUpdate.getCategory().getId());
@@ -271,7 +278,7 @@ public class EventServiceImpl implements EventService {
             category = categoryService.getCategoryEntity(updateEventRequest.getCategory());
         }
 
-        EventMapper.INSTANCE.updateEventUserRequestToEvent(
+        eventMapper.updateEventUserRequestToEvent(
                 updateEventRequest,
                 category,
                 updateEventRequest.getLocation(),
@@ -370,7 +377,7 @@ public class EventServiceImpl implements EventService {
         BooleanExpression byEvent = QParticipationRequest.participationRequest.event.id.eq(eventId);
         Iterable<ParticipationRequest> iterable = participationRequestRepository.findAll(byEvent);
         return StreamSupport.stream(iterable.spliterator(), false)
-                .map(ParticipationRequestMapper.INSTANCE::participationRequestToParticipationRequestDto)
+                .map(participationRequestMapper::participationRequestToParticipationRequestDto)
                 .collect(Collectors.toList());
     }
 
@@ -408,18 +415,18 @@ public class EventServiceImpl implements EventService {
 
             if (newStatus == Status.REJECTED) {
                 participationRequest.setStatus(newStatus);
-                rejectedRequests.add(ParticipationRequestMapper.INSTANCE.participationRequestToParticipationRequestDto(
+                rejectedRequests.add(participationRequestMapper.participationRequestToParticipationRequestDto(
                         participationRequest));
             }
 
             if (newStatus == Status.CONFIRMED && confirmedRequestsCount < availableConfirmations) {
                 participationRequest.setStatus(newStatus);
                 confirmedRequestsCount++;
-                confirmedRequests.add(ParticipationRequestMapper.INSTANCE.participationRequestToParticipationRequestDto(
+                confirmedRequests.add(participationRequestMapper.participationRequestToParticipationRequestDto(
                         participationRequest));
             } else {
                 participationRequest.setStatus(Status.REJECTED);
-                rejectedRequests.add(ParticipationRequestMapper.INSTANCE.participationRequestToParticipationRequestDto(
+                rejectedRequests.add(participationRequestMapper.participationRequestToParticipationRequestDto(
                         participationRequest));
             }
         }
@@ -437,31 +444,43 @@ public class EventServiceImpl implements EventService {
     public List<EventShortDto> makeEvenShortDtoFromEventsList(List<Event> events) {
 
         List<Long> categoryIds = events.stream().map(event -> event.getCategory().getId()).collect(Collectors.toList());
-        Map<Long, CategoryDto> categoryDtos = categoryService.findAllById(categoryIds)
-                .stream()
-                .collect(Collectors.toMap(CategoryDto::getId, categoryDto -> categoryDto));
-
-        List<Long> ewmUserIds = events.stream().map(event -> event.getInitiator().getId()).collect(Collectors.toList());
-        Map<Long, EwmShortUserDto> ewmUserDtos = ewmUserService.findAllBy(ewmUserIds)
-                .stream()
-                .collect(Collectors.toMap(EwmShortUserDto::getId, ewmShortUserDto -> ewmShortUserDto));
-
-
-        List<String> endpoints = events.stream().map(event ->
-                        ENDPOINT_PREFIX_TO_SAVE +
-                                event.getId())
-                .collect(Collectors.toList());
-
-        Map<String, Long> views = getStatisticsFromStatsModule(endpoints, false);
+        Map<Long, CategoryDto> categoryDtos = getCategoriesMappedById(categoryIds);
+        List<Long> ewmUserIds = getUserIdsFromEvents(events);
+        Map<Long, EwmShortUserDto> ewmUserDtos = getUsersMappedById(ewmUserIds);
+        Map<String, Long> views = getMappedViews(events);
 
         return events.stream()
-                .map(event -> EventMapper.INSTANCE.eventToEventShortDto(event,
+                .map(event -> eventMapper.eventToEventShortDto(event,
                         categoryDtos.get(event.getCategory().getId()),
                         ewmUserDtos.get(event.getInitiator().getId()),
                         1,
                         views.getOrDefault(ENDPOINT_PREFIX_TO_SAVE +
                                 event.getId(), 0L)))
                 .collect(Collectors.toList());
+    }
+
+    private Map<String, Long> getMappedViews(List<Event> events) {
+        List<String> endpoints = events.stream().map(event ->
+                        ENDPOINT_PREFIX_TO_SAVE +
+                                event.getId())
+                .collect(Collectors.toList());
+        return getStatisticsFromStatsModule(endpoints, false);
+    }
+
+    private static List<Long> getUserIdsFromEvents(List<Event> events) {
+        return events.stream().map(event -> event.getInitiator().getId()).collect(Collectors.toList());
+    }
+
+    private Map<Long, EwmShortUserDto> getUsersMappedById(List<Long> ewmUserIds) {
+        return ewmUserService.findAllBy(ewmUserIds)
+                .stream()
+                .collect(Collectors.toMap(EwmShortUserDto::getId, ewmShortUserDto -> ewmShortUserDto));
+    }
+
+    private Map<Long, CategoryDto> getCategoriesMappedById(List<Long> categoryIds) {
+        return categoryService.findAllById(categoryIds)
+                .stream()
+                .collect(Collectors.toMap(CategoryDto::getId, categoryDto -> categoryDto));
     }
 
     private List<EventFullDto> makeEventFullDtoFromEvents(List<Event> events) {
@@ -471,20 +490,13 @@ public class EventServiceImpl implements EventService {
                 .stream()
                 .collect(Collectors.toMap(CategoryDto::getId, categoryDto -> categoryDto));
 
-        List<Long> ewmUserIds = events.stream().map(event -> event.getInitiator().getId()).collect(Collectors.toList());
-        Map<Long, EwmShortUserDto> ewmUserDtos = ewmUserService.findAllBy(ewmUserIds)
-                .stream()
-                .collect(Collectors.toMap(EwmShortUserDto::getId, ewmShortUserDto -> ewmShortUserDto));
+        List<Long> ewmUserIds = getUserIdsFromEvents(events);
+        Map<Long, EwmShortUserDto> ewmUserDtos = getUsersMappedById(ewmUserIds);
 
-        List<String> endpoints = events.stream().map(event ->
-                        ENDPOINT_PREFIX_TO_SAVE +
-                                event.getId())
-                .collect(Collectors.toList());
-
-        Map<String, Long> views = getStatisticsFromStatsModule(endpoints, false);
+        Map<String, Long> views = getMappedViews(events);
 
         return events.stream()
-                .map(event -> EventMapper.INSTANCE.eventToEventFullDto(event,
+                .map(event -> eventMapper.eventToEventFullDto(event,
                         categoryDtos.get(event.getCategory().getId()),
                         ewmUserDtos.get(event.getInitiator().getId()),
                         LocationDto.builder().lat(event.getLat()).lon(event.getLon()).build(),
@@ -500,7 +512,7 @@ public class EventServiceImpl implements EventService {
     private EventFullDto makeEventFullDtoFromEvent(Event singleEvent) {
 
         CategoryDto categoryDto = categoryService.getCategory(singleEvent.getCategory().getId());
-        EwmShortUserDto ewmShortUserDto = EwmUserMapper.INSTANCE.ewmUserToEwmShortUserDto(
+        EwmShortUserDto ewmShortUserDto = ewmUserMapper.ewmUserToEwmShortUserDto(
                 ewmUserService.getEwmUserEntityById(singleEvent.getInitiator().getId())
         );
 
@@ -508,7 +520,7 @@ public class EventServiceImpl implements EventService {
                 List.of(ENDPOINT_PREFIX_TO_SAVE + singleEvent.getId()),
                 true);
 
-        return EventMapper.INSTANCE.eventToEventFullDto(singleEvent,
+        return eventMapper.eventToEventFullDto(singleEvent,
                 categoryDto,
                 ewmShortUserDto,
                 LocationDto.builder()

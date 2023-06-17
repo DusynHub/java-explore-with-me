@@ -4,7 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
-import org.mapstruct.factory.Mappers;
+import org.springframework.stereotype.Service;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.category.model.dto.CategoryDto;
 import ru.practicum.ewm.enums.State;
@@ -12,6 +12,7 @@ import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.location.model.dto.LocationDto;
 import ru.practicum.ewm.user.model.EwmUser;
 import ru.practicum.ewm.user.model.dto.EwmShortUserDto;
+import ru.practicum.ewm.util.DateTimeFormatProvider;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -19,12 +20,13 @@ import java.time.format.DateTimeFormatter;
 /**
  * Mapper for Event
  */
-@Mapper(imports = LocalDateTime.class, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+@Mapper(componentModel = "spring",
+        imports = LocalDateTime.class,
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+@Service
 public interface EventMapper {
 
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-    EventMapper INSTANCE = Mappers.getMapper(EventMapper.class);
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DateTimeFormatProvider.PATTERN);
 
     @Mapping(target = "views", ignore = true)
     @Mapping(target = "state", ignore = true)

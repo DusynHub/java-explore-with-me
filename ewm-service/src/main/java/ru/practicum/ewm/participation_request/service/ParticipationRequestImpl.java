@@ -36,6 +36,8 @@ public class ParticipationRequestImpl implements ParticipationRequestService {
 
     private final ParticipationRequestRepository participationRequestRepository;
 
+    private final ParticipationRequestMapper participationRequestMapper;
+
     @Override
     @Transactional
     public ParticipationRequestDto postRequest(long userId, long eventId) {
@@ -78,7 +80,7 @@ public class ParticipationRequestImpl implements ParticipationRequestService {
                 .created(LocalDateTime.now())
                 .build();
 
-        return ParticipationRequestMapper.INSTANCE.participationRequestToParticipationRequestDto(
+        return participationRequestMapper.participationRequestToParticipationRequestDto(
                 participationRequestRepository.save(requestToSave)
         );
     }
@@ -109,7 +111,7 @@ public class ParticipationRequestImpl implements ParticipationRequestService {
 
         participationRequestToCancel.setStatus(Status.CANCELED);
 
-        return ParticipationRequestMapper.INSTANCE.participationRequestToParticipationRequestDto(
+        return participationRequestMapper.participationRequestToParticipationRequestDto(
                 participationRequestRepository.save(participationRequestToCancel)
         );
     }
@@ -123,7 +125,7 @@ public class ParticipationRequestImpl implements ParticipationRequestService {
         BooleanExpression findByRequesterId = QParticipationRequest.participationRequest.requester.id.eq(userId);
         Iterable<ParticipationRequest> iterable = participationRequestRepository.findAll(findByRequesterId);
         return StreamSupport.stream(iterable.spliterator(), false)
-                .map(ParticipationRequestMapper.INSTANCE::participationRequestToParticipationRequestDto)
+                .map(participationRequestMapper::participationRequestToParticipationRequestDto)
                 .collect(Collectors.toList());
     }
 }

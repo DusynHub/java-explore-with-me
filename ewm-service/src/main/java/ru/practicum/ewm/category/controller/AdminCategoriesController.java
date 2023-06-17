@@ -39,7 +39,7 @@ public class AdminCategoriesController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    CategoryDto postCategory(@RequestBody @Valid NewCategoryDto newCategoryDto) {
+    public CategoryDto postCategory(@RequestBody @Valid NewCategoryDto newCategoryDto) {
         log.info("[Admin Controller] received a request POST /admin/categories with name {}",
                 newCategoryDto.getName());
         return categoryService.saveCategory(newCategoryDto);
@@ -52,7 +52,7 @@ public class AdminCategoriesController {
      */
     @DeleteMapping("/{categoryId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void deleteCategory(@PathVariable @Positive String categoryId) {
+    public void deleteCategory(@PathVariable @Positive String categoryId) {
         log.info("[Admin Controller] received a request DELETE /admin/categories/{}", categoryId);
         long categoryIdLong = Long.parseLong(categoryId);
         categoryService.deleteCategory(categoryIdLong);
@@ -66,7 +66,7 @@ public class AdminCategoriesController {
      * @return category with changed name
      */
     @PatchMapping("/{categoryId}")
-    CategoryDto patchCategory(
+    public CategoryDto patchCategory(
             @PathVariable String categoryId,
             @RequestBody(required = false) @Valid NewCategoryDto newCategoryDto) {
         log.info("[Admin Controller] received a request PATCH /admin/categories/{}", categoryId);

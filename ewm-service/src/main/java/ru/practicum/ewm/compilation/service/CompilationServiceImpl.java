@@ -39,6 +39,8 @@ public class CompilationServiceImpl implements CompilationService {
 
     private final CompilationRepository compilationRepository;
 
+    private final CompilationMapper compilationMapper;
+
     @Override
     @Transactional
     public CompilationDto postCompilation(NewCompilationDto newCompilationDto) {
@@ -56,7 +58,7 @@ public class CompilationServiceImpl implements CompilationService {
         Set<Event> eventsSetToCompilation = new HashSet<>(
                 eventsToCompilation);
 
-        Compilation compilationToSave = CompilationMapper.INSTANCE.newCompilationDtoToCompilation(
+        Compilation compilationToSave = compilationMapper.newCompilationDtoToCompilation(
                 newCompilationDto,
                 eventsSetToCompilation);
 
@@ -67,7 +69,7 @@ public class CompilationServiceImpl implements CompilationService {
 
         Compilation savedCompilation = compilationRepository.save(compilationToSave);
 
-        return CompilationMapper.INSTANCE.compilationToCompilationDto(
+        return compilationMapper.compilationToCompilationDto(
                 savedCompilation, shortEvents);
     }
 
@@ -100,7 +102,7 @@ public class CompilationServiceImpl implements CompilationService {
             newEventsInList = new ArrayList<>(compilationToBePatched.getEvents());
         }
 
-        CompilationMapper.INSTANCE.patchCompilationDtoToCompilation(
+        compilationMapper.patchCompilationDtoToCompilation(
                 patchCompilationDto,
                 newEventSetToCompilation,
                 compilationToBePatched);
@@ -108,7 +110,7 @@ public class CompilationServiceImpl implements CompilationService {
         Compilation pathchedCompilation = compilationRepository.save(compilationToBePatched);
         List<EventShortDto> shortEvents = eventService.makeEvenShortDtoFromEventsList(newEventsInList);
 
-        return CompilationMapper.INSTANCE.compilationToCompilationDto(
+        return compilationMapper.compilationToCompilationDto(
                 pathchedCompilation, shortEvents);
     }
 
@@ -131,7 +133,7 @@ public class CompilationServiceImpl implements CompilationService {
                         comp -> eventService
                                 .makeEvenShortDtoFromEventsList(new ArrayList<>(comp.getEvents()))));
         return requiredCompilations.stream().map(comp ->
-                        CompilationMapper.INSTANCE
+                        compilationMapper
                                 .compilationToCompilationDto(comp, shortEventsToCompilation.get(comp.getId())))
                 .collect(Collectors.toList());
     }
@@ -149,7 +151,7 @@ public class CompilationServiceImpl implements CompilationService {
                 .sorted(Comparator.comparing(EventShortDto::getId))
                 .collect(Collectors.toList());
 
-        return CompilationMapper.INSTANCE.compilationToCompilationDto(
+        return compilationMapper.compilationToCompilationDto(
                 requiredCompilation,
                 shortEvents
         );

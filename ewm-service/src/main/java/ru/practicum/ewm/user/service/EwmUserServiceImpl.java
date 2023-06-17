@@ -24,6 +24,8 @@ public class EwmUserServiceImpl implements EwmUserService {
 
     private final EwmUserRepository ewmUserRepository;
 
+    private final EwmUserMapper ewmUserMapper;
+
     @Override
     public EwmUser getEwmUserEntityById(long ewmUserId) {
         return ewmUserRepository.findById(ewmUserId).orElseThrow(() ->
@@ -46,7 +48,7 @@ public class EwmUserServiceImpl implements EwmUserService {
         log.info("[Ewm Service] received a request to get all users");
         if (ewmUserIds != null) {
             return ewmUserRepository.findAllByIdIn(ewmUserIds).stream()
-                    .map(EwmUserMapper.INSTANCE::ewmUserToEwmUserDto)
+                    .map(ewmUserMapper::ewmUserToEwmUserDto)
                     .collect(Collectors.toList());
         } else {
             OffsetPageRequest pageRequest = OffsetPageRequest.of(from,
@@ -54,7 +56,7 @@ public class EwmUserServiceImpl implements EwmUserService {
                     Sort.by(Sort.Direction.ASC, "id")
             );
             return ewmUserRepository.findAllBy(pageRequest).stream()
-                    .map(EwmUserMapper.INSTANCE::ewmUserToEwmUserDto)
+                    .map(ewmUserMapper::ewmUserToEwmUserDto)
                     .collect(Collectors.toList());
         }
     }
@@ -63,9 +65,9 @@ public class EwmUserServiceImpl implements EwmUserService {
     @Transactional
     public EwmUserDto saveUser(EwmUserDto ewmUserDto) {
         log.info("[Service] received a request to save user");
-        return EwmUserMapper.INSTANCE.ewmUserToEwmUserDto(
+        return ewmUserMapper.ewmUserToEwmUserDto(
             ewmUserRepository.save(
-                    EwmUserMapper.INSTANCE.ewmUserDtoToEwnUserDto(ewmUserDto)
+                    ewmUserMapper.ewmUserDtoToEwnUserDto(ewmUserDto)
             )
         );
     }
@@ -86,7 +88,7 @@ public class EwmUserServiceImpl implements EwmUserService {
     public List<EwmShortUserDto> findAllBy(List<Long> userIds) {
         return ewmUserRepository.findAllById(userIds)
                 .stream()
-                .map(EwmUserMapper.INSTANCE::ewmUserToEwmShortUserDto)
+                .map(ewmUserMapper::ewmUserToEwmShortUserDto)
                 .collect(Collectors.toList());
     }
 }
