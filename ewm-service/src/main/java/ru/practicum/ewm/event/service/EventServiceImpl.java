@@ -212,8 +212,7 @@ public class EventServiceImpl implements EventService {
 
         State updatedState = eventToUpdate.getState();
         if (updateEventRequest.getStateAction() != null) {
-            updatedState = State.getStateFromStateAction(
-                    StateAction.getStateAction(updateEventRequest.getStateAction()).name());
+            updatedState = StateAction.getStateAction(updateEventRequest.getStateAction()).getState();
         }
 
         if (updatedState == State.PUBLISHED) {
@@ -267,8 +266,7 @@ public class EventServiceImpl implements EventService {
 
         State updatedState = eventToUpdate.getState();
         if (updateEventRequest.getStateAction() != null) {
-            updatedState = State.getStateFromStateAction(
-                    StateAction.getStateAction(updateEventRequest.getStateAction()).name());
+            updatedState = StateAction.getStateAction(updateEventRequest.getStateAction()).getState();
         }
 
         Category category = categoryService.getCategoryEntity(eventToUpdate.getCategory().getId());

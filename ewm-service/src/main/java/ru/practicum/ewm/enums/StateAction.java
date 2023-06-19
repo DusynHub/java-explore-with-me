@@ -2,10 +2,20 @@ package ru.practicum.ewm.enums;
 
 public enum StateAction {
 
-    PUBLISH_EVENT,
-    REJECT_EVENT,
-    CANCEL_REVIEW,
-    SEND_TO_REVIEW;
+    PUBLISH_EVENT(State.PUBLISHED),
+    REJECT_EVENT(State.CANCELED),
+    CANCEL_REVIEW(State.CANCELED),
+    SEND_TO_REVIEW(State.PENDING);
+
+    private final State state;
+
+    StateAction(State state) {
+        this.state = state;
+    }
+
+    public State getState() {
+        return state;
+    }
 
     public static StateAction getStateAction(String potentialStateAction) {
         try {
