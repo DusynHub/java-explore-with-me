@@ -21,12 +21,22 @@ public interface EwmUserService {
     EwmUser getEwmUserEntityById(long ewmUserId);
 
     /**
-     * Method to get  user Proxy by id
+     * Method to get  user proxy by id
      *
      * @param ewmUserId  user id
-     * @return required user id
+     * @return required user proxy
      */
     EwmUser getEwmUserProxyById(long ewmUserId);
+
+
+    /**
+     * Method to check user existence by id
+     *
+     * @param userId potentially existed user
+     * @return information about user existence
+     */
+    boolean checkUserExistence(long userId);
+
 
     /**
      * Method to get all users

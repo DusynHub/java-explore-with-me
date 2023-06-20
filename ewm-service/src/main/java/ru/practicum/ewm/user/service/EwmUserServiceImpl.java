@@ -28,6 +28,7 @@ public class EwmUserServiceImpl implements EwmUserService {
 
     @Override
     public EwmUser getEwmUserEntityById(long ewmUserId) {
+        log.info("[Ewm Service] received a request to get user entity");
         return ewmUserRepository.findById(ewmUserId).orElseThrow(() ->
             new ResourceNotFoundException(
                     String.format("User with id = '%d' not found", ewmUserId)
@@ -42,10 +43,16 @@ public class EwmUserServiceImpl implements EwmUserService {
     }
 
     @Override
+    public boolean checkUserExistence(long userId) {
+        log.info("[Ewm Service] received a request to check user existence by id");
+        return ewmUserRepository.existsById(userId);
+    }
+
+    @Override
     public List<EwmUserDto> getAllUsersOrUsersByIds(List<Long> ewmUserIds,
                                                     Integer from,
                                                     Integer size) {
-        log.info("[Ewm Service] received a request to get all users");
+        log.info("[Ewm User Service] received a request to get all users");
         if (ewmUserIds != null) {
             return ewmUserRepository.findAllByIdIn(ewmUserIds).stream()
                     .map(ewmUserMapper::ewmUserToEwmUserDto)
@@ -64,7 +71,7 @@ public class EwmUserServiceImpl implements EwmUserService {
     @Override
     @Transactional
     public EwmUserDto saveUser(EwmUserDto ewmUserDto) {
-        log.info("[Service] received a request to save user");
+        log.info("[Ewm User Service] received an admin request to save user");
         return ewmUserMapper.ewmUserToEwmUserDto(
             ewmUserRepository.save(
                     ewmUserMapper.ewmUserDtoToEwnUserDto(ewmUserDto)
@@ -75,7 +82,7 @@ public class EwmUserServiceImpl implements EwmUserService {
     @Override
     @Transactional
     public void deleteUser(long userId) {
-        log.info("[Service] received a request to delete user with id = '{}'", userId);
+        log.info("[Ewm User Service] received an admin request to delete user with id = '{}'", userId);
         if (!ewmUserRepository.existsById(userId)) {
             throw new ResourceNotFoundException(
                     String.format("User with id = '%d' not found", userId)
@@ -86,6 +93,7 @@ public class EwmUserServiceImpl implements EwmUserService {
 
     @Override
     public List<EwmShortUserDto> findAllBy(List<Long> userIds) {
+        log.info("[Ewm User Service] received a request to find users by ids'");
         return ewmUserRepository.findAllById(userIds)
                 .stream()
                 .map(ewmUserMapper::ewmUserToEwmShortUserDto)

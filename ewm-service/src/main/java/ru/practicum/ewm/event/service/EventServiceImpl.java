@@ -135,8 +135,10 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDto getUserEventById(long userId, long eventId) {
-        log.info("[Event Service] received a private request to get user event by id");
-        Event requiredEvent = getEventEntityById(eventId);
+        log.info("[Event Service] received a private request to get user with id = '{}' event by id = '{}'",
+                userId,
+                eventId);
+        Event requiredEvent = getEventEntityByIdMandatory(eventId);
 
         if (requiredEvent.getInitiator().getId() != userId) {
             throw new ResourceNotAvailableException(
@@ -195,7 +197,7 @@ public class EventServiceImpl implements EventService {
                                                  UpdateEventRequest updateEventRequest) {
         log.info("[Event Service] received an admin request to patch event by id = '{}'", eventId);
         checkEventExistenceById(eventId);
-        Event eventToUpdate = getEventEntityById(eventId);
+        Event eventToUpdate = getEventEntityByIdMandatory(eventId);
 
         if (updateEventRequest.getEventDate() != null) {
             LocalDateTime newDate = updateEventRequest.getEventDate();
@@ -243,7 +245,7 @@ public class EventServiceImpl implements EventService {
                                                 UpdateEventRequest updateEventRequest) {
         log.info("[Event Service] received an private request from user with id = '{}'to patch event by id = '{}'", userId, eventId);
         checkEventExistenceById(eventId);
-        Event eventToUpdate = getEventEntityById(eventId);
+        Event eventToUpdate = getEventEntityByIdMandatory(eventId);
 
         if (updateEventRequest.getEventDate() != null) {
             LocalDateTime newDate = updateEventRequest.getEventDate();
@@ -343,9 +345,8 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDto getEventById(long eventId, String clientIp, String endpointPath) {
-        log.info("[Event Service] received a public request to get event by id");
-
-        Event requiredEvent = getEventEntityById(eventId);
+        log.info("[Event Service] received a public request to get event with id = {}", eventId);
+        Event requiredEvent = getEventEntityByIdMandatory(eventId);
 
         if (requiredEvent.getState() != State.PUBLISHED) {
             throw new ResourceNotFoundException(
@@ -354,16 +355,23 @@ public class EventServiceImpl implements EventService {
         }
 
         statsClient.postStat("ewv-service", endpointPath, clientIp, LocalDateTime.now().format(formatter));
+        log.info("[Event Service] request has sent to save statistics to endpoint = {}", endpointPath);
         return makeEventFullDtoFromEvent(requiredEvent);
-
     }
 
     @Override
-    public Event getEventEntityById(long eventId) {
+    public Event getEventEntityByIdMandatory(long eventId) {
+        log.info("[Event Service] received a request to get event entity with id = {}", eventId);
         return eventRepository.findById(eventId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
                                 String.format("Event with id = '%d' not found", eventId)));
+    }
+
+    @Override
+    public Event getEventProxyById(long eventId) {
+        log.info("[Event Service] received a request to get event proxy with id = {}", eventId);
+        return eventRepository.getReferenceById(eventId);
     }
 
     @Override
@@ -388,7 +396,7 @@ public class EventServiceImpl implements EventService {
         log.info("[Event Service] received private request PATCH /users/{}/events/{}/requests",
                 userId,
                 eventId);
-        Event requiredEvent = getEventEntityById(eventId);
+        Event requiredEvent = getEventEntityByIdMandatory(eventId);
         Status newStatus = changeStatusRequest.getStatus();
 
         List<ParticipationRequest> pendingRequests
@@ -433,14 +441,14 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<Event> getEventsById(Set<Long> eventIds) {
+    public List<Event> getEventsEntityByIds(Set<Long> eventIds) {
         log.info("[Event Service] received a request to get event entities by ids");
         return eventRepository.findAllById(eventIds);
     }
 
     @Override
     public List<EventShortDto> makeEvenShortDtoFromEventsList(List<Event> events) {
-
+        log.info("[Event Service] received a request to make List<EvenShortDto> from List<Event>");
         List<Long> categoryIds = events.stream().map(event -> event.getCategory().getId()).collect(Collectors.toList());
         Map<Long, CategoryDto> categoryDtos = getCategoriesMappedById(categoryIds);
         List<Long> ewmUserIds = getUserIdsFromEvents(events);
@@ -456,6 +464,7 @@ public class EventServiceImpl implements EventService {
                                 event.getId(), 0L)))
                 .collect(Collectors.toList());
     }
+
 
     private Map<String, Long> getMappedViews(List<Event> events) {
         List<String> endpoints = events.stream().map(event ->
