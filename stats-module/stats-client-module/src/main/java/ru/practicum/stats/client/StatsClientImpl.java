@@ -1,5 +1,8 @@
 package ru.practicum.stats.client;
 
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -16,27 +19,27 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
-public class StatsServiceImpl implements StatsClient {
+@PropertySource(value = "classpath:stats-application.properties")
+public class StatsClientImpl implements StatsClient {
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private final WebClient webClient;
 
-    public StatsServiceImpl(String baseUrl) {
+    public StatsClientImpl(@Value("${stats-server.url}") String serverUrl) {
         webClient = WebClient.builder()
-                .baseUrl(baseUrl)
+                .baseUrl(serverUrl)
                 .build();
     }
 
     @Override
     public ResponseEntity<List<ViewStatsDto>> getStat(String start, String end, List<String> uri, boolean unique) {
-
         return webClient.get()
                 .uri(UriComponentsBuilder
                         .fromUriString("/stats")
                         .queryParam("start", start)
                         .queryParam("end", end)
-                        .queryParam("uri", uri)
+                        .queryParam("uris", uri)
                         .queryParam("unique", unique)
                         .build().encode().toUriString())
                 .retrieve()
@@ -46,7 +49,6 @@ public class StatsServiceImpl implements StatsClient {
 
     @Override
     public ResponseEntity<EndpointHitDto> postStat(String app, String uri, String ip, String timestamp) {
-
         String decodedDate = URLDecoder.decode(timestamp, StandardCharsets.UTF_8);
 
         EndpointHitDto endpointHitDto = EndpointHitDto.builder()

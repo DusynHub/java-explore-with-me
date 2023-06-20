@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS endpoint_hit
     uri       VARCHAR(500)                            NOT NULL,
     ip        VARCHAR(50)                             NOT NULL,
     timestamp TIMESTAMP WITHOUT TIME ZONE             NOT NULL,
-    CONSTRAINT pk_comment PRIMARY KEY (id)
+    CONSTRAINT pk_endpoint_hit PRIMARY KEY (id)
 );
 
 CREATE INDEX endpoint_hit_stats_uri ON endpoint_hit (uri);
