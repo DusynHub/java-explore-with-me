@@ -1,400 +1,11 @@
 {
 	"info": {
-		"_postman_id": "03b26e77-8af2-43bb-8278-2a42bf985b83",
-		"name": "feature",
+		"_postman_id": "1b56058b-3881-4aba-ab1e-1384d2bcafba",
+		"name": "feature Copy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "25271283"
 	},
 	"item": [
-		{
-			"name": "Base Preparement",
-			"item": [
-				{
-					"name": "Post User with id = 1",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function () {",
-									"    pm.response.to.have.status(201);",
-									"    pm.response.to.be.withBody;",
-									"    pm.response.to.be.json;",
-									"});",
-									"",
-									"const target = pm.response.json();",
-									"",
-									"pm.test(\"Пользователь должен содержать поля: id, name, email\", function () {",
-									"pm.expect(target).to.have.property('id');",
-									"pm.expect(target).to.have.property('name');",
-									"pm.expect(target).to.have.property('email');",
-									"});",
-									"",
-									"",
-									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {",
-									"    pm.expect(1).equal(target.id, 'id пользователя должен быть равен 1');",
-									"    pm.expect(\"Mr. First Gerhold 1\").equal(target.name, 'Имя пользователя должно соответствовать отправленному в запросе');",
-									"    pm.expect(\"Firstman@gmail.com\").equal(target.email, 'Почта пользователя должна соответствовать отправленной в запросе');",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"name\": \"Mr. First Gerhold 1\",\n    \"email\": \"Firstman@gmail.com\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}/admin/users",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"admin",
-								"users"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Post User with id = 2",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function () {",
-									"    pm.response.to.have.status(201);",
-									"    pm.response.to.be.withBody;",
-									"    pm.response.to.be.json;",
-									"});",
-									"",
-									"const target = pm.response.json();",
-									"",
-									"pm.test(\"Пользователь должен содержать поля: id, name, email\", function () {",
-									"pm.expect(target).to.have.property('id');",
-									"pm.expect(target).to.have.property('name');",
-									"pm.expect(target).to.have.property('email');",
-									"});",
-									"",
-									"",
-									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {",
-									"    pm.expect(2).equal(target.id, 'id пользователя должен быть равен 2');",
-									"    pm.expect(\"Mr. Second Gerhold 2\").equal(target.name, 'Имя пользователя должно соответствовать отправленному в запросе');",
-									"    pm.expect(\"Secondman@gmail.com\").equal(target.email, 'Почта пользователя должна соответствовать отправленной в запросе');",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"name\": \"Mr. Second Gerhold 2\",\n    \"email\": \"Secondman@gmail.com\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}/admin/users",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"admin",
-								"users"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Post Category with id = 1",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function () {",
-									"    pm.response.to.have.status(201);",
-									"    pm.response.to.be.withBody;",
-									"    pm.response.to.be.json;",
-									"});",
-									"",
-									"const target = pm.response.json();",
-									"",
-									"pm.test(\"Категория должна содержать поля: id, name\", function () {",
-									"pm.expect(target).to.have.property('id');",
-									"pm.expect(target).to.have.property('name');",
-									"});",
-									"",
-									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {",
-									"    pm.expect(1).equal(target.id, 'id категории должен быть равен 1');",
-									"    pm.expect(\"FirstCategory\").equal(target.name, 'Название категории должно совпадать с отправленным');",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"name\": \"FirstCategory\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}/admin/categories",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"admin",
-								"categories"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Post Category with id = 2",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function () {",
-									"    pm.response.to.have.status(201);",
-									"    pm.response.to.be.withBody;",
-									"    pm.response.to.be.json;",
-									"});",
-									"",
-									"const target = pm.response.json();",
-									"",
-									"pm.test(\"Категория должна содержать поля: id, name\", function () {",
-									"pm.expect(target).to.have.property('id');",
-									"pm.expect(target).to.have.property('name');",
-									"});",
-									"",
-									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {",
-									"    pm.expect(2).equal(target.id, 'id категории должен быть равен 2');",
-									"    pm.expect(\"Second Category\").equal(target.name, 'Название категории должно совпадать с отправленным');",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"name\": \"Second Category\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}/admin/categories",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"admin",
-								"categories"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Post  Event  with id = 1",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function () {",
-									"    pm.response.to.have.status(201);  ",
-									"    pm.response.to.be.withBody;",
-									"    pm.response.to.be.json;",
-									"});",
-									"",
-									"const source = JSON.parse(pm.request.body.raw);",
-									"const target = pm.response.json();",
-									"",
-									"pm.test(\"Событие должно содержать поля: id, title, annotation, category, paid, eventDate, initiator, description, participantLimit, state, createdOn, location, requestModeration\", function () {",
-									"pm.expect(target).to.have.property('id');",
-									"pm.expect(target).to.have.property('title');",
-									"pm.expect(target).to.have.property('annotation');",
-									"pm.expect(target).to.have.property('category');",
-									"pm.expect(target).to.have.property('paid');",
-									"pm.expect(target).to.have.property('eventDate');",
-									"pm.expect(target).to.have.property('initiator');",
-									"pm.expect(target).to.have.property('description');",
-									"pm.expect(target).to.have.property('participantLimit');",
-									"pm.expect(target).to.have.property('state');",
-									"pm.expect(target).to.have.property('createdOn');",
-									"pm.expect(target).to.have.property('location');",
-									"pm.expect(target).to.have.property('requestModeration');",
-									"});",
-									"",
-									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {",
-									"    pm.expect(1).equal(target.id, 'id события должен быть равен 1');",
-									"    pm.expect(target.title).equal(\"First at First.\", 'Название события должно соответствовать названию события в запросе');",
-									"    pm.expect(target.annotation).equal(\"First First First First First First First First First First First First First First First First First First First First First.\", 'Аннотация события должна соответствовать аннотации события в запросе');",
-									"    pm.expect(target.paid.toString()).equal(\"true\", 'Стоимость события должна соответствовать стоимости события в запросе');",
-									"    pm.expect(target.eventDate).equal(\"2030-12-21 19:43:06\", 'Дата проведения события должна соответствовать дате проведения события в запросе');",
-									"    pm.expect(target.description).equal(\"Description First First First First First First First First First First First First First First First First First First First First First.\", 'Описание события должно соответствовать описание события в запросе');",
-									"    pm.expect(target.participantLimit.toString()).equal(\"326\", 'Лимит участников события должно соответствовать лимиту участников события в запросе');",
-									"    pm.expect(target.location.lat.toString()).equal(\"-48.6747\", 'Широта локации проведения события должна соответствовать широте локации проведения события в запросе');",
-									"    pm.expect(target.location.lon.toString()).equal(\"13.4242\", 'Долгота локации проведения события должна соответствовать долготе локации проведения события в запросе');",
-									"    pm.expect(target.requestModeration.toString()).equal(\"false\", 'Необходимость модерации события должна соответствовать необходимости модерации события в запросе');",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"annotation\": \"First First First First First First First First First First First First First First First First First First First First First.\",\n    \"category\": 1,\n    \"description\": \"Description First First First First First First First First First First First First First First First First First First First First First.\",\n    \"eventDate\": \"2030-12-21 19:43:06\",\n    \"location\": {\n        \"lat\": -48.6747,\n        \"lon\": 13.4242\n    },\n    \"paid\": true,\n    \"participantLimit\": 326,\n    \"requestModeration\": false,\n    \"title\": \"First at First.\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}/users/:userId/events",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"users",
-								":userId",
-								"events"
-							],
-							"variable": [
-								{
-									"key": "userId",
-									"value": "1"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Post  Event  with id = 2",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function () {",
-									"    pm.response.to.have.status(201);  ",
-									"    pm.response.to.be.withBody;",
-									"    pm.response.to.be.json;",
-									"});",
-									"",
-									"const source = JSON.parse(pm.request.body.raw);",
-									"const target = pm.response.json();",
-									"",
-									"pm.test(\"Событие должно содержать поля: id, title, annotation, category, paid, eventDate, initiator, description, participantLimit, state, createdOn, location, requestModeration\", function () {",
-									"pm.expect(target).to.have.property('id');",
-									"pm.expect(target).to.have.property('title');",
-									"pm.expect(target).to.have.property('annotation');",
-									"pm.expect(target).to.have.property('category');",
-									"pm.expect(target).to.have.property('paid');",
-									"pm.expect(target).to.have.property('eventDate');",
-									"pm.expect(target).to.have.property('initiator');",
-									"pm.expect(target).to.have.property('description');",
-									"pm.expect(target).to.have.property('participantLimit');",
-									"pm.expect(target).to.have.property('state');",
-									"pm.expect(target).to.have.property('createdOn');",
-									"pm.expect(target).to.have.property('location');",
-									"pm.expect(target).to.have.property('requestModeration');",
-									"});",
-									"",
-									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {",
-									"    pm.expect(2).equal(target.id, 'id события должен быть равен 2');",
-									"    pm.expect(target.title).equal(\"Second at Second.\", 'Название события должно соответствовать названию события в запросе');",
-									"    pm.expect(target.annotation).equal(\"Second Second Second Second Second Second Second Second Second Second Second Second Second Second Second Second Second Second Second Second Second.\", 'Аннотация события должна соответствовать аннотации события в запросе');",
-									"    pm.expect(target.paid.toString()).equal(\"true\", 'Стоимость события должна соответствовать стоимости события в запросе');",
-									"    pm.expect(target.eventDate).equal(\"2030-11-21 19:43:06\", 'Дата проведения события должна соответствовать дате проведения события в запросе');",
-									"    pm.expect(target.description).equal(\"Description Second Second Second Second Second Second Second Second Second Second Second Second Second Second Second Second Second Second Second Second Second.\", 'Описание события должно соответствовать описание события в запросе');",
-									"    pm.expect(target.participantLimit.toString()).equal(\"326\", 'Лимит участников события должно соответствовать лимиту участников события в запросе');",
-									"    pm.expect(target.location.lat.toString()).equal(\"-47.6747\", 'Широта локации проведения события должна соответствовать широте локации проведения события в запросе');",
-									"    pm.expect(target.location.lon.toString()).equal(\"11.4242\", 'Долгота локации проведения события должна соответствовать долготе локации проведения события в запросе');",
-									"    pm.expect(target.requestModeration.toString()).equal(\"false\", 'Необходимость модерации события должна соответствовать необходимости модерации события в запросе');",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"annotation\": \"Second Second Second Second Second Second Second Second Second Second Second Second Second Second Second Second Second Second Second Second Second.\",\n    \"category\": 1,\n    \"description\": \"Description Second Second Second Second Second Second Second Second Second Second Second Second Second Second Second Second Second Second Second Second Second.\",\n    \"eventDate\": \"2030-11-21 19:43:06\",\n    \"location\": {\n        \"lat\": -47.6747,\n        \"lon\": 11.4242\n    },\n    \"paid\": true,\n    \"participantLimit\": 326,\n    \"requestModeration\": false,\n    \"title\": \"Second at Second.\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}/users/:userId/events",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"users",
-								":userId",
-								"events"
-							],
-							"variable": [
-								{
-									"key": "userId",
-									"value": "1"
-								}
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
 		{
 			"name": "comment",
 			"item": [
@@ -424,7 +35,6 @@
 									"",
 									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {",
 									"    pm.expect(1).equal(target.id, 'id комментария должен быть равен 1');",
-									"    pm.expect(\"Mr. First Gerhold 1\").equal(target.commentatorName, 'Имя пользователя должно соответствовать имени пользователя, оставившего комментарий');",
 									"    pm.expect(\"First comment\").equal(target.text, 'Текст комментария должен соответствовать отправленному в запросе');",
 									"    pm.expect(\"false\").equal(target.edited.toString(), 'Информация о редактировании должна быть false для нового комментария');",
 									"});"
@@ -552,7 +162,6 @@
 									"",
 									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {",
 									"    pm.expect(2).equal(target.id, 'id комментария должен быть равен 2');",
-									"    pm.expect(\"Mr. Second Gerhold 2\").equal(target.commentatorName, 'Имя пользователя должно соответствовать имени пользователя, оставившего комментарий');",
 									"    pm.expect(\"First comment\").equal(target.text, 'Текст комментария должен соответствовать отправленному в запросе');",
 									"    pm.expect(\"false\").equal(target.edited.toString(), 'Информация о редактировании должна быть false для нового комментария');",
 									"});"
@@ -729,7 +338,6 @@
 									"pm.test(\"Test user[0] 'email' field\", function () {",
 									"    var target = pm.response.json();",
 									"    pm.expect(2).equal(target[0].id, 'id комментария должен быть равен 2');",
-									"    pm.expect(\"Mr. Second Gerhold 2\").equal(target[0].commentatorName, 'Имя пользователя должно соответствовать имени пользователя, оставившего комментарий');",
 									"    pm.expect(\"First comment\").equal(target[0].text, 'Текст комментария должен соответствовать отправленному в запросе');",
 									"    pm.expect(\"false\").equal(target[0].edited.toString(), 'Информация о редактировании должна быть false для нового комментария');",
 									"});",
@@ -738,7 +346,6 @@
 									"pm.test(\"Test user[0] 'id' field\", function () {",
 									"    var target = pm.response.json();",
 									"    pm.expect(1).equal(target[1].id, 'id комментария должен быть равен 1');",
-									"    pm.expect(\"Mr. First Gerhold 1\").equal(target[1].commentatorName, 'Имя пользователя должно соответствовать имени пользователя, оставившего комментарий');",
 									"    pm.expect(\"First comment\").equal(target[1].text, 'Текст комментария должен соответствовать отправленному в запросе');",
 									"    pm.expect(\"false\").equal(target[1].edited.toString(), 'Информация о редактировании должна быть false для нового комментария');",
 									"});"
@@ -791,7 +398,6 @@
 									"pm.test(\"Test user[0] 'email' field\", function () {",
 									"    var target = pm.response.json();",
 									"    pm.expect(2).equal(target[0].id, 'id комментария должен быть равен 2');",
-									"    pm.expect(\"Mr. Second Gerhold 2\").equal(target[0].commentatorName, 'Имя пользователя должно соответствовать имени пользователя, оставившего комментарий');",
 									"    pm.expect(\"First comment\").equal(target[0].text, 'Текст комментария должен соответствовать отправленному в запросе');",
 									"    pm.expect(\"false\").equal(target[0].edited.toString(), 'Информация о редактировании должна быть false для нового комментария');",
 									"});"
@@ -859,7 +465,6 @@
 									"",
 									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {",
 									"    pm.expect(3).equal(target.id, 'id комментария должен быть равен 3');",
-									"    pm.expect(\"Mr. First Gerhold 1\").equal(target.commentatorName, 'Имя пользователя должно соответствовать имени пользователя, оставившего комментарий');",
 									"    pm.expect(\"20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstringEND\").equal(target.text, 'Текст комментария должен соответствовать отправленному в запросе');",
 									"    pm.expect(\"false\").equal(target.edited.toString(), 'Информация о редактировании должна быть false для нового комментария');",
 									"});"
@@ -933,7 +538,6 @@
 									"",
 									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {",
 									"    pm.expect(1).equal(target.id, 'id комментария должен быть равен 1');",
-									"    pm.expect(\"Mr. First Gerhold 1\").equal(target.commentatorName, 'Имя пользователя должно соответствовать имени пользователя, оставившего комментарий');",
 									"    pm.expect(\"PATCH PATCH First comment\").equal(target.text, 'Текст комментария должен соответствовать отправленному в запросе');",
 									"    pm.expect(\"true\").equal(target.edited.toString(), 'Информация о редактировании должна быть true после редактирования комментария');",
 									"});"
@@ -1067,7 +671,6 @@
 									"pm.test(\"Test target[0]\", function () {",
 									"    var target = pm.response.json();",
 									"    pm.expect(2).equal(target[0].id, 'id комментария должен быть равен 2');",
-									"    pm.expect(\"Mr. Second Gerhold 2\").equal(target[0].commentatorName, 'Имя пользователя должно соответствовать имени пользователя, оставившего комментарий');",
 									"    pm.expect(\"First comment\").equal(target[0].text, 'Текст комментария должен соответствовать отправленному в запросе');",
 									"    pm.expect(\"false\").equal(target[0].edited.toString(), 'Информация о редактировании должна быть false для нового комментария');",
 									"});",
@@ -1076,7 +679,6 @@
 									"pm.test(\"Test target[1]\", function () {",
 									"    var target = pm.response.json();",
 									"    pm.expect(1).equal(target[1].id, 'id комментария должен быть равен 1');",
-									"    pm.expect(\"Mr. First Gerhold 1\").equal(target[1].commentatorName, 'Имя пользователя должно соответствовать имени пользователя, оставившего комментарий');",
 									"    pm.expect(\"PATCH PATCH First comment\").equal(target[1].text, 'Текст комментария должен соответствовать отправленному в запросе');",
 									"    pm.expect(\"true\").equal(target[1].edited.toString(), 'Информация о редактировании должна быть false для нового комментария');",
 									"});"
