@@ -27,7 +27,7 @@ public class EwmUserServiceImpl implements EwmUserService {
     private final EwmUserMapper ewmUserMapper;
 
     @Override
-    public EwmUser getEwmUserEntityById(long ewmUserId) {
+    public EwmUser getEwmUserEntityByIdMandatory(long ewmUserId) {
         log.info("[Ewm Service] received a request to get user entity");
         return ewmUserRepository.findById(ewmUserId).orElseThrow(() ->
             new ResourceNotFoundException(

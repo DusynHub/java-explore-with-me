@@ -83,7 +83,7 @@ public class EventServiceImpl implements EventService {
     public EventFullDto postEvent(NewEventDto newEventDto, long initiator) {
         log.info("[Event Service] received a private request to save new event");
 
-        EwmUser initiatorUser = ewmUserService.getEwmUserEntityById(initiator);
+        EwmUser initiatorUser = ewmUserService.getEwmUserEntityByIdMandatory(initiator);
         if (newEventDto.getRequestModeration() == null) {
             newEventDto.setRequestModeration(true);
         }
@@ -520,7 +520,7 @@ public class EventServiceImpl implements EventService {
 
         CategoryDto categoryDto = categoryService.getCategory(singleEvent.getCategory().getId());
         EwmShortUserDto ewmShortUserDto = ewmUserMapper.ewmUserToEwmShortUserDto(
-                ewmUserService.getEwmUserEntityById(singleEvent.getInitiator().getId())
+                ewmUserService.getEwmUserEntityByIdMandatory(singleEvent.getInitiator().getId())
         );
 
         Map<String, Long> views = getStatisticsFromStatsModule(
@@ -537,7 +537,7 @@ public class EventServiceImpl implements EventService {
                         singleEvent.getId()));
     }
 
-    private void checkEventExistenceById(long eventId) {
+    public void checkEventExistenceById(long eventId) {
         if (!eventRepository.existsById(eventId)) {
             throw new ResourceNotFoundException(
                     String.format("Event with id = '%d' not found", eventId));

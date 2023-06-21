@@ -57,6 +57,16 @@ public interface EventService {
      */
     List<EventShortDto> getUserEvents(long userId, int from, int size);
 
+
+    /**
+     * Method to get check event existence
+     *
+     * @param eventId event id
+     * @return event
+     */
+    void checkEventExistenceById(long eventId);
+
+
     /**
      * Method to get event posted by user
      *
