@@ -49,7 +49,11 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public OutputCommentDto postComment(NewCommentDto newCommentDto) {
+    public OutputCommentDto postComment(String eventIdString, String userIdString, NewCommentDto newCommentDto) {
+        long userId = Long.parseLong(userIdString);
+        long eventId = Long.parseLong(eventIdString);
+        newCommentDto.setCommentator(userId);
+        newCommentDto.setCommentedEvent(eventId);
         log.info("[Comment Service] received a request to post comment");
         EwmUser commentator = ewmUserService.getEwmUserEntityByIdMandatory(newCommentDto.getCommentator());
         Event commentedEvent = eventService.getEventEntityByIdMandatory(newCommentDto.getCommentedEvent());
@@ -59,9 +63,10 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<OutputCommentDto> getCommentsByEvent(long eventId, int from, int size, String sort) {
+    public List<OutputCommentDto> getCommentsByEvent(String eventIdString, int from, int size, String sort) {
         log.info("[Comment Service] received a request to get comments to event with id = '{}' " +
-                "from = '{}' with size = '{}' and sort = ''{}", eventId, from, size, sort);
+                "from = '{}' with size = '{}' and sort = ''{}", eventIdString, from, size, sort);
+        long eventId = Long.parseLong(eventIdString);
         eventService.checkEventExistenceById(eventId);
         Sort byDate = Sort.by(Sort.Direction.DESC, "commentedOn");
         if (sort.equalsIgnoreCase("ASC")) {
@@ -80,8 +85,14 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public OutputCommentDto patchComment(NewCommentDto newCommentDto) {
+    public OutputCommentDto patchComment(String eventIdString, String userIdString, String commentIdString, NewCommentDto newCommentDto) {
         log.info("[Comment Service] received a request to patch comment");
+        long userId = Long.parseLong(userIdString);
+        long eventId = Long.parseLong(eventIdString);
+        long commentId = Long.parseLong(commentIdString);
+        newCommentDto.setId(commentId);
+        newCommentDto.setCommentator(userId);
+        newCommentDto.setCommentedEvent(eventId);
         ewmUserService.checkUserExistence(newCommentDto.getCommentator());
         eventService.checkEventExistenceById(newCommentDto.getCommentedEvent());
         Comment commentToUpdate = getCommentEntityByIdMandatory(newCommentDto.getId());
@@ -106,7 +117,10 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public void deleteComment(long userId, long eventId, long commentId) {
+    public void deleteComment(String userIdString, String eventIdString, String commentIdString) {
+        long userId = Long.parseLong(userIdString);
+        long eventId = Long.parseLong(eventIdString);
+        long commentId = Long.parseLong(commentIdString);
         log.info("[Comment Service] received a request to patch comment");
         ewmUserService.checkUserExistence(userId);
         eventService.checkEventExistenceById(eventId);

@@ -22,19 +22,19 @@ public interface CommentService {
      * @param newCommentDto new comment
      * @return posted comment
      */
-    OutputCommentDto postComment(NewCommentDto newCommentDto);
+    OutputCommentDto postComment(String eventIdString, String userIdString, NewCommentDto newCommentDto);
 
 
     /**
      * Method to get event comments
      *
-     * @param eventId event id
+     * @param eventIdString event id
      * @param from first comment in result
      * @param size page size
      * @param sort sort by date ASC or DESC
      * @return comments to event
      */
-    List<OutputCommentDto> getCommentsByEvent(long eventId, int from, int size, String sort);
+    List<OutputCommentDto> getCommentsByEvent(String eventIdString, int from, int size, String sort);
 
 
     /**
@@ -43,14 +43,14 @@ public interface CommentService {
      * @param newCommentDto new text to comment
      * @return edited comment
      */
-    OutputCommentDto patchComment(NewCommentDto newCommentDto);
+    OutputCommentDto patchComment(String eventIdString, String userIdString, String commentIdString, NewCommentDto newCommentDto);
 
     /**
      * Method to delete comment by id
      *
-     * @param userId comment owner id
-     * @param eventId commented event
-     * @param commentId comment id
+     * @param userIdString comment owner id
+     * @param eventIdString commented event
+     * @param commentIdString comment id
      */
-    void deleteComment(long userId, long eventId, long commentId);
+    void deleteComment(String userIdString, String eventIdString, String commentIdString);
 }

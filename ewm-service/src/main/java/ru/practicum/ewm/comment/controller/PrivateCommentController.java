@@ -32,14 +32,10 @@ public class PrivateCommentController {
             @PathVariable String eventIdString,
             @PathVariable String userIdString,
             @RequestBody @Valid NewCommentDto newCommentDto) {
-        long userId = Long.parseLong(userIdString);
-        long eventId = Long.parseLong(eventIdString);
-        newCommentDto.setCommentator(userId);
-        newCommentDto.setCommentedEvent(eventId);
         log.info("[Private Comment Controller] received a request POST /users/{}/events/{}/comments",
                 userIdString,
                 eventIdString);
-        return commentService.postComment(newCommentDto);
+        return commentService.postComment(eventIdString, userIdString, newCommentDto);
     }
 
 
@@ -49,16 +45,10 @@ public class PrivateCommentController {
             @PathVariable String userIdString,
             @RequestBody @Valid NewCommentDto newCommentDto,
             @PathVariable String commentIdString) {
-        long userId = Long.parseLong(userIdString);
-        long eventId = Long.parseLong(eventIdString);
-        long commentId = Long.parseLong(commentIdString);
-        newCommentDto.setId(commentId);
-        newCommentDto.setCommentator(userId);
-        newCommentDto.setCommentedEvent(eventId);
         log.info("[Private Comment Controller] received a request PATCH /users/{}/events/{}/comments",
                 userIdString,
                 eventIdString);
-        return commentService.patchComment(newCommentDto);
+        return commentService.patchComment(eventIdString, userIdString, commentIdString, newCommentDto);
     }
 
     @DeleteMapping("/{commentIdString}")
@@ -67,12 +57,9 @@ public class PrivateCommentController {
             @PathVariable String eventIdString,
             @PathVariable String userIdString,
             @PathVariable String commentIdString) {
-        long userId = Long.parseLong(userIdString);
-        long eventId = Long.parseLong(eventIdString);
-        long commentId = Long.parseLong(commentIdString);
         log.info("[Private Comment Controller] received a request DELETE /users/{}/events/{}/comments",
                 userIdString,
                 eventIdString);
-        commentService.deleteComment(userId, eventId, commentId);
+        commentService.deleteComment(userIdString, eventIdString, commentIdString);
     }
 }

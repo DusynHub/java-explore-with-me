@@ -4,7 +4,6 @@ import org.mapstruct.Mapper;
 
 import org.mapstruct.Mapping;
 import org.mapstruct.NullValuePropertyMappingStrategy;
-import org.springframework.stereotype.Service;
 import ru.practicum.ewm.comment.model.Comment;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.user.model.EwmUser;
@@ -14,7 +13,6 @@ import java.time.LocalDateTime;
 @Mapper(componentModel = "spring",
         imports = LocalDateTime.class,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-@Service
 public interface CommentMapper {
 
     @Mapping(target = "id", ignore = true)

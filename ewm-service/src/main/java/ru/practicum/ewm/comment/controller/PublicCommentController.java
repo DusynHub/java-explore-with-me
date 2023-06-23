@@ -26,10 +26,9 @@ public class PublicCommentController {
             @RequestParam(defaultValue = "0") Integer from,
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(defaultValue = "DESC") String sort) {
-        long eventId = Long.parseLong(eventIdString);
         log.info("[Public Comment Controller] received a request GET events/{}/comments",
                 eventIdString);
-        return commentService.getCommentsByEvent(eventId, from, size, sort);
+        return commentService.getCommentsByEvent(eventIdString, from, size, sort);
     }
 
 }
