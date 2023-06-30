@@ -52,7 +52,7 @@ public class CompilationServiceImpl implements CompilationService {
 
         List<Event> eventsToCompilation = new ArrayList<>(0);
         if (newCompilationDto.getEvents() != null) {
-            eventsToCompilation = eventService.getEventsById(newCompilationDto.getEvents());
+            eventsToCompilation = eventService.getEventsEntityByIds(newCompilationDto.getEvents());
         }
 
         Set<Event> eventsSetToCompilation = new HashSet<>(
@@ -89,14 +89,14 @@ public class CompilationServiceImpl implements CompilationService {
         log.info("[Compilation Service] received an admin request PATCH /admin/compilations/{}",
                 compilationId);
         checkCompilationExistenceById(compilationId);
-        Compilation compilationToBePatched = getCompilationByIdMandatory(compilationId);
+        Compilation compilationToBePatched = getCompilationEntityByIdMandatory(compilationId);
 
         Set<Long> newEventIdsSetToCompilationInSet = patchCompilationDto.getEvents();
         List<Event> newEventsInList;
         Set<Event> newEventSetToCompilation = null;
 
         if (newEventIdsSetToCompilationInSet != null) {
-            newEventsInList = eventService.getEventsById(newEventIdsSetToCompilationInSet);
+            newEventsInList = eventService.getEventsEntityByIds(newEventIdsSetToCompilationInSet);
             newEventSetToCompilation = new HashSet<>(newEventsInList);
         } else {
             newEventsInList = new ArrayList<>(compilationToBePatched.getEvents());
@@ -143,7 +143,7 @@ public class CompilationServiceImpl implements CompilationService {
         log.info("[Public Compilation Controller] received a public " +
                 "request to get compilation with id = '{}'", compilationId);
         checkCompilationExistenceById(compilationId);
-        Compilation requiredCompilation = getCompilationByIdMandatory(compilationId);
+        Compilation requiredCompilation = getCompilationEntityByIdMandatory(compilationId);
 
         List<EventShortDto> shortEvents = eventService.makeEvenShortDtoFromEventsList(
                         new ArrayList<>(requiredCompilation.getEvents())
@@ -164,7 +164,7 @@ public class CompilationServiceImpl implements CompilationService {
         }
     }
 
-    private Compilation getCompilationByIdMandatory(long compilationId) {
+    private Compilation getCompilationEntityByIdMandatory(long compilationId) {
         return compilationRepository.findById(compilationId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(

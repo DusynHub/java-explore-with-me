@@ -57,6 +57,16 @@ public interface EventService {
      */
     List<EventShortDto> getUserEvents(long userId, int from, int size);
 
+
+    /**
+     * Method to get check event existence
+     *
+     * @param eventId event id
+     * @return event
+     */
+    void checkEventExistenceById(long eventId);
+
+
     /**
      * Method to get event posted by user
      *
@@ -96,6 +106,14 @@ public interface EventService {
      */
     EventFullDto updateEventByIdFromAdmin(long eventId, UpdateEventRequest updateEventRequest);
 
+    /**
+     * Method to update event by id from user
+     *
+     * @param userId event owner id
+     * @param eventId event id
+     * @param updateEventRequest updateEventUserRequest with event fields need to update
+     * @return updated event
+     */
     EventFullDto updateEventByIdFromUser(long userId, long eventId,
                                          UpdateEventRequest updateEventRequest);
 
@@ -128,7 +146,7 @@ public interface EventService {
             String endpointPath);
 
     /**
-     * Method to get event by id
+     * Method to get event by id and send to stat service
      *
      * @param eventId      event id
      * @param clientIp     client ip
@@ -143,7 +161,15 @@ public interface EventService {
      * @param eventId event id
      * @return required event
      */
-    Event getEventEntityById(long eventId);
+    Event getEventEntityByIdMandatory(long eventId);
+
+    /**
+     * Method to get event proxy by id
+     *
+     * @param eventId event id
+     * @return required event proxy
+     */
+    Event getEventProxyById(long eventId);
 
     /**
      * Method to get participation requests in specific event from user
@@ -174,7 +200,7 @@ public interface EventService {
      * @param eventIds event ids
      * @return required events
      */
-    List<Event> getEventsById(Set<Long> eventIds);
+    List<Event> getEventsEntityByIds(Set<Long> eventIds);
 
     /**
      * Method to make from Event list EventShortDto list

@@ -1,0 +1,722 @@
+{
+	"info": {
+		"_postman_id": "1b56058b-3881-4aba-ab1e-1384d2bcafba",
+		"name": "feature Copy",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25271283"
+	},
+	"item": [
+		{
+			"name": "comment",
+			"item": [
+				{
+					"name": "Post Comment 1  from User 1 to Event 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function () {",
+									"    pm.response.to.have.status(201);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const target = pm.response.json();",
+									"",
+									"pm.test(\"Пользователь должен содержать поля: id, name, email\", function () {",
+									"pm.expect(target).to.have.property('id');",
+									"pm.expect(target).to.have.property('commentatorName');",
+									"pm.expect(target).to.have.property('text');",
+									"pm.expect(target).to.have.property('edited');",
+									"pm.expect(target).to.have.property('commentedOn');",
+									"});",
+									"",
+									"",
+									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {",
+									"    pm.expect(1).equal(target.id, 'id комментария должен быть равен 1');",
+									"    pm.expect(\"First comment\").equal(target.text, 'Текст комментария должен соответствовать отправленному в запросе');",
+									"    pm.expect(\"false\").equal(target.edited.toString(), 'Информация о редактировании должна быть false для нового комментария');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\": \"First comment\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}//users/:userId/events/:eventId/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"",
+								"users",
+								":userId",
+								"events",
+								":eventId",
+								"comments"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "1"
+								},
+								{
+									"key": "eventId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Post Comment 1  from User 1 to Event 1 Length >20000",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([400]);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\": \"20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstring,20001lengthstringEND!\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}//users/:userId/events/:eventId/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"",
+								"users",
+								":userId",
+								"events",
+								":eventId",
+								"comments"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "1"
+								},
+								{
+									"key": "eventId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Post Comment 2 from User 2 to Event 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function () {",
+									"    pm.response.to.have.status(201);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const target = pm.response.json();",
+									"",
+									"pm.test(\"Пользователь должен содержать поля: id, name, email\", function () {",
+									"pm.expect(target).to.have.property('id');",
+									"pm.expect(target).to.have.property('commentatorName');",
+									"pm.expect(target).to.have.property('text');",
+									"pm.expect(target).to.have.property('edited');",
+									"pm.expect(target).to.have.property('commentedOn');",
+									"});",
+									"",
+									"",
+									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {",
+									"    pm.expect(2).equal(target.id, 'id комментария должен быть равен 2');",
+									"    pm.expect(\"First comment\").equal(target.text, 'Текст комментария должен соответствовать отправленному в запросе');",
+									"    pm.expect(\"false\").equal(target.edited.toString(), 'Информация о редактировании должна быть false для нового комментария');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\": \"First comment\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}//users/:userId/events/:eventId/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"",
+								"users",
+								":userId",
+								"events",
+								":eventId",
+								"comments"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "2"
+								},
+								{
+									"key": "eventId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Post Comment 2 from non existiong User 999 to Event 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([404]);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\": \"First comment\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}//users/:userId/events/:eventId/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"",
+								"users",
+								":userId",
+								"events",
+								":eventId",
+								"comments"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "999"
+								},
+								{
+									"key": "eventId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Post Comment 2 from User 1 to non existiong  Event 999",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([404]);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\": \"First comment\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}//users/:userId/events/:eventId/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"",
+								"users",
+								":userId",
+								"events",
+								":eventId",
+								"comments"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "1"
+								},
+								{
+									"key": "eventId",
+									"value": "999"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Event 1 comments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.be.ok;",
+									"});",
+									"pm.test(\"Test list user response\", function () {",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length, 'List length must be 2').to.eql(2);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Test user[0] 'email' field\", function () {",
+									"    var target = pm.response.json();",
+									"    pm.expect(2).equal(target[0].id, 'id комментария должен быть равен 2');",
+									"    pm.expect(\"First comment\").equal(target[0].text, 'Текст комментария должен соответствовать отправленному в запросе');",
+									"    pm.expect(\"false\").equal(target[0].edited.toString(), 'Информация о редактировании должна быть false для нового комментария');",
+									"});",
+									"",
+									"",
+									"pm.test(\"Test user[0] 'id' field\", function () {",
+									"    var target = pm.response.json();",
+									"    pm.expect(1).equal(target[1].id, 'id комментария должен быть равен 1');",
+									"    pm.expect(\"First comment\").equal(target[1].text, 'Текст комментария должен соответствовать отправленному в запросе');",
+									"    pm.expect(\"false\").equal(target[1].edited.toString(), 'Информация о редактировании должна быть false для нового комментария');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/events/:eventId/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"events",
+								":eventId",
+								"comments"
+							],
+							"variable": [
+								{
+									"key": "eventId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Event 1 comments with from  = 0 and size  = 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.be.ok;",
+									"});",
+									"pm.test(\"Test list user response\", function () {",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length, 'List length must be 1').to.eql(1);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Test user[0] 'email' field\", function () {",
+									"    var target = pm.response.json();",
+									"    pm.expect(2).equal(target[0].id, 'id комментария должен быть равен 2');",
+									"    pm.expect(\"First comment\").equal(target[0].text, 'Текст комментария должен соответствовать отправленному в запросе');",
+									"    pm.expect(\"false\").equal(target[0].edited.toString(), 'Информация о редактировании должна быть false для нового комментария');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/events/:eventId/comments?from=0&size=1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"events",
+								":eventId",
+								"comments"
+							],
+							"query": [
+								{
+									"key": "from",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "1"
+								}
+							],
+							"variable": [
+								{
+									"key": "eventId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Post Comment 3  from User 1 to Event 1 Length ==20000",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function () {",
+									"    pm.response.to.have.status(201);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const target = pm.response.json();",
+									"",
+									"pm.test(\"Пользователь должен содержать поля: id, name, email\", function () {",
+									"pm.expect(target).to.have.property('id');",
+									"pm.expect(target).to.have.property('commentatorName');",
+									"pm.expect(target).to.have.property('text');",
+									"pm.expect(target).to.have.property('edited');",
+									"pm.expect(target).to.have.property('commentedOn');",
+									"});",
+									"",
+									"",
+									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {",
+									"    pm.expect(3).equal(target.id, 'id комментария должен быть равен 3');",
+									"    pm.expect(\"20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstringEND\").equal(target.text, 'Текст комментария должен соответствовать отправленному в запросе');",
+									"    pm.expect(\"false\").equal(target.edited.toString(), 'Информация о редактировании должна быть false для нового комментария');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\": \"20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstring,20000lengthstringEND\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}//users/:userId/events/:eventId/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"",
+								"users",
+								":userId",
+								"events",
+								":eventId",
+								"comments"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "1"
+								},
+								{
+									"key": "eventId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Patch Comment 1  from User 1 to Event 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"const target = pm.response.json();",
+									"",
+									"pm.test(\"Пользователь должен содержать поля: id, name, email\", function () {",
+									"pm.expect(target).to.have.property('id');",
+									"pm.expect(target).to.have.property('commentatorName');",
+									"pm.expect(target).to.have.property('text');",
+									"pm.expect(target).to.have.property('edited');",
+									"pm.expect(target).to.have.property('commentedOn');",
+									"});",
+									"",
+									"",
+									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {",
+									"    pm.expect(1).equal(target.id, 'id комментария должен быть равен 1');",
+									"    pm.expect(\"PATCH PATCH First comment\").equal(target.text, 'Текст комментария должен соответствовать отправленному в запросе');",
+									"    pm.expect(\"true\").equal(target.edited.toString(), 'Информация о редактировании должна быть true после редактирования комментария');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\": \"PATCH PATCH First comment\"\n}   ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}//users/:userId/events/:eventId/comments/:commentId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"",
+								"users",
+								":userId",
+								"events",
+								":eventId",
+								"comments",
+								":commentId"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "1"
+								},
+								{
+									"key": "eventId",
+									"value": "1"
+								},
+								{
+									"key": "commentId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Comment 3 from User 1 to Event 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 204 и данные в формате json\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\": \"PATCH PATCH First comment\"\n}   ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}//users/:userId/events/:eventId/comments/:commentId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"",
+								"users",
+								":userId",
+								"events",
+								":eventId",
+								"comments",
+								":commentId"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "1"
+								},
+								{
+									"key": "eventId",
+									"value": "1"
+								},
+								{
+									"key": "commentId",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Event 1 comments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.be.ok;",
+									"});",
+									"pm.test(\"Test list user response\", function () {",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length, 'List length must be 2').to.eql(2);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Test target[0]\", function () {",
+									"    var target = pm.response.json();",
+									"    pm.expect(2).equal(target[0].id, 'id комментария должен быть равен 2');",
+									"    pm.expect(\"First comment\").equal(target[0].text, 'Текст комментария должен соответствовать отправленному в запросе');",
+									"    pm.expect(\"false\").equal(target[0].edited.toString(), 'Информация о редактировании должна быть false для нового комментария');",
+									"});",
+									"",
+									"",
+									"pm.test(\"Test target[1]\", function () {",
+									"    var target = pm.response.json();",
+									"    pm.expect(1).equal(target[1].id, 'id комментария должен быть равен 1');",
+									"    pm.expect(\"PATCH PATCH First comment\").equal(target[1].text, 'Текст комментария должен соответствовать отправленному в запросе');",
+									"    pm.expect(\"true\").equal(target[1].edited.toString(), 'Информация о редактировании должна быть false для нового комментария');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/events/:eventId/comments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"events",
+								":eventId",
+								"comments"
+							],
+							"variable": [
+								{
+									"key": "eventId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080"
+		}
+	]
+}

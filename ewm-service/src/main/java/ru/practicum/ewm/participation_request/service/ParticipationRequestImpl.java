@@ -43,7 +43,7 @@ public class ParticipationRequestImpl implements ParticipationRequestService {
     public ParticipationRequestDto postRequest(long userId, long eventId) {
         log.info("[Participation Request Service] received a private request to post request");
 
-        Event targetEvent = eventService.getEventEntityById(eventId);
+        Event targetEvent = eventService.getEventEntityByIdMandatory(eventId);
         long eventInitiatorId = targetEvent.getInitiator().getId();
 
         if (userId == eventInitiatorId) {

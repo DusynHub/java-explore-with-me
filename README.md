@@ -1,2 +1,5 @@
 # java-explore-with-me
-Template repository for ExploreWithMe project.
+
+Учебный проект
+
+Пул реквест для фичи "комментарии: https://github.com/DusynHub/java-explore-with-me/pull/3
